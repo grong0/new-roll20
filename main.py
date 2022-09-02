@@ -124,27 +124,55 @@ class allSpellsSpider(scrapy.Spider):
             spell_range = content.css('p::text').getall()[3][1:]
             components = content.css('p::text').getall()[5][1:]
             duration = content.css('p::text').getall()[7][1:]
-            description = content.css('p::text').getall()[8:]
-            no_upcast = True
-            count = 1
-            paragraph = 8
-            while no_upcast:
-                if not content.css('p::text').getall()[paragraph + count][1].isupper():
-                    description += "\n" + content.css('p::text').getall()[paragraph + count]
-                    count += 1
+
+            desc_up = content.css('p::text').getall()[8:len(content.css('p::text').getall()) - len(content.css('p').css('a::text').getall())]
+            description = None
+            upcast = None
+            if desc_up[-1][0] == " ":
+                description = desc_up[:len(desc_up) - 1]
+                upcast = desc_up[-1][1:]
+            else:
+                description = desc_up
+                upcast = ""
+
+            desc_list = []
+            for x in content.css('ul'):
+                desc_list.append(x.css('em::text').get())
+                if desc_list[len(desc_list) - 1] != None:
+                    desc_list.append(x.css('li::text').get()[1:])
                 else:
-                    no_upcast = False
-                    continue
-            upcast = content.css('p::text').getall()[paragraph + count + 1][1:]
+                    desc_list.append(x.css('li::text').get())
+
             spellLists = content.css('p').css('a::text').getall()
+
+            # no_upcast = True
+            # count = 1
+            # paragraph = 8
+            # while no_upcast:
+            #     if not content.css('p::text').getall()[paragraph + count][1].isupper():
+            #         description += "\n" + content.css('p::text').getall()[paragraph + count]
+            #         count += 1
+            #     else:
+            #         no_upcast = False
+            #         continue
+
             if "Critical Role" in content.css('p::text').get():
                 source = "Critical Role"
                 castingTime = content.css('p::text').getall()[2][1:]
                 spell_range = content.css('p::text').getall()[4][1:]
                 components = content.css('p::text').getall()[6][1:]
                 duration = content.css('p::text').getall()[8][1:]
-                description = content.css('p::text').getall()[9]
-                upcast = content.css('p::text').getall()[10][1:]
+
+                desc_up = content.css('p::text').getall()[9:len(content.css('p::text').getall()) - len(content.css('p').css('a::text').getall())]
+                description = None
+                upcast = None
+                if desc_up[-1][0] == " ":
+                    description = desc_up[:len(desc_up) - 1]
+                    upcast = desc_up[-1][1:]
+                else:
+                    description = desc_up
+                    upcast = ""
+                
                 spellLists = content.css('p').css('a::text').getall()
                 spellLists.remove("Twitter")
             yield {
@@ -155,7 +183,8 @@ class allSpellsSpider(scrapy.Spider):
                 'range': spell_range,
                 'components': components,
                 'duration': duration,
-                'description': description,
+                'description': description, #list
+                'list': desc_list, #list
                 'upcast': upcast,
                 'spellLists': spellLists #list
             }
