@@ -1,0 +1,179 @@
+#:kivy
+ImagesExample:
+
+
+<ImagesExample@GridLayout>:
+    cols: 3
+    Image:
+        source: "images/super_teemo.jpg"
+    Image:
+        source: "images/super_teemo.jpg"
+        allow_stretch: True
+    Image:
+        source: "images/super_teemo.jpg"
+        allow_stretch: True # default is false
+        keep_ratio: False # default is true
+
+<WidgetsExample>:
+    cols: 3
+    ToggleButton:
+        text: "OFF"
+        on_state: root.on_toggle_button_state(self)
+        size_hint: None, 1
+        width: "100dp"
+    Button:
+        text: "Click here"
+        on_press: root.on_button_click()
+        disabled: not root.state
+    Label:
+        text: root.my_text
+        font_name: "fonts/ArchivoBlack-Regular.ttf"
+        font_size: "80dp"
+        color: 1, .5, 1, 1
+    Switch:
+        id: my_switch
+        active: True
+        on_active: root.on_switch_active(self)
+        size_hint: None, 1
+        width: "100dp"
+    Slider:
+        id: my_slider
+        # defualt is 0 - 100 and starting pos 0
+        min: 0
+        max: 100
+        value: 50
+        orientation: "vertical"
+        disabled: not my_switch.active
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: str(int(my_slider.value))
+            font_name: "fonts/ArchivoBlack-Regular.ttf"
+            font_size: "80dp"
+            color: .5, 1, 1, 1
+        ProgressBar:
+            max: 100
+            value: my_slider.value
+    TextInput:
+        id: text_input
+        size_hint: None, 1
+        width: "100dp"
+        text: "foo"
+        multiline: False # default is true
+        on_text_validate: root.on_text_validate(self)
+    Label:
+        text: "Your name is " + root.text_input_str
+
+# <CorePageRoll20>:
+#     BoxLayout:
+#         orientation: "horizontal"
+        
+
+<PageLayoutExample>:
+    MainWidget:
+    BoxLayoutExample:
+    GridLayoutExample:
+    ScrollViewExample:
+
+<ScrollViewExample>:
+    StackLayoutExample:
+        size_hint: 1, None
+        height: self.minimum_height
+
+<StackLayoutExample>:
+    # left-rght  top-bottom
+    # orientation: "lr-bt"
+    # (left, right, top, bottom)
+    # padding: "20dp", "20dp", "20dp", "20dp"
+    # (horizontally, vertically)
+    # spacing: "20dp", "20dp"
+
+    # Button:
+    #     text: "A"
+    #     size_hint: .2, .2
+    # Button:
+    #     text: "B"
+    #     size_hint: .2, .2
+    # Button:
+    #     text: "C"
+    #     size_hint: .2, .2
+    # Button:
+    #     text: "D"
+    #     size_hint: .2, .2
+    # Button:
+    #     text: "E"
+    #     size_hint: .2, .2
+    # Button:
+    #     text: "F"
+    #     size_hint: .2, .2
+
+
+<GridLayoutExample>:
+    # num of rows
+    # num of cols
+    cols: 3
+    rows: 2
+    Button:
+        text: "A"
+    Button:
+        text: "B"
+    Button:
+        text: "C"
+    Button:
+        text: "D"
+    Button:
+        text: "E"
+    Button:
+        text: "F"
+    
+
+<AnchorLayoutExample>:
+    # right, left, center
+    anchor_x: "center"
+    # botton, top center
+    anchor_y: "top"
+    BoxLayout:
+        size_hint: .2, .2
+        Button:
+            text: "A"
+        Button:
+            text: "B"
+
+<BoxLayoutExample>:
+    orientation: "horizontal"
+    Button:
+        text: "A"
+        size_hint: .5, None
+        # size: "100dp", "60dp"
+        # width: "100dp"
+        height: "60dp"
+
+        # you can only pick one from the list
+        # x, center_x, right
+        # y, center_y, top
+        pos_hint: {"center_y": .5}
+    BoxLayout:
+        orientation: "vertical"
+        spacing: "10dp"
+        Button:
+            text: "B1"
+        Button:
+            text: "B2" 
+        Button:
+            text: "B3"
+        Button:
+            text: "B4"
+        
+    Label:
+        text: "C"
+
+<MainWidget>:
+    Button:
+        text: "Hello"
+        size: "100dp", "100dp"
+        pos: "100dp", "100dp"
+    Label:
+        text: "Hello"
+        size: "100dp", "100dp"
+        pos: "200dp", "200dp"
+        color: 1, 0.9, 0.9, 1
