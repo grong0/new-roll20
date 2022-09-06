@@ -1,8 +1,6 @@
+import string
 import scrapy
 from scrapy.crawler import CrawlerProcess
-import logging
-from kivy.logger import Logger
-logging.root = Logger
 
 from kivy.app import App
 from kivy.metrics import dp
@@ -192,18 +190,301 @@ class allSpellsSpider(scrapy.Spider):
         for x in self.spell_urls:
             yield(scrapy.Request(x, callback=self.parse))
 
-process = CrawlerProcess(settings={
+def isAlph(next, prev):
+    alph = string.ascii_uppercase
+    for x in alph:
+        if prev == x:
+            return False
+        elif next == x:
+            return True
+        else:
+            continue
+
+def flipOrder(listIn):
+    temp = []
+    for x in range(0, len(listIn) - 1):
+        temp.append(listIn[-x])
+    return temp
+
+class allRacesSpider(scrapy.Spider):
+    name = "allSpells"
+    start_urls = ['http://dnd5e.wikidot.com/']
+    race_urls = []
+    new_loop = False
+    race_list = []
+
+
+    def start_requests(self):
+        yield scrapy.Request('http://dnd5e.wikidot.com/')
+
+    def parse(self, response):
+        # html = ""
+        # race_class = ""
+        # race = ""
+        # race_link = "http://dnd5e.wikidot.com"
+        # races = []
+        # spanDetected = False
+        # removingEndSpan = False
+        # ahrefDetected = False
+        # waitingForName = False
+        # collectingName = False
+        # collectingRaceLink = False
+        # removingEndahref = False
+        if self.new_loop == False:
+            race_cat = response.css('div.feature.offcolor')[1].css('div.row')[1].css('div.col-sm-4').css('span::text').getall()[:response.css('div.feature.offcolor')[1].css('div.row')[1].css('div.col-sm-4').css('span::text').getall().index("Setting Specific")+1]
+            spec_set = response.css('div.feature.offcolor')[1].css('div.row')[1].css('div.col-sm-4').css('span::text').getall()[response.css('div.feature.offcolor')[1].css('div.row')[1].css('div.col-sm-4').css('span::text').getall().index("Setting Specific")+1:]
+            races = response.css('div.feature.offcolor')[1].css('div.row')[1].css('div.col-sm-4').css('a::text').getall()
+            race_links = response.css('div.feature.offcolor')[1].css('div.row')[1].css('div.col-sm-4').css('a::attr(href)').getall()
+            race_cat_count = 0
+            spec_set_count = 0
+            for x in range(0, len(races)):
+                if race_cat[race_cat_count] == "Setting Specific":
+                    if isAlph(races[x][0], self.race_list[-1]["race_name"][0]) == True:
+                        spec_set_count += 1
+                    self.race_list.append({
+                        "race_name": races[x],
+                        "race_cat": ["Setting Specific", spec_set[spec_set_count]],
+                        "race_link": "http://dnd5e.wikidot.com" + race_links[x]
+                    })
+                    self.race_urls.append("http://dnd5e.wikidot.com" + race_links[x])
+                else:
+                    if len(self.race_list) >= 2 and races[x] != "Custom Lineage" and races[x] != "Fairy" and isAlph(races[x][0], self.race_list[-1]["race_name"][0]) == True:
+                        race_cat_count += 1
+                        if race_cat[race_cat_count] == "Setting Specific":
+                            self.race_list.append({
+                                "race_name": races[x],
+                                "race_cat": ["Setting Specific", spec_set[spec_set_count]],
+                                "race_link": "http://dnd5e.wikidot.com" + race_links[x]
+                            })
+                            self.race_urls.append("http://dnd5e.wikidot.com" + race_links[x])
+                            continue
+                    if races[x] == "Custom Lineage":
+                        self.race_list.append({
+                            "race_name": races[x],
+                            "race_cat": "Custom Lineage",
+                            "race_link": "http://dnd5e.wikidot.com" + race_links[x]
+                        })
+                        self.race_urls.append("http://dnd5e.wikidot.com" + race_links[x])
+                        continue
+                    self.race_list.append({
+                        "race_name": races[x],
+                        "race_cat": race_cat[race_cat_count],
+                        "race_link": "http://dnd5e.wikidot.com" + race_links[x]
+                    })
+                    self.race_urls.append("http://dnd5e.wikidot.com" + race_links[x])
+            self.new_loop = True
+            yield {"race_urls": self.race_urls}
+        elif self.new_loop == True: 
+            feats = []
+            race_name = response.css('div.page-title.page-header').css('span::text').get()
+            try:
+                for x in response.css('div.feature')[0].css('div.row')[0].css('ul'):
+                    feats.append({
+                        "feat_name": x.css('strong::text').get(),
+                        "feat_desc": x.css('li::text').get()[1:]
+                    })
+            except:
+                for x in response.css('div#page-content').css('ul'):
+                    feats.append({
+                        "feat_name": x.css('strong::text').get(),
+                        "feat_desc": x.css('li::text').get()[1:]
+                    })
+            race_cat = None
+            race_link = None
+            for x in self.race_list:
+                if "(UA)" in race_name:
+                    if race_name[:4].lower() in x['race_name'].lower() and x['race_cat'] == "Unearthed Arcana":
+                        race_cat = x['race_cat']
+                        race_link = x['race_link']
+                else:
+                    if race_name[:4].lower() in x['race_name'].lower() and x['race_cat'] != "Unearthed Arcana":
+                        race_cat = x['race_cat']
+                        race_link = x['race_link']
+            
+            race_desc = []
+            for x in response.css('p'):
+                if type(x.css('em::text').get()) == str and x.css('em::text').get().__contains__('Mark of') == False:
+                    race_desc.append(x.css('em::text').getall())
+                elif type(x.css('strong::text').get()) == str and x.css('strong::text').get().__contains__('Mark of') == False:
+                    race_desc.append(x.css('strong::text').getall())
+
+            race_misc_table = {'misc_table_name': None}
+            race_misc_table_rows = []
+            pos = 1
+            x = response.css('table.wiki-content-table')[0]
+            if len(response.css('div.row')) > 1:
+                x = response.css('div.row')[1]
+            if type(x.css('th::text').get()) == str:
+                if len(x.css('tr')[0].css('th').getall()) == 1:
+                    race_misc_table['misc_table_name'] = x.css('th::text').get()
+                if x.css('tr')[0].__contains__("td")
+                if len(x.css('tr')[1].css('td').getall()) == 2:
+                    race_misc_table_rows.append({
+                        'cat1': x.css('tr')[1].css('th::text').get(),
+                        'cat2': x.css('tr')[1].css('th::text')[1].get()
+                    })
+                    for y in x.css('tr')[2:]:
+                        race_misc_table_rows.append({
+                            "cat1_cont": y.css('td::text').get(),
+                            "cat2_cont": y.css('td::text')[1].get()
+                        })
+                elif len(x.css('tr')[1].css('td').getall()) == 3:
+                    race_misc_table_rows.append({
+                        'cat1': x.css('th::text').get(),
+                        'cat2': x.css('th::text')[1].get(),
+                        'cat3': x.css('th::text')[2].get()
+                    })
+                    for y in x.css('tr')[1:]:
+                        race_misc_table_rows.append({
+                            "cat1_cont": y.css('td::text').get(),
+                            "cat2_cont": y.css('td::text')[1].get(),
+                            "cat3_cont": y.css('td::text')[2].get()
+                        })
+                race_misc_table['content'] = race_misc_table_rows
+                race_misc_table_rows = []
+            
+
+            subraces = []
+            subrace_feats = []
+            subrace_desc_sublist = []
+            sublist_names = []
+            sublist_descs = []
+            subrace_spell_table = {}
+            subrace_spell_table_rows = []
+            subrace_misc_table = {'misc_table_name': None}
+            subrace_misc_table_rows = []
+            for x in response.css('div.row')[2:]:
+                for y in x.css('ul'):
+                    if type(y.css('li').css('ul').css('strong::text').get()) == str:
+                        sublist_names = y.css('li').css('ul').css('strong::text').getall()
+                        sublist_descs = y.css('li').css('ul').css('li::text').getall()
+                        for count, i in enumerate(sublist_names):
+                            subrace_desc_sublist.append({
+                                "sublist_name": sublist_names[count],
+                                "sublist_desc": sublist_descs[count]
+                            })
+                        subrace_feats.append({
+                            "subrace_feat_name": y.css('strong::text').get(),
+                            "subrace_feat_desc": [y.css('li::text').get(), subrace_desc_sublist]
+                        })
+                        sublist_names = []
+                        sublist_descs = []
+                        subrace_desc_sublist = []
+                    else:
+                        try:
+                            if y.css('strong::text').get() != subrace_feats[-1]["subrace_feat_desc"][1][0]["sublist_name"]:
+                                continue
+                        except:
+                            subrace_feats.append({
+                                "subrace_feat_name": y.css('strong::text').get(),
+                                "subrace_feat_desc": y.css('li::text').get()
+                            })
+                if len(x.css('p')) > 1:
+                    subrace_spell_table['spell_table_name'] = x.css('p')[-1].css('strong::text').get()
+                    for y in x.css('table.wiki-content-table').css('tr')[1:]:
+                        subrace_spell_table_rows.append({
+                            "spell_level": y.css('td::text').get(),
+                            "spell": y.css('a::text').getall()
+                        })
+                    subrace_spell_table['spell_table_content'] = subrace_spell_table_rows
+                    subrace_spell_table_rows = []
+                    subraces.append({
+                        "subrace_name": x.css('span::text').get(),
+                        "subrace_source": x.css('p::text').get()[8:],
+                        "subrace_feats": subrace_feats,
+                        "subrace_spell_table": subrace_spell_table
+                    })
+                elif type(x.css('th::text').get()) == str:
+                    if len(x.css('tr')[0].css('th').getall()) == 1:
+                        subrace_misc_table['misc_table_name'] = x.css('th::text').get()
+                    if len(x.css('tr')[1].css('th').getall()) == 2:
+                        subrace_misc_table_rows.append({
+                            'cat1': x.css('tr')[1].css('th::text').get(),
+                            'cat2': x.css('tr')[1].css('th::text')[1].get()
+                        })
+                        for y in x.css('tr')[2:]:
+                            subrace_misc_table_rows.append({
+                                "cat1_cont": y.css('td::text').get(),
+                                "cat2_cont": y.css('td::text')[1].get()
+                            })
+                    elif len(x.css('tr')[1].css('td').getall()) == 3:
+                        subrace_misc_table_rows.append({
+                            'cat1': x.css('th::text').get(),
+                            'cat2': x.css('th::text')[1].get(),
+                            'cat3': x.css('th::text')[2].get()
+                        })
+                        for y in x.css('tr')[1:]:
+                            subrace_misc_table_rows.append({
+                                "cat1_cont": y.css('td::text').get(),
+                                "cat2_cont": y.css('td::text')[1].get(),
+                                "cat3_cont": y.css('td::text')[2].get()
+                            })
+                    subrace_misc_table['content'] = subrace_misc_table_rows
+                    subrace_misc_table_rows = []
+                    subraces.append({
+                        "subrace_name": x.css('span::text').get(),
+                        "subrace_source": x.css('p::text').get()[8:],
+                        "subrace_feats": subrace_feats,
+                        "subrace_misc_table": subrace_misc_table
+                    })
+                else:
+                    subraces.append({
+                        "subrace_name": x.css('span::text').get(),
+                        "subrace_source": x.css('p::text').get()[8:],
+                        "subrace_feats": subrace_feats
+                    })
+                subrace_feats = []
+                subrace_spell_table = {}
+                subrace_misc_table = {'misc_table_name': None}
+            try:
+                print(race_misc_table['content'])
+                yield {
+                    "race_name": race_name,
+                    "race_cat": race_cat,
+                    "race_link": race_link,
+                    "race_desc": race_desc,
+                    "race_feats": feats,
+                    "race_misc_table": race_misc_table,
+                    "race_subraces": subraces
+                }
+            except:
+                yield {
+                    "race_name": race_name,
+                    "race_cat": race_cat,
+                    "race_link": race_link,
+                    "race_desc": race_desc,
+                    "race_feats": feats,
+                    "race_subraces": subraces
+                }
+
+        
+        for x in flipOrder(self.race_urls):
+            yield(scrapy.Request(x, callback=self.parse))
+
+
+# allSpellsProcess = CrawlerProcess(settings={
+#     "FEEDS": {
+#         "spells.json": {
+#             "format": "json",
+#             "overwrite": True
+#         }
+#     }
+# })
+
+# allSpellsProcess.crawl(allSpellsSpider)
+# allSpellsProcess.start() # the script will block here until all crawling jobs are finished
+
+allRacesProcess = CrawlerProcess(settings={
     "FEEDS": {
-        "spells.json": {
+        "races.json": {
             "format": "json",
             "overwrite": True
         }
     }
 })
 
-process.crawl(allSpellsSpider)
-process.start() # the script will block here until all crawling jobs are finished
-
+allRacesProcess.crawl(allRacesSpider)
+allRacesProcess.start()
 
 
 
