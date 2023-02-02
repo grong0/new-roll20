@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\grong\Documents\new roll20\venv"
+VIRTUAL_ENV="C:\Users\Garrett\Documents\Coding Programs (Shared)\new-roll20\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
