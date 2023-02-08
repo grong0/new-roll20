@@ -287,27 +287,18 @@ def infoFromTable(table):
 
 def descFromParagraph(paragraph):
     if paragraph != []:
-
-        source = None
-        if paragraph.css("p::text").get() != None and "Source" in paragraph.css("p::text").get():
-            source = paragraph.css("p::text").get()[8:]
-
         allStrongs = paragraph.css("strong")
-        if allStrongs == []:
-            return None, source
-        
         allStrText = paragraph.css("strong::text").getall()
+        allItalics = allStrongs[0].css("em").getall()
         allItaText = allStrongs[0].css("em::text").getall()
 
-        if allStrText == []: 
-            return allItaText[0], source
-
         combinedString = ""
-        for index, x in enumerate(allStrText): 
-            combinedString += (allItaText[index] + x)
-        if len(allItaText) != len(allStrText): 
+        for index, x in enumerate(allStrText):
+            combinedString += allItaText[index] + x
+        if len(allStrText) != len(allItaText):
             combinedString += allItaText[-1]
-        return combinedString, source
+
+        return combinedString
 
 
 class allRacesSpider(scrapy.Spider):
@@ -399,21 +390,17 @@ class allRacesSpider(scrapy.Spider):
                     yield lineage
                     pass
 
-            race_name = response.css('div.page-title.page-header').css('span::text').get()
             raceFeats = []
             raceTable = None
             subraces = []
             raceDesc = []
             race_name = response.css('div.page-title.page-header').css('span::text').get()
 
-            # The Unearthed Arcana for Dragonborn has the source underneith 
-            # the name so having a check to see if the paragraph has "source" in it.
-
             page_content = response.css("div#page-content")
             if page_content.css('h1').get() == None:
                 feats = featsFromList(page_content.css("ul"))
                 raceFeats.append(feats)
-            else:
+            elif "Dragonborn" in race_name:
                 headers = splitHeaders(page_content)
                 raceHeader = headers[0]
                 raceFeats = featsFromList(raceHeader.css("ul"))
@@ -440,10 +427,7 @@ class allRacesSpider(scrapy.Spider):
                             subraceDesc = []
                             if subraceHeader.css("p") != None:
                                 if type(subraceHeader.css("p")) == Selector.selectorlist_cls:
-                                    for paragraph in subraceHeader.css("p"): 
-                                        tempDesc, tempSource = descFromParagraph(paragraph)
-                                        if tempDesc != None: subraceDesc.append(tempDesc)
-                                        if tempSource != None: subraceSource = tempSource
+                                    for paragraph in subraceHeader.css("p"): subraceDesc.append(descFromParagraph(paragraph))
                                 else:
                                     subraceDesc.append(descFromParagraph(subraceHeader.css("p")))
                             subraceTable = None
@@ -457,6 +441,7 @@ class allRacesSpider(scrapy.Spider):
                                 "feats": subraceFeats,
                                 "table": subraceTable
                             })
+
 
 
             # for x in elementsInDiv(response.css('div.feature')[0].css('div.row')[0].css('div.col-lg-12').extract()[0]):
@@ -589,6 +574,9 @@ class allRacesSpider(scrapy.Spider):
             # you find races, you can get rid of that race in the list, making the future searches
             # faster
 
+            
+
+            race_name = response.css('div.page-title.page-header').css('span::text').get()
             for lineage in self.lineages:
                 try:
                     for race in lineage['races']:
