@@ -1,4 +1,4 @@
-#!c:\users\garrett\documents\coding programs (shared)\new-roll20\venv\scripts\python.exe
+#!C:\Users\Garrett\Documents\Coding Programs (Shared)\new-roll20\venv\Scripts\python.exe
 
 import sys
 import json
