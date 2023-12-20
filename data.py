@@ -1,141 +1,13 @@
 import string
+from typing import Optional
+from parsel import SelectorList
+from pkg_resources import require
 import scrapy
 from scrapy.crawler import CrawlerProcess
 from scrapy.selector import Selector
 import webbrowser
 import os
-
-class allSpellsSpider(scrapy.Spider):
-    name = "allSpells"
-    start_urls = ['http://dnd5e.wikidot.com/spells']
-    spell_urls = []
-    new_loop = False
-
-    def start_requests(self):
-        yield scrapy.Request('http://dnd5e.wikidot.com/spells')
-
-    def parse(self, response):
-        if self.new_loop == False:
-            for products in response.css('tr'):
-                if products.css('th::text').get() == "Spell Name":
-                    continue
-                else:
-                    # yield {
-                    #     'spellName': products.css('a::text').get(),
-                    #     'link': 'http://dnd5e.wikidot.com' + str(products.css('a::attr(href)').get()),
-                    #     'school': products.css('em::text').get(),
-                    #     'castingTime': products.css('td::text')[0].get(),
-                    #     'range': products.css('td::text')[1].get(),
-                    #     'duration': products.css('td::text')[2].get(),
-                    #     'components': products.css('td::text')[3].get()
-                    # }
-                    self.spell_urls.append(
-                        'http://dnd5e.wikidot.com' + str(products.css('a::attr(href)').get()))
-            self.new_loop = True
-        elif self.new_loop == True:
-            name = response.css('div.page-title.page-header').css('span::text').get()
-            content = response.css('div.main-content')
-            source = content.css('p::text').get()[8:]
-            castingTime = content.css('p::text').getall()[1][1:]
-            spell_range = content.css('p::text').getall()[3][1:]
-
-            component_data = content.css('p::text').getall()[5][1:]
-            
-            duration = content.css('p::text').getall()[7][1:]
-
-            schData = content.css('em::text').get().split(" ")
-            school = schData[0] if "level" not in schData[0] else schData[1][0].upper() + schData[1][1:]
-            level = schData[1] if "level" not in schData[0] else schData[0][:schData[0].find("-")]
-            ritual = True if len(schData) == 3 else False
-
-            desc_up = content.css('p::text').getall()[8:len(content.css(
-                'p::text').getall()) - len(content.css('p').css('a::text').getall())]
-            description = None
-            upcast = None
-            
-            if "decompose" in name:
-                print()
-
-            if desc_up[-1][0] == " ":
-                description = desc_up[:len(desc_up) - 1]
-                upcast = desc_up[-1][1:]
-            else:
-                description = desc_up
-                upcast = ""
-
-            desc_list = []
-            for x in content.css('ul'):
-                desc_list.append(x.css('em::text').get())
-                if desc_list[len(desc_list) - 1] != None:
-                    desc_list.append(x.css('li::text').get()[1:])
-                else:
-                    desc_list.append(x.css('li::text').get())
-
-            spellLists = content.css('p').css('a::text').getall()
-
-            # no_upcast = True
-            # count = 1
-            # paragraph = 8
-            # while no_upcast:
-            #     if not content.css('p::text').getall()[paragraph + count][1].isupper():
-            #         description += "\n" + content.css('p::text').getall()[paragraph + count]
-            #         count += 1
-            #     else:
-            #         no_upcast = False
-            #         continue
-
-            if "Critical Role" in content.css('p::text').get():
-                source = "Critical Role"
-                castingTime = content.css('p::text').getall()[2][1:]
-                spell_range = content.css('p::text').getall()[4][1:]
-                component_data = content.css('p::text').getall()[6][1:]
-                duration = content.css('p::text').getall()[8][1:]
-
-                desc_up = content.css('p::text').getall()[9:len(content.css(
-                    'p::text').getall()) - len(content.css('p').css('a::text').getall())]
-                description = None
-                upcast = None
-                
-                if "decompose" in name:
-                    print()
-                
-                if desc_up[-1][0] == " ":
-                    description = desc_up[:len(desc_up) - 1]
-                    upcast = desc_up[-1][1:]
-                else:
-                    description = desc_up
-                    upcast = ""
-
-                spellLists = content.css('p').css('a::text').getall()
-                spellLists.remove("Twitter")
-
-            materials = component_data[component_data.find("("):component_data.find(")")][1:]
-            components = component_data[:component_data.find(" (")]
-            component_obj = {
-                "V": True if "V" in components else False,
-                "S": True if "S" in components else False,
-                "M": True if materials != "" else False,
-                "items": materials
-            }
-            
-            yield {
-                'spellName': name,
-                'source': source,
-                'school': school,
-                'level': level,
-                'ritual': ritual,
-                'castingTime': castingTime,
-                'range': spell_range,
-                'components': component_obj,
-                'duration': duration,
-                'description': description,  # list
-                'list': desc_list,  # list
-                'upcast': upcast,
-                'spellLists': spellLists  # list
-            }
-            source = ""
-        for x in self.spell_urls:
-            yield (scrapy.Request(x, callback=self.parse))
+from colorama import Fore
 
 
 def isAlph(next, prev):
@@ -156,12 +28,13 @@ def flipOrder(listIn):
     return temp
 
 
-def indexFromPoint(txt, char, index):
+def indexFromPoint(txt: str, char: str, index: int) -> Optional[int]:
     for pos, x in enumerate(txt):
         if pos < index:
             continue
         if txt[pos:pos+len(char)] == char:
             return pos
+    return None
 
 
 def indexInList(list, str):
@@ -178,42 +51,42 @@ def removeNothing(list: list) -> list:
 
 
 
-def elementsInDiv(code: str) -> list:
-    code = code.extract()
-    main_element = code[1:code.find(">")]
-    if " " in main_element: main_element = main_element[:main_element.find(" ")]
-    code = removeIndent(code)[code.find(">")+1:-len(main_element)-3]
+# def elementsInDiv(div: Selector) -> list:
+#     code: str = div.extract()
+#     main_element = code[1:code.find(">")]
+#     if " " in main_element: main_element = main_element[:main_element.find(" ")]
+#     code = removeIndent(code)[code.find(">")+1:-len(main_element)-3]
 
-    new_elements = []
+#     new_elements = []
     
-    looking = False
-    sub_children = 0
-    target = {
-        "ele": "",
-        "index": 0,
-    }
+#     looking = False
+#     sub_children = 0
+#     target = {
+#         "ele": "",
+#         "index": 0,
+#     }
     
-    for index, char in enumerate(code):
-        if char == "<":
-            element = code[index:code.find(">", index)+1]
-            if "<br" in element: continue
-            if "/" in element and looking:
-                if sub_children == 0:
-                    new_elements.append(code[target['index']:index+len(target['ele'])+3])
-                    looking = False
-                else: sub_children -= 1
-            else:
-                if looking: sub_children += 1
-                else:
-                    target = {
-                        "ele": code[index+1:code.find(">", index)],
-                        "index": index
-                    }
-                    looking = True
-    return new_elements
+#     for index, char in enumerate(code):
+#         if char == "<":
+#             element = code[index:code.find(">", index)+1]
+#             if "<br" in element: continue
+#             if "/" in element and looking:
+#                 if sub_children == 0:
+#                     new_elements.append(code[target['index']:index+len(target['ele'])+3])
+#                     looking = False
+#                 else: sub_children -= 1
+#             else:
+#                 if looking: sub_children += 1
+#                 else:
+#                     target = {
+#                         "ele": code[index+1:code.find(">", index)],
+#                         "index": index
+#                     }
+#                     looking = True
+#     return new_elements
 
 
-def getRaceTableInfo(table) -> (list, list):
+def getRaceTableInfo(table) -> tuple[list, list]:
     tab = []
     links = []
 
@@ -312,7 +185,7 @@ def descFromParagraph(paragraph):
         return combinedString, source
     
 
-def getElementName(element: str) -> str:
+def getElementName(element: Selector) -> str:
     """The name of the element
 
     Args:
@@ -321,8 +194,9 @@ def getElementName(element: str) -> str:
     Returns:
         str: the element's name
     """
-    if "/" in element: inside = element[2:-1]
-    else: inside = element[1:-1]
+    elementCode: str = element.extract();
+    if "/" in elementCode: inside = elementCode[2:-1]
+    else: inside = elementCode[1:-1]
     return inside[:inside.find(" ")]
 
 
@@ -335,68 +209,67 @@ def getHeadersWithinDiv(div: Selector) -> list:
     Returns:
         list: list of hearders
     """
-    elementsInDiv(div.extract())
     headers = []
-    for element in elementsInDiv:
+    for element in div.xpath("./"):
         if len(getElementName(element)) and "h" in getElementName(element):
             headers.append(element)
     return headers
 
 
-def getHeaders(page_content):
+# def getHeaders(page_content):
     
-    pageContentCode = page_content.extract()[0].replace("\n", "")
-    headers = page_content.css("h1")
-    headerElement = "h1"
-    if len(headers) == 0: 
-        headers = page_content.css("h2")
-        headerElement = "h2"
-        if len(headers) == 0:
-            return None, None
-    headersCode = headers.extract()
+#     pageContentCode = page_content.extract()[0].replace("\n", "")
+#     headers = page_content.css("h1")
+#     headerElement = "h1"
+#     if len(headers) == 0: 
+#         headers = page_content.css("h2")
+#         headerElement = "h2"
+#         if len(headers) == 0:
+#             return None, None
+#     headersCode = headers.extract()
 
-    if len(headersCode) == 1:
-        return page_content, headerElement
+#     if len(headersCode) == 1:
+#         return page_content, headerElement
 
-    headersCodeContent = []
-    for index in range(0, len(headersCode)-1):
-        currentHeaderIndex = pageContentCode.index(headersCode[index])
-        nextHeaderIndex = pageContentCode.index(headersCode[index+1])
-        currentHeaderCodeContent = pageContentCode[currentHeaderIndex:nextHeaderIndex]
-        headersCodeContent.append(currentHeaderCodeContent)
-    indexOfLastHeader = pageContentCode.index(headersCode[-1])
-    indexOfDiv = indexFromPoint(pageContentCode, "</div>", indexOfLastHeader)
-    headersCodeContent.append(pageContentCode[indexOfLastHeader:indexOfDiv])
+#     headersCodeContent = []
+#     for index in range(0, len(headersCode)-1):
+#         currentHeaderIndex = pageContentCode.index(headersCode[index])
+#         nextHeaderIndex = pageContentCode.index(headersCode[index+1])
+#         currentHeaderCodeContent = pageContentCode[currentHeaderIndex:nextHeaderIndex]
+#         headersCodeContent.append(currentHeaderCodeContent)
+#     indexOfLastHeader = pageContentCode.index(headersCode[-1])
+#     indexOfDiv = indexFromPoint(pageContentCode, "</div>", indexOfLastHeader)
+#     headersCodeContent.append(pageContentCode[indexOfLastHeader:indexOfDiv])
 
-    headersContent = []
-    for headerCodeContent in headersCodeContent:
-        headerContent = Selector(text=headerCodeContent)
-        headersContent.append(headerContent)
+#     headersContent = []
+#     for headerCodeContent in headersCodeContent:
+#         headerContent = Selector(text=headerCodeContent)
+#         headersContent.append(headerContent)
 
-    return headersContent, headerElement
+#     return headersContent, headerElement
 
 
-def getSubHeaders(header, headerElement):
-    headerContentCode = header.extract()[0]
-    subHeaders = header.css(headerElement)
-    subHeadersCode = subHeaders.extract()
+# def getSubHeaders(header, headerElement):
+#     headerContentCode = header.extract()[0]
+#     subHeaders = header.css(headerElement)
+#     subHeadersCode = subHeaders.extract()
 
-    if len(subHeadersCode) == 1:
-        return None
+#     if len(subHeadersCode) == 1:
+#         return None
 
-    subHeadersCodeContent = []
-    for index in range(0, len(subHeadersCode)-1):
-        currentHeaderIndex = headerContentCode.index(subHeadersCode[index])
-        nextHeaderIndex = headerContentCode.index(subHeadersCode[index])
-        currentHeaderCodeContent = headerContentCode[currentHeaderIndex:nextHeaderIndex]
-        subHeadersCodeContent.append(currentHeaderCodeContent)
+#     subHeadersCodeContent = []
+#     for index in range(0, len(subHeadersCode)-1):
+#         currentHeaderIndex = headerContentCode.index(subHeadersCode[index])
+#         nextHeaderIndex = headerContentCode.index(subHeadersCode[index])
+#         currentHeaderCodeContent = headerContentCode[currentHeaderIndex:nextHeaderIndex]
+#         subHeadersCodeContent.append(currentHeaderCodeContent)
 
-    subHeadersContent = []
-    for subHeaderCodeContent in subHeadersContent:
-        subHeaderContent = Selector(text=subHeaderCodeContent)
-        subHeadersContent.append(subHeaderContent)
+#     subHeadersContent = []
+#     for subHeaderCodeContent in subHeadersContent:
+#         subHeaderContent = Selector(text=subHeaderCodeContent)
+#         subHeadersContent.append(subHeaderContent)
 
-    return subHeadersContent
+#     return subHeadersContent
 
 
 def getRaceCode(page_content, header, subheader, headerElement: str) -> Selector:
@@ -418,7 +291,9 @@ def getRaceCode(page_content, header, subheader, headerElement: str) -> Selector
     indexOfSubHeader = headerCode.index(subheaderCode)
     idexOfEndOfHeader = indexFromPoint(headerCode, ">", indexOfHeader)
 
-    mainRaceCode = headerCode[idexOfEndOfHeader+1:indexOfSubHeader]
+    if idexOfEndOfHeader != None:
+        mainRaceCode = headerCode[idexOfEndOfHeader+1:indexOfSubHeader]
+    else: return Selector(text="")
     mainRaceElement = Selector(text=mainRaceCode)
 
     return mainRaceElement
@@ -456,9 +331,9 @@ def elementsBeforeHeader(page_content, header, headerElement: str) -> list:
     endOfHeader = headerCode.index(">")
     headerCode = headerCode[:endOfHeader+1]
 
-    elements = elementsInDiv(page_content[0])
+    elements: SelectorList = page_content[0].xpath("./*")
 
-    elementsBeforeHeader = None
+    elementsBeforeHeader = SelectorList()
     for index, element in enumerate(elements):
         if headerCode in element:
             elementsBeforeHeader = elements[:index]
@@ -474,7 +349,7 @@ def elementsBeforeList(page_content) -> list:
     if type(extracted_page_content) == list:
         extracted_page_content = extracted_page_content[0]
     first_list_item = removeIndent(page_content.css("ul").extract()[0])
-    elements = elementsInDiv(page_content[0])
+    elements = page_content[0].xpath("./*")
     index_in_list = elements.index(first_list_item)
     elements_before_list = elements[:index_in_list]
     for index, element in enumerate(elements_before_list):
@@ -490,101 +365,105 @@ def getParagraphsFromEleList(eleList: list) -> list:
     return paragraphs
 
 
-def combineEles(eleList: list) -> Selector:
-    eleString = ""
-    for ele in eleList:
-        eleString += ele.extract()
-    return Selector(text=eleString)
 
 
-def getRaceDesc(page_content):
-    header, headerElement = getHeaders(page_content)
-    if header == None: 
-        eleBeforeHeader = elementsBeforeList(page_content)
-        subHeader = []
-    else: 
-        header = header[0]
-        if headerElement == "h1":
-            try: subHeader = header.css("h2")[0]
-            except: subHeader = header.css("h2")
-        else:
-            try: subHeader = header.css("h3")[0]
-            except: subHeader = header.css("h3")
-        eleBeforeHeader = elementsBeforeHeader(page_content, header, headerElement)
+
+def descriptionString(descriptionContent: Selector) -> str:
+    strongFirst = descriptionContent.css("p strong em::text").getall()
+    emFirst = descriptionContent.css("p em strong::text").getall()
+    noEm = descriptionContent.css("p strong::text").getall()
     
-    paragraphsBeforeHeader = getParagraphsFromEleList(eleBeforeHeader)
-    if paragraphsBeforeHeader != []:
-        header = combineEles(paragraphsBeforeHeader)
-
-    strongFirst = header.css("p strong em::text").getall()
-    emFirst = header.css("p em strong::text").getall()
-    noEm = header.css("p strong::text").getall()
-
     descriptionString = "p em::text"
     if strongFirst < emFirst:
         descriptionString = "p em strong::text"
     elif noEm > strongFirst:
         descriptionString = "p strong::text"
+    return descriptionString
 
-    description = header.css(descriptionString).getall()
-    if len(description) > 1 and subHeader != [] and len(paragraphsBeforeHeader) != len(description):
-        description = getRaceCode(header, subHeader, headerElement).css(
-            descriptionString).getall()
 
-    for x in description:
-        if "<ul>" in x and len(description) > 1:
+def getRaceDesc(page_content: Selector, layout_version = None):
+    # elementsBeforeHeader = elementsBeforeElement(page_content, page_content.css("p")[-1])
+    
+    # paragraphsBeforeHeader = getParagraphsFromEleList(elementsBeforeHeader)
+    # if paragraphsBeforeHeader != []:
+    #     descriptionContent = combineEles(paragraphsBeforeHeader)
 
-            newDescription = []
-            elements = elementsInDiv(header.css("body"))
-            firstHeader = header.css("p")[0].extract()
-            lastHeader = header.css("p")[-1].extract()
+    # description = descriptionContent.css(descriptionLocation(descriptionContent)).getall()
 
-            elementsInBetweenDescription = elements[elements.index(
-                firstHeader):elements.index(lastHeader)]
-            for element in elementsInBetweenDescription:
-                elementType = element[:element.index(">")+1]
+    # for index, x in enumerate(description):
+    #     if "<ul>" in x and len(description) > 1:
+            
+            
+            
+            
+            # description.insert(index, )
+            
 
-                if elementType == "<p>":
-                    newDescription.append(
-                        Selector(text=element).css(descriptionString).get())
+            # newDescription = []
+            # elements = elementsInDiv(header.css("body"))
+            # firstHeader = header.css("p")[0].extract()
+            # lastHeader = header.css("p")[-1].extract()
 
-                elif elementType == "<ul>":
-                    unorderedList = []
-                    for listItem in Selector(text=element).css("li"):
-                        strongText = listItem.css("strong::text").get()
-                        listItemText = listItem.css("li::text").get()
+            # elementsInBetweenDescription = elements[elements.index(
+            #     firstHeader):elements.index(lastHeader)]
+            # for element in elementsInBetweenDescription:
+            #     elementType = element[:element.index(">")+1]
 
-                        unorderedList.append(strongText + listItemText)
-                    newDescription.append(unorderedList)
+            #     if elementType == "<p>":
+            #         newDescription.append(
+            #             Selector(text=element).css(descriptionString).get())
 
-            description = newDescription
+            #     elif elementType == "<ul>":
+            #         unorderedList = []
+            #         for listItem in Selector(text=element).css("li"):
+            #             strongText = listItem.css("strong::text").get()
+            #             listItemText = listItem.css("li::text").get()
 
-            break
+            #             unorderedList.append(strongText + listItemText)
+            #         newDescription.append(unorderedList)
+
+            # description = newDescription
+
+            # break
+            
+    if layout_version == "1.01.141118":
+        source_elements = elementsBeforeElement(page_content, page_content.css("h1")[1])[:-1]
+        source_content = combineEles(source_elements)
+        race_elments = elementsBeforeElement(source_content, source_content.css("h2")[0])
+        race_content = combineEles(race_elments)
+        
+        description_elements = elementsBetweenElements(race_content, race_content.css("#toc0")[0], race_content.css("p")[-1])[1:]
+        description_content = combineEles(description_elements)
+        description = description_content.css(descriptionString(description_content)).getall()
+    else: description = None
+    print(description)
 
     return description
 
 
-def getRaceFeats(page_content):
-    header, headerElement = getHeaders(page_content)[0]
-    subHeader = header.css("h2")
+# def getRaceFeats(page_content):
+#     header, headerElement = getHeaders(page_content)
+#     subHeader = header.css("h2")
 
-    unorderedLists = header.css("ul")
-    if subHeader != []:
-        unorderedLists = getRaceCode(header, subHeader, headerElement).css("ul")
+#     unorderedLists = header.css("ul")
+#     if subHeader != []:
+#         unorderedLists = getRaceCode(header, subHeader, headerElement).css("ul")
 
-    feats = featsFromList(unorderedLists)
+#     feats = featsFromList(unorderedLists)
 
-    return feats
+#     return feats
 
 class Found(Exception): pass
 class allRacesSpider(scrapy.Spider):
     name = "allRaces"
     start_urls = ['http://dnd5e.wikidot.com/']
     race_urls = []
+    finished_races = []
     new_loop = False
     lineages = []
     count = 0
     done = False
+    finishedYielding = False
     recordedResponses = []
     lineagesDone = []
 
@@ -656,35 +535,48 @@ class allRacesSpider(scrapy.Spider):
 
             print(f"race_urls: {self.race_urls}")
 
-            # yield {"race_urls": self.race_urls}
+            yield {"race_urls": self.race_urls}
 
         elif self.new_loop == True:
 
             self.count += 1
 
-            if self.count == len(self.race_urls)-1:
+            if self.count == len(self.race_urls)-2:
                 self.done = True
 
             page_content = response.css("div#page-content")
             # problemRaces = ['plasmoid-ua', 'rabbitfolk-ua', 'revenant-ua', 'thri-kreen-ua', "kender", "autognome-ua", "giff-ua", "hadozee-ua", "kender-ua", "rabbitfolk-ua",]
             problemRaces = ["hobgoblin", "goblin", "centaur", "bugbear", "triton"]
 
-            raceName = getRaceName(response)
+            layout_version = getLayoutVersion(response)
 
-            if "Revenant (UA)" == raceName:
-                print()
-                raceDesc = getRaceDesc(page_content)
-                print()
+            raceName = getRaceName(response)
+            self.finished_races.append(response.request.url)
+            
+            if raceName == "Kender":
+                print("\n\n\n\n\nKENDER HAS BEEN FOUND\n\n\n\n\n")
+            
+            try:
+                raceDesc = getRaceDesc(page_content, layout_version)
+            except Exception as exception:
+                raceDesc = exception
+            
+            print()
+
+            # if "Revenant (UA)" == raceName:
+            #     print()
+            #     raceDesc = getRaceDesc(page_content)
+            #     print()
             # try:
             #     raceDesc = getRaceDesc(page_content)
             # except:
             #     print("raceName: " + raceName)
                     
 
-            thingsToDo = {
-                "shifter": "has a table description",
-                "glitchling-ua": "url generation fucks up"
-            }
+            # thingsToDo = {
+            #     "shifter": "has a table description",
+            #     "glitchling-ua": "url generation fucks up"
+            # }
 
             # if ("Shifter" in raceName):
             #     webbrowser.get(using=None)
@@ -693,7 +585,7 @@ class allRacesSpider(scrapy.Spider):
 
             # raceFeats = getRaceFeats(page_content)
 
-            print()
+            # print()
 
             # raceTable = getRaceTable(page_content)
             # subraces = getRaceSubraces(page_scontent)
@@ -876,25 +768,24 @@ class allRacesSpider(scrapy.Spider):
             # You can optomise here by creating a dummy list that is equal to self.lineages and as
             # you find races, you can get rid of that race in the list, making the future searches
             # faster
-            if raceName.lower() in problemRaces[0]:
-                found = False
-                for lineage in self.lineages:
-                    if found: break
-                    if lineage['name'] != "Setting Specific Lineages":
-                        for race in lineage['races']:
+            # if raceName.lower() in problemRaces[0]:
+            found = False
+            for lineage in self.lineages:
+                if found: break
+                if lineage['name'] != "Setting Specific Lineages":
+                    for race in lineage['races']:
+                        if raceName.lower() == race['name'].lower():
+                            race['desc'] = raceDesc
+                            found = True
+                            break
+                else:
+                    for extraLineage in lineage['lineages']:
+                        if found: break
+                        for race in extraLineage['races']:
                             if raceName.lower() == race['name'].lower():
                                 race['desc'] = raceDesc
                                 found = True
                                 break
-                    else:
-                        for extraLineage in lineage['lineages']:
-                            if found: break
-                            for race in extraLineage['races']:
-                                if raceName.lower() == race['name'].lower():
-                                    race['desc'] = raceDesc
-                                    found = True
-                                    break
-                
 
             # for lineage in self.lineages:
             #     try:
@@ -917,29 +808,167 @@ class allRacesSpider(scrapy.Spider):
                 if lineage['name'] not in self.lineagesDone:
                     self.lineagesDone.append(lineage['name'])
                     yield lineage
-
-
-def getTag(element: Selector) -> str:
-    element = element.extract()[1:element.extract().find(">")]
+            
+                    
+    
+def getTag(elementRaw: Selector) -> str:
+    element = elementRaw.extract()[1:elementRaw.extract().find(">")]
     return element if " " not in element else element[:element.find(" ")]
 
-def getHeaders(element: Selector) -> list: 
+def getHeaders(element: Selector) -> list[Selector]:
     return [child for child in element.xpath('./*') if getTag(child)[0] == "h"]
+
+def elementsBeforeElement(parent: Selector, target: Selector) -> list[Selector]:
+    children = parent.xpath('./*').getall()
+    return parent.xpath('./*')[:children.index(target.get())+1]
+
+def elementsBetweenElements(parent: Selector, start: Selector, end: Selector):
+    children = parent.xpath('./*').getall()
+    return parent.xpath('./*')[children.index(start.get()):children.index(end.get())+1]
+
+def getLayoutVersion(response: Selector) -> str:
+    comments = response.xpath("//comment()")
+    for comment in comments:
+        if "Version: " in comment.get():
+            return comment.get()[comment.get().find(": ") + 2:comment.get().find("\n", comment.get().find(": "))]
+    return "None"
+
+def combineEles(eleList: list[Selector]) -> Selector:
+    eleString = ""
+    for ele in eleList:
+        eleString += ele.extract()
+    return Selector(text=eleString).css("body")[0]
+
+def getChildrenThatHaveChildren(parent: Selector, tag: str) -> SelectorList[Selector]:
+    children = parent.xpath("./*")
+    valid_children = []
+    for child in children:
+        children_with_tag = child.xpath(".//" + tag)
+        if len(children_with_tag) != 0:
+            valid_children.append(child)
+    return SelectorList(valid_children)
+
+def interlaceListAtIndex(parent: list, appender: list, starting_index: int) -> list:
+    for index, item in enumerate(appender):
+        parent.insert(starting_index + (index * 2), item)
+    return parent
+
+def concatStrElementsAtIndex(parent: list, starting_index: int) -> list:
+    concatenated_str = ""
+    for item in parent[starting_index:]: concatenated_str += item
+    parent = parent[:starting_index]
+    parent.append(concatenated_str)
+    return parent
+
+def tableElementTo2DArray(table: Selector) -> tuple[any, list[list[str]]]: # type: ignore
+    headers = table.xpath(".//tbody").extract()
+    content = []
+
+    # for row in table.xpath(".//tbody/tr"):
+    #     list_row = []
+    #     for col in row.xpath("")
+
+    return headers, content
+
+class allClassesSpider(scrapy.Spider):
+    name = "allClasses"
+    start_urls = ["http://dnd5e.wikidot.com/"]
+    class_urls = []
+    classes = {}
+    new_loop = True
+    race_start = 7
+    race_end = 20
+    ran_ending = False
     
+    def parse(self, response):
+        if self.new_loop:
+            page_content = response.css("#page-content").xpath("./*")[1]
+            for class_feature in page_content.xpath("./*")[self.race_start-1:self.race_end]:
+                class_bio = class_feature.css(".feature")[0]
+                
+                name = class_bio.css("a::text").get()
+                key = name.lower() if "(" not in name else name[:name.find("(")-1].lower()
+                link = 'http://dnd5e.wikidot.com' + class_bio.css("a::attr(href)").get()
+
+                self.classes[key] = {
+                    "name": name,
+                    "link": link
+                }
+                self.class_urls.append(link)
+            self.new_loop = False
+        else:
+            page_content = response.css("#page-content")
+            bio_content = elementsBeforeElement(page_content, page_content.css("table")[0])
+            bio_content = combineEles(bio_content)
+            
+            # Getting the name
+            name = response.css(".page-title span::text").get()
+            
+            # Getting the description
+            description = []
+            for element in bio_content.xpath(".//p"):
+                if element.css("p::text").get() == None and element.xpath(".//strong/em/text()").get() != None:
+                    description.append(element.xpath(".//strong/em/text()").get())
+            
+            # Getting the specific requirements + extra notes on class compatibility
+            requirement_elements = bio_content.xpath(".//p/em")
+            requirement_elements_code = [element.get() for element in requirement_elements]
+            requirements = [element.xpath("./text()").get() for element in requirement_elements]
+            for index, element in enumerate(requirement_elements_code):
+                if "</a>" in element:
+                    em_text = bio_content.xpath(".//p/em/text()").getall()
+                    a_text = bio_content.xpath(".//p/em/a/text()").getall()
+                    requirements = concatStrElementsAtIndex(interlaceListAtIndex(em_text, a_text, index+1), index)
+                
+            # Getting the table data
+            table = tableElementTo2DArray(bio_content.css("table.wiki-content-table")[0])
+
+
+                
+            print("\n\n\n")
+            print("name: " + name)
+            print("description: " + str(description))
+            print("requirements: " + str(requirements))
+            print(f"table: {table}")
+            # print("\n\n\n")
+            
+            yield self.classes[response.css(".page-title span::text").get().lower()]
+        for index, x in enumerate(self.class_urls):
+            yield (scrapy.Request(x, callback=self.parse))
+            
+    def spider_idle(self):
+        print("\n\n\nclosed happened\n\n\n")
+        yield self.classes
+            
+
 class testSpider(scrapy.Spider):
     name = "test"
-    start_urls = ['http://dnd5e.wikidot.com/lineage:revenant-ua']
+    start_urls = ['http://dnd5e.wikidot.com/lineage:dragonborn']
 
     def parse(self, response):
         print(f"{'=' +'-=' * 24}\n\n\n\n")
         
-        page_content = response.css("div#page-content")
-        elements = page_content.xpath("./*")
-        for header in getHeaders(page_content):
-            print(header.get())
-        # elements = page_content.xpath('./*')
-        # for element in elements:
-        #     print(getTag(element))
+        try:
+            if getLayoutVersion(response) == "1.01.141118":
+                page_content = response.css("div#page-content")
+                source_elements = elementsBeforeElement(page_content, page_content.css("h1")[1])[:-1]
+                source_content = combineEles(source_elements)
+                if (source_content.css("h2").get() != None):
+                    race_elements = elementsBeforeElement(source_content, source_content.css("h2")[0])
+                    race_content = combineEles(race_elements)
+                else:
+                    race_content = source_content
+                
+                description_elements = elementsBetweenElements(race_content, race_content.css("#toc0")[0], race_content.css("p")[-1])[1:]
+                description_content = combineEles(description_elements)
+                description = description_content.css(descriptionString(description_content)).getall()
+            else: description = None
+            print(description)
+
+            # print(descrption_content)
+            
+        except Exception as e:
+            print(f"{Fore.RED}{e}{Fore.WHITE}")
         
         print(f"\n\n\n\n{'=' +'-=' * 24}")
 
@@ -952,9 +981,9 @@ class testSpider(scrapy.Spider):
 #         }
 #     }
 # })
-
 # allSpellsProcess.crawl(allSpellsSpider)
 # allSpellsProcess.start() # the script will block here until all crawling jobs are finished
+
 # allRacesProcess = CrawlerProcess(settings={
 #     "FEEDS": {
 #         "races.json": {
@@ -966,13 +995,24 @@ class testSpider(scrapy.Spider):
 # allRacesProcess.crawl(allRacesSpider)
 # allRacesProcess.start()
 
-testProcess = CrawlerProcess(settings={
+allClassesProcess = CrawlerProcess(settings={
     "FEEDS": {
-        "test.json": {
+        "classes.json": {
             "format": "json",
             "overwrite": True
         }
     }
 })
-testProcess.crawl(testSpider)
-testProcess.start()
+allClassesProcess.crawl(allClassesSpider)
+allClassesProcess.start()
+
+# testProcess = CrawlerProcess(settings={
+#     "FEEDS": {
+#         "test.json": {
+#             "format": "json",
+#             "overwrite": True
+#         }
+#     }
+# })
+# testProcess.crawl(testSpider)
+# testProcess.start()

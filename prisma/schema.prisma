@@ -18,12 +18,12 @@ model Spell {
   school      String
   level       String
   castingTime String
-  range       String? // Shield has nothing
-  components  String? // Shield has nothing
-  duration    String? // Shield and Dragonic Transformation have nothing
-  description String[] // Shield has nothing
-  list        String[] // 502 Spells have nothing // A lot of spells have null alongside content
-  upcast      String? // 352 Spells have nothing
+  range       String?   // Shield has nothing
+  components  String?   // Shield has nothing
+  duration    String?   // Shield and Dragonic Transformation have nothing
+  description String[]  // Shield has nothing
+  list        String[]  // 502 Spells have nothing // A lot of spells have null alongside content
+  upcast      String?   // 352 Spells have nothing
   spellLists  String[]
 }
 
