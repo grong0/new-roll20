@@ -14,14 +14,10 @@ class RaceSpider(Spider):
     race_urls = []
     lineages: Lineages = Lineages()
     new_loop = False
-
-    finished_races = []
     count = 0
     done = False
-    lineages_done = []
 
     def parse(self, response: Response):
-        print("\n\n\n\n\n")
         if self.new_loop == False:
             page = response.css("div#page-content")
 
@@ -61,27 +57,17 @@ class RaceSpider(Spider):
                         races[-1]["source"] = col["name"]
             self.lineages.add_lineage(Lineage("Unearthed Arcana", False, races))
 
-            pprint(self.lineages.get_as_dict())
-
             self.new_loop = True
             yield {"race_urls": self.race_urls}
 
         else:
             pass
-            # race = Race(response)
 
-            # for lineage in self.lineages:
+        for _, x in enumerate(self.race_urls):
+            yield (Request(x, callback=self.parse))
 
-        # for _, x in enumerate(self.race_urls):
-        #     yield (Request(x, callback=self.parse))
-
-        print("\n\n\n\n\n")
-
-        # if self.done == True:
-        #     for lineage in self.lineages:
-        #         if lineage["name"] not in self.lineages_done:
-        #             self.lineages_done.append(lineage["name"])
-        #             yield lineage
+        if self.done == True:
+            yield self.lineages.get_as_dict()
 
 
 RacesProcess = CrawlerProcess(
