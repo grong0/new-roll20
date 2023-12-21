@@ -6,7 +6,7 @@ from scrapy.crawler import CrawlerProcess  # type: ignore
 from Spell import Spell  # type: ignore
 
 
-class SpellsSpider(Spider):
+class SpellSpider(Spider):
     name = "SpellSpider"
     start_urls = ["http://dnd5e.wikidot.com/spells"]
     spell_urls = []
@@ -33,5 +33,5 @@ class SpellsSpider(Spider):
 SpellsProcess = CrawlerProcess(
     settings={"FEEDS": {"spells.json": {"format": "json", "overwrite": True}}}
 )
-SpellsProcess.crawl(SpellsSpider)
+SpellsProcess.crawl(SpellSpider)
 SpellsProcess.start()  # the script will block here until all crawling jobs are finished

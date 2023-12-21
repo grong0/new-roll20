@@ -1,7 +1,10 @@
 from scrapy import Selector
+from scrapy.http import Response
 
 
-def get_race_table_info(table: Selector) -> tuple[list[list[dict[str, str]]], list[str]]:
+def get_lineage_table_info(
+    table: Selector,
+) -> tuple[list[list[dict[str, str]]], list[str]]:
     tab = []
     links = []
 
@@ -31,10 +34,19 @@ def get_race_table_info(table: Selector) -> tuple[list[list[dict[str, str]]], li
     return tab, links
 
 
-def to_list(table: list[list[dict[str, str]]]) -> list:
-    tableList = []
+def array_2D_to_1D(table: list[list[dict[str, str]]]) -> list[dict[str, str]]:
+    tableList: list[dict[str, str]] = []
     for row in table:
         for col in row:
             if col["name"] != None:
                 tableList.append(col)
     return tableList
+
+
+def get_race_name(response: Response) -> str:
+    page_header = response.css("div.page-title.page-header")
+    span_text = page_header.css("span::text").get()
+
+    processed_span_text = span_text.replace("-", " ")
+
+    return processed_span_text
