@@ -1,3 +1,4 @@
+from typing import Optional
 from Race import Race
 
 
@@ -16,6 +17,9 @@ class Lineage:
             self.races[race["name"]] = Race(race["name"], race["link"])
             if "source" in race.keys():
                 self.races[race["name"]].source = race["source"]
+    
+    def get_race(self, name: str) -> Optional[Race]:
+        return self.races[name]
 
     def add_race(self, race: Race) -> None:
         self.races[race.name] = race
@@ -23,8 +27,8 @@ class Lineage:
     def contains(self, race: Race) -> bool:
         return race in self.races
 
-    def get_as_dict(self) -> dict[str, str | bool | dict[str, Race]]:
-        dict_races = {}
+    def get_as_dict(self) -> dict[str, str | bool | dict[str, dict[str, str | list[str] | list[dict[str, str| int | dict[str, str | list[str] | list[list[str]] | None]]]]]]:
+        dict_races: dict[str, dict[str, str | list[str] | list[dict[str, str| int | dict[str, str | list[str] | list[list[str]] | None]]]]] = {}
         for key in self.races:
             dict_races[key] = self.races[key].get_as_dict()
         return {

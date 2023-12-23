@@ -31,6 +31,8 @@ class RaceSpider(Spider):
                 )
                 self.race_urls.extend(links)
                 races = array_2D_to_1D(table)
+                for race in races:
+                    race["name"] = race["name"].replace("-", " ")
                 self.lineages.add_lineage(Lineage(name, False, races))
 
             # Getting Setting Specific Lineages and Their Races
@@ -41,6 +43,8 @@ class RaceSpider(Spider):
                 )
                 self.race_urls.extend(links)
                 races = array_2D_to_1D(table)
+                for race in races:
+                    race["name"] = race["name"].replace("-", " ")
                 self.lineages.add_lineage(Lineage(name, True, races))
 
             # Getting Unearthed Arcana Lineages and Their Races
@@ -55,16 +59,27 @@ class RaceSpider(Spider):
                         self.race_urls.append(col["link"])
                     else:
                         races[-1]["source"] = col["name"]
+            for race in races:
+                race["name"] = race["name"].replace("-", " ")
             self.lineages.add_lineage(Lineage("Unearthed Arcana", False, races))
 
             self.new_loop = True
-            yield {"race_urls": self.race_urls}
+            # yield {"race_urls": self.race_urls}
 
         else:
-            pass
+            self.count += 1
+            self.done = self.count == len(self.race_urls)
+
+            page_header = response.css("div.page-title.page-header")
+            raw_name: str = page_header.css("span::text").get()
+            name = raw_name.replace("-", " ")
+
+            race = self.lineages.get_race(name)
+            if race != None:
+                race.compile(response)
 
         for _, x in enumerate(self.race_urls):
-            yield (Request(x, callback=self.parse))
+            yield Request(x, callback=self.parse)
 
         if self.done == True:
             yield self.lineages.get_as_dict()
