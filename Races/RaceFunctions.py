@@ -1,4 +1,5 @@
 from typing import Optional
+from prettyprinter import pprint
 from scrapy import Selector
 from scrapy.http import Response
 from scrapy.selector import SelectorList
@@ -68,6 +69,11 @@ def elements_before_element(parent: Selector, target: Selector) -> list[Selector
     return parent.xpath("./*")[: children.index(target.get()) + 1]
 
 
+def elements_after_element(parent: Selector, target: Selector) -> list[Selector]:
+    children = parent.xpath("./*").getall()
+    return parent.xpath("./*")[children.index(target.get()) :]
+
+
 def elements_between_elements(parent: Selector, start: Selector, end: Selector):
     children = parent.xpath("./*").getall()
     try:
@@ -78,12 +84,32 @@ def elements_between_elements(parent: Selector, start: Selector, end: Selector):
         end_index = children.index(end.get()) + 1
     except:
         end_index = -1
-    
-    print(f"start: {start_index}")
-    print(f"end: {end_index}")
-    
+
     return parent.xpath("./*")[start_index:end_index]
 
+
+def get_elements_contents(parent: Selector, element: str) -> list[Selector]:
+    elements_contents = []
+    elements = parent.xpath(f"./{element}")
+    
+    for index, element in enumerate(elements):
+        if index+1 != len(elements):
+            element_contents = combine_elements(elements_between_elements(parent, element, elements[index+1])[:-1])
+        else:
+            element_contents = combine_elements(elements_after_element(parent, element))
+        elements_contents.append(element_contents)
+    
+    return elements_contents
+
+
+def get_highest_header(parent: Selector) -> str:
+    highest = 0
+    for element in parent.xpath("./*"):
+        tag = get_tag(element)
+        if tag[0] == "h" and (int(tag[1]) < highest or highest == 0):
+            highest = int(tag[1])
+    return "h" + str(highest)
+        
 
 def get_layout_version(response: Response) -> str:
     comments = response.xpath("//comment()")
