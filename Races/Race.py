@@ -50,35 +50,32 @@ class Race:
 
         if self.source == "":
             self.source = self.extract_source(source_content, version)
-
         self.description = self.extract_description(source_content, version)
-
         self.feats = self.extract_feats(source_content, version)
-
         self.compile_subraces(response)
-
-        print()
 
     def compile_subraces(self, response: Response):
         page_content = response.css("div#page-content")
+        version = get_layout_version(response)
 
         sources = get_elements_contents(page_content, "h1")
-        for source in sources[1:]:
+        for source in sources:
             subraces = get_elements_contents(source, "h2")
 
             for subrace in subraces:
                 name = subrace.css("h2 span::text").get()
                 link = self.link + "#" + subrace.css("h2::attr(id)").get()
                 subrace_source = source.css("span::text").get()
-                description = self.extract_description(
-                    subrace, get_layout_version(response)
-                )
+                description = self.extract_description(subrace, version)
+                feats = self.extract_feats(subrace, version)
 
                 print(f"name: {name}")
                 print(f"link: {link}")
                 print(f"source: {subrace_source}")
-                print(f"description: {description}")
-                print()
+                # pprint(f"description: {description}")
+                for feat in feats:
+                    pprint(feat)
+                
 
     def extract_source(self, source_content: Selector, version: str) -> str:
         source = ""
@@ -99,7 +96,7 @@ class Race:
             description_elements = elements_between_elements(
                 source_content,
                 source_content.css(get_highest_header(source_content))[0],
-                source_content.css("p")[-1],
+                source_content.css("ul")[0],
             )[1:]
             description_content = combine_elements(description_elements)
             description = description_content.css(

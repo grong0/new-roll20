@@ -75,7 +75,7 @@ class RaceSpider(Spider):
             name = raw_name.replace("-", " ")
 
             race = self.lineages.get_race(name)
-            if race != None and name == "Dragonborn":
+            if race != None and name == "Gnome":
                 print(f"name: {name}")
                 race.compile_race(response)
                 pprint(f"core race description: {race.description}")

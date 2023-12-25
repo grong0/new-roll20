@@ -1,0 +1,237 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-py"
+}
+
+model DamageType {
+    id     Int      @id @default(autoincrement())
+    name   String
+    desc   String[]
+    Damage Damage[]
+}
+
+model AbilityScore {
+    id        Int      @id @default(autoincrement())
+    name      String
+    full_name String
+    desc      String[]
+    skills    Skill[]
+    dcs       DC[]
+}
+
+model Skill {
+    id               Int          @id @default(autoincrement())
+    name             String
+    desc             String[]
+    ability_score    AbilityScore @relation(fields: [ability_score_id], references: [id])
+    ability_score_id Int
+}
+
+model DamageAtPlayerLevel {
+    id       Int    @id @default(autoincrement())
+    level_1  String
+    level_2  String
+    level_3  String
+    level_4  String
+    level_5  String
+    level_6  String
+    level_7  String
+    level_8  String
+    level_9  String
+    level_10 String
+    level_11 String
+    level_12 String
+    level_13 String
+    level_14 String
+    level_15 String
+    level_16 String
+    level_17 String
+    level_18 String
+    level_19 String
+    level_20 String
+    damage   Damage @relation(fields: [damageId], references: [id])
+    damageId Int    @unique
+}
+
+model DC {
+    id             Int          @id @default(autoincrement())
+    abilityScore   AbilityScore @relation(fields: [abilityScoreId], references: [id])
+    abilityScoreId Int
+    dcSuccess      String
+    Spell          Spell[]
+}
+
+model School {
+    id     Int      @id @default(autoincrement())
+    name   String
+    desc   String[]
+    spells Spell[]
+}
+
+model Spell {
+    id            Int      @id @default(autoincrement())
+    name          String
+    desc          String[]
+    higherLevel   String[]
+    range         String
+    verbal        Boolean
+    somatic       Boolean
+    material      String
+    ritual        Boolean
+    duration      String
+    concentration Boolean
+    castingTime   String
+    level         Int
+    damage        Damage?
+    dc            DC       @relation(fields: [dcId], references: [id])
+    dcId          Int
+    school        School   @relation(fields: [schoolId], references: [id])
+    schoolId      Int
+    // classes       Class[]
+}
+
+model Proficiency {
+    id   Int    @id @default(autoincrement())
+    type String
+    name String
+    // classes Class[]
+    // races   Race[]
+}
+
+model EquipmentCategory {
+    id        Int         @id @default(autoincrement())
+    name      String
+    equipment Equipment[]
+}
+
+model Equipment {
+    id                 Int               @id @default(autoincrement())
+    name               String
+    special            String[]
+    equipmentCategory  EquipmentCategory @relation(fields: [equimentCategoryId], references: [id])
+    equimentCategoryId Int
+}
+
+// model EquipmentChoiceArray {
+//     id     Int      @id @default(autoincrement())
+//     desc   String[]
+//     amount Int
+//     type   String
+//     choices Equipment[]
+// }
+
+// model ProficiencyChoiceArray {
+//     id      Int           @id @default(autoincrement())
+//     desc    String[]
+//     amount  Int
+//     type    String
+//     choices Proficiency[]
+// }
+
+// model MultiClass {
+//     id Int @id @default(autoincrement())
+//     prerequisites AbilityScore[]
+//     proficiencies Proficiency[]
+//     class Class @relation(fields: [classId], references: [id])
+//     classId Int
+// }
+
+// model Feat {
+//     id Int @id @default(autoincrement())
+//     name String
+//     level Int
+//     prerequisites String[]
+//     desc String[]
+//     classLevel ClassLevel? @relation(fields: [classLevelId], references: [id])
+//     classLevelId Int?
+//     subclassLevel SubClassLevel? @relation(fields: [subclassLevelId], references: [id])
+//     subclassLevelId Int?
+// }
+
+// model SpellCasting {
+//     id Int @id @default(autoincrement())
+//     cantripsKnown Int
+//     spellSlotsLevel1 Int
+//     spellSlotsLevel2 Int
+//     spellSlotsLevel3 Int
+//     spellSlotsLevel4 Int
+//     spellSlotsLevel5 Int
+//     spellSlotsLevel6 Int
+//     spellSlotsLevel7 Int
+//     spellSlotsLevel8 Int
+//     spellSlotsLevel9 Int
+//     classLevel ClassLevel @relation(fields: [classLevelId], references: [id])
+//     classLevelId Int @unique
+// }
+
+// model ClassSpecific {
+//     id Int @id @default(autoincrement())
+//     name String
+//     amount Int
+//     classLevel ClassLevel @relation(fields: [classLevelId], references: [id])
+//     classLevelId Int
+// }
+
+// model ClassLevel {
+//     id Int @id @default(autoincrement())
+//     level Int
+//     abilityScoreBonuses Int
+//     profBonus Int
+//     features Feat[]
+//     spellCasting SpellCasting
+//     classSpecfic ClassSpecific[]
+//     class Class @relation(fields: [classId], references: [id])
+//     classId Int
+// }
+
+// model SubClassLevel {
+//     id Int @id @default(autoincrement())
+//     level Int
+//     features Feat[]
+//     subClass SubClass @relation(fields: [subClassId], references: [id])
+//     subClassId Int
+// }
+
+// model SubClass {
+//     id Int @id @default(autoincrement())
+//     class Class @relation(fields: [classId], references: [id])
+//     classId Int
+//     name String
+//     subclassFlavor String
+//     desc String[]
+//     levels SubClassLevel[]
+//     spells Spell[]
+// }
+
+// model Class {
+//     id                       Int                    @id @default(autoincrement())
+//     name                     String
+//     hitDie                   Int
+//     proficiencyChoices       ProficiencyChoiceArray
+//     proficiencies            Proficiency[]
+//     savingThrows             AbilityScore[]
+//     startingEquipment        Equipment[]
+//     startingEquipemntCount   Int
+//     startingEquipmentChoices EquipmentChoiceArray[]
+//     classLevels ClassLevel[]
+//     multiClassing MultiClass
+//     subclasses SubClass[]
+// }
+
+model Damage {
+    id                  Int                  @id @default(autoincrement())
+    damageType          DamageType           @relation(fields: [damageTypeId], references: [id])
+    damageTypeId        Int
+    damageAtPlayerLevel DamageAtPlayerLevel?
+    spell               Spell                @relation(fields: [spellId], references: [id])
+    spellId             Int                  @unique
+}
+
+// model Race {
+//     id   Int    @id @default(autoincrement())
+//     name String
+// }

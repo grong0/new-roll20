@@ -91,14 +91,16 @@ def elements_between_elements(parent: Selector, start: Selector, end: Selector):
 def get_elements_contents(parent: Selector, element: str) -> list[Selector]:
     elements_contents = []
     elements = parent.xpath(f"./{element}")
-    
+
     for index, element in enumerate(elements):
-        if index+1 != len(elements):
-            element_contents = combine_elements(elements_between_elements(parent, element, elements[index+1])[:-1])
+        if index + 1 != len(elements):
+            element_contents = combine_elements(
+                elements_between_elements(parent, element, elements[index + 1])[:-1]
+            )
         else:
             element_contents = combine_elements(elements_after_element(parent, element))
         elements_contents.append(element_contents)
-    
+
     return elements_contents
 
 
@@ -106,10 +108,10 @@ def get_highest_header(parent: Selector) -> str:
     highest = 0
     for element in parent.xpath("./*"):
         tag = get_tag(element)
-        if tag[0] == "h" and (int(tag[1]) < highest or highest == 0):
+        if tag[0] == "h" and tag[1] != "r" and (int(tag[1]) < highest or highest == 0):
             highest = int(tag[1])
     return "h" + str(highest)
-        
+
 
 def get_layout_version(response: Response) -> str:
     comments = response.xpath("//comment()")
