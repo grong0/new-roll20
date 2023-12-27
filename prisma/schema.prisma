@@ -4,7 +4,8 @@ datasource db {
 }
 
 generator client {
-    provider = "prisma-client-py"
+    provider             = "prisma-client-py"
+    recursive_type_depth = 5
 }
 
 model DamageType {
@@ -15,20 +16,34 @@ model DamageType {
 }
 
 model AbilityScore {
-    id        Int      @id @default(autoincrement())
-    name      String
-    full_name String
-    desc      String[]
-    skills    Skill[]
-    dcs       DC[]
+    id       Int      @id @default(autoincrement())
+    name     String
+    fullName String
+    desc     String[]
+    skills   Skill[]
+    dcs      DC[]
+}
+
+model Alignment {
+    id           Int    @id @default(autoincrement())
+    name         String
+    abbreviation String
+    desc         String
+    races        Race[]
+}
+
+model Condition {
+    id   Int      @id @default(autoincrement())
+    name String
+    desc String[]
 }
 
 model Skill {
-    id               Int          @id @default(autoincrement())
-    name             String
-    desc             String[]
-    ability_score    AbilityScore @relation(fields: [ability_score_id], references: [id])
-    ability_score_id Int
+    id             Int          @id @default(autoincrement())
+    name           String
+    desc           String[]
+    abilityScore   AbilityScore @relation(fields: [abilityScoreId], references: [id])
+    abilityScoreId Int
 }
 
 model DamageAtPlayerLevel {
@@ -66,10 +81,31 @@ model DC {
 }
 
 model School {
-    id     Int      @id @default(autoincrement())
+    id     Int     @id @default(autoincrement())
     name   String
-    desc   String[]
+    desc   String
     spells Spell[]
+}
+
+model RuleSection {
+    id     Int    @id @default(autoincrement())
+    name   String
+    desc   String
+    rule   Rule   @relation(fields: [ruleId], references: [id])
+    ruleId Int
+}
+
+model Rule {
+    id          Int           @id @default(autoincrement())
+    name        String
+    desc        String
+    subsections RuleSection[]
+}
+
+model WeaponProperty {
+    id   Int      @id @default(autoincrement())
+    name String
+    desc String[]
 }
 
 model Spell {
@@ -103,17 +139,25 @@ model Proficiency {
 }
 
 model EquipmentCategory {
-    id        Int         @id @default(autoincrement())
+    id        Int                     @id @default(autoincrement())
     name      String
-    equipment Equipment[]
+    equipment CategoriesOnEquipment[]
 }
 
 model Equipment {
-    id                 Int               @id @default(autoincrement())
-    name               String
-    special            String[]
-    equipmentCategory  EquipmentCategory @relation(fields: [equimentCategoryId], references: [id])
-    equimentCategoryId Int
+    id                  Int                     @id @default(autoincrement())
+    name                String
+    special             String[]
+    equipmentCategories CategoriesOnEquipment[]
+}
+
+model CategoriesOnEquipment {
+    equipment           Equipment         @relation(fields: [equipmentId], references: [id])
+    equipmentId         Int
+    equipmentCategory   EquipmentCategory @relation(fields: [equipmentCategoryId], references: [id])
+    equipmentCategoryId Int
+
+    @@id([equipmentId, equipmentCategoryId])
 }
 
 // model EquipmentChoiceArray {
@@ -231,7 +275,81 @@ model Damage {
     spellId             Int                  @unique
 }
 
-// model Race {
-//     id   Int    @id @default(autoincrement())
-//     name String
-// }
+model RaceTable {
+    id     Int            @id @default(autoincrement())
+    name   String
+    rows   RaceTableRow[]
+    race   Race           @relation(fields: [raceId], references: [id])
+    raceId Int
+}
+
+model RaceTableRow {
+    id      Int       @id @default(autoincrement())
+    content String[]
+    table   RaceTable @relation(fields: [tableId], references: [id])
+    tableId Int
+}
+
+model FeatTable {
+    id     Int            @id @default(autoincrement())
+    name   String
+    rows   FeatTableRow[]
+    feat   Feat           @relation(fields: [featId], references: [id])
+    featId Int            @unique
+}
+
+model FeatTableRow {
+    id      Int       @id @default(autoincrement())
+    content String[]
+    table   FeatTable @relation(fields: [tableId], references: [id])
+    tableId Int
+}
+
+model Feat {
+    id            Int         @id @default(autoincrement())
+    name          String
+    desc          String
+    level         Int
+    prerequisites String[]
+    table         FeatTable[]
+    type          String
+    race          Race?       @relation(fields: [raceId], references: [id])
+    raceId        Int?
+    subrace       Subrace?    @relation(fields: [subraceId], references: [id])
+    subraceId     Int?
+    // class level
+    // subclass level
+}
+
+model Lineage {
+    id              Int     @id @default(autoincrement())
+    name            String
+    settingSpecific Boolean
+    races           Race[]
+}
+
+model Race {
+    id          Int         @id @default(autoincrement())
+    name        String
+    lineage     Lineage     @relation(fields: [lineageId], references: [id])
+    lineageId   Int
+    source      String
+    desc        String[]
+    raceTables  RaceTable[]
+    alignment   Alignment   @relation(fields: [alignmentId], references: [id])
+    alignmentId Int
+    age         Int
+    size        String
+    speed       Int
+    feats       Feat[]
+    subraces    Subrace[]
+}
+
+model Subrace {
+    id     Int      @id @default(autoincrement())
+    name   String
+    desc   String[]
+    feats  Feat[]
+    race   Race     @relation(fields: [raceId], references: [id])
+    raceId Int
+}
