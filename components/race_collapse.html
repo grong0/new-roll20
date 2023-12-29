@@ -1,0 +1,15 @@
+<div id="{name}" class="collapse bg-base-300">
+	<input type="radio" name="race" value="{name}" />
+	<div class="collapse-title text-xl font-medium">
+		<span class="flex items-center gap-2">
+			{name}
+			<span
+				class="inline-flex space-x-2"
+				hx-get="/isNPC/{handle_name}/{source}/{isRace}"
+				hx-trigger="load once"
+				><span class="loading loading-spinner loading-lg"></span
+			></span>
+		</span>
+		<div class="text-lg font-normal">{full_source}</div>
+	</div>
+</div>

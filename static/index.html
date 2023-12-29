@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<script src="./htmx.min.js"></script>
+		<link
+			href="https://cdn.jsdelivr.net/npm/daisyui@4.4.24/dist/full.min.css"
+			rel="stylesheet"
+			type="text/css"
+		/>
+		<script src="https://cdn.tailwindcss.com"></script>
+	</head>
+	<body>
+		<!-- <div class="flex flex-col gap-5 p-5">
+			<h1 class="text-xl font-bold" hx-get="/init" hx-trigger="load once">
+				<span class="loading loading-spinner loading-lg"></span>
+			</h1>
+			<input class="input bg-base-200" />
+			<button class="btn">POST</button>
+			<input id="output" class="input bg-base-200" placeholder="Waiting for input..." disabled />
+		</div> -->
+        <div class="flex flex-col p-5 gap-5" hx-get="/races" hx-trigger="load once">
+
+        </div>
+	</body>
+</html>
