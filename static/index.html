@@ -5,24 +5,26 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Document</title>
 		<script src="./htmx.min.js"></script>
-		<link
-			href="https://cdn.jsdelivr.net/npm/daisyui@4.4.24/dist/full.min.css"
-			rel="stylesheet"
-			type="text/css"
-		/>
-		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="stylesheet" href="./output.css" />
 	</head>
 	<body>
-		<!-- <div class="flex flex-col gap-5 p-5">
-			<h1 class="text-xl font-bold" hx-get="/init" hx-trigger="load once">
-				<span class="loading loading-spinner loading-lg"></span>
-			</h1>
-			<input class="input bg-base-200" />
-			<button class="btn">POST</button>
-			<input id="output" class="input bg-base-200" placeholder="Waiting for input..." disabled />
-		</div> -->
-        <div class="flex flex-col p-5 gap-5" hx-get="/races" hx-trigger="load once">
-
-        </div>
+		<div class="grid grid-cols-2 w-screen h-dvh">
+			<div class="overflow-y-scroll">
+				<div
+					class="flex flex-col p-5 gap-5 w-full"
+					hx-get="/race_categories"
+					hx-trigger="load once"
+				></div>
+			</div>
+			<div class="overflow-y-scroll">
+				<div id="selected_race_info" class="p-5 prose dark:prose-invert w-min">
+					<h1>Selected Race Info</h1>
+					<p>
+						Click on a race to the left to see it's details. Here, you'll be able to see the race's
+						feats and whatnot.
+					</p>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>

@@ -1,11 +1,9 @@
 <div class="collapse collapse-arrow bg-base-200">
-	<input type="radio" name="opened-race" />
-	<div class="collapse-title text-xl font-medium">
-		{name}<span class="float-right">{source}</span>
-	</div>
+	<input type="radio" name="opened-race-category" />
+	<div class="collapse-title text-xl font-medium">{name}</div>
 	<div
 		class="collapse-content flex flex-col justify-center items-center gap-5"
-		hx-get="/subraces/{name}/{source}"
+		hx-get="/race_category_content/{name}"
 		hx-trigger="load"
 	>
 		<!-- Collapsed Cotent Goes Here -->

@@ -3,3 +3,8 @@ build
 dist
 venv
 main.spec
+node_modules
+data/raw/*.json
+data/compiled/*.json
+data/raw/*/*.json
+data/compiled/*/*.json
