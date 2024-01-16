@@ -20,7 +20,6 @@ class API:
         marked_races = []
         for race in self.races:
             processed_name = race["name"].split("(")[0].strip()
-            print(f"from {race['name']} to {processed_name}")
             if processed_name not in marked_races:
                 marked_races.append(processed_name)
         return marked_races
@@ -50,26 +49,82 @@ class API:
                 subraces.append(subrace)
         return subraces
 
+    def get_race_entries(self, race: dict) -> list[dict]:
+        if "entries" in race.keys():
+            return race["entries"]
+        elif "_copy" in race.keys():
+            copy_race = self.get_race(race["_copy"]["name"], race["_copy"]["source"])
+            entries = self.get_race_entries(copy_race).copy()
+            for entry in race["_copy"]["_mod"]["entries"]:
+                match entry["mode"]:
+                    case "appendArr":
+                        for existing_entry in entries:
+                            if existing_entry["name"] == entry["items"]["name"]:
+                                existing_entry["entries"].extend(
+                                    entry["items"]["entries"]
+                                )
+                        entries.append(entry["items"])
+                    case "replaceArr":
+                        for existing_entry in entries:
+                            if existing_entry["name"] == entry["items"]["name"]:
+                                existing_entry = entry["items"]
+                    case _:
+                        print(
+                            "copy mode was something other than appendArr and replaceArr"
+                        )
+            return entries
+        return [{"name": "error", "entries": ["something went wrong"]}]
+
     def get_race_traitTags(self, race: dict) -> list[str]:
-        if "traitTags" in race.keys():
-            return race["traitTags"]
+        if "traitTags" not in race.keys() and "_copy" in race.keys():
+            copy_race = self.get_race(race["_copy"]["name"], race["_copy"]["source"])
+            return self.get_race_traitTags(copy_race)
+        elif "traitTags" in race.keys():
+            return race["traitTags"] if race["traitTags"] is not None else []
         else:
             return []
+
+    def get_race_ability(self, race: dict) -> list[dict[str, int]]:
+        if "ability" not in race.keys() and "_copy" in race.keys():
+            copy_race = self.get_race(race["_copy"]["name"], race["_copy"]["source"])
+            return copy_race["ability"]
+        elif "ability" in race.keys():
+            return race["ability"]
+        else:
+            return [{
+                "Err": 0
+            }]
+
+    def get_race_speed(self, race: dict) -> dict[str, int] | int:
+        if "speed" not in race.keys() and "_copy" in race.keys():
+            copy_race = self.get_race(race["_copy"]["name"], race["_copy"]["source"])
+            return copy_race["speed"]
+        elif "speed" in race.keys():
+            return race["speed"]
+        else:
+            return -1
+
+    def get_race_size(self, race: dict) -> list[str]:
+        if "size" not in race.keys() and "_copy" in race.keys():
+            copy_race = self.get_race(race["_copy"]["name"], race["_copy"]["source"])
+            return copy_race["size"]
+        elif "size" in race.keys():
+            return race["size"]
+        else:
+            return ["Err"]
 
     def race_has_base(self, race: dict) -> bool:
         for subrace in self.get_race_subraces(race):
             if "name" not in subrace.keys():
                 return True
         return False
-    
-    def get_race_ability(self, race: dict) -> list[str]:
-        if "ability" not in race.keys():
-            return []
-        return race["ability"]
 
     def race_has_subraces(self, race: dict) -> bool:
         for subrace in self.subraces:
-            if subrace["raceName"] == race["name"] and subrace["raceSource"] == race["source"]:
+            if (
+                subrace["raceName"] == race["name"]
+                and subrace["raceSource"] == race["source"]
+            ):
                 return True
         return False
 
@@ -86,7 +141,7 @@ class API:
     def get_subrace_traitTags(self, subrace) -> dict:
         if "overwrite" in subrace.keys() and "traitTags" in subrace["overwrite"]:
             if "traitTags" in subrace.keys():
-                return subrace["traitTags"]
+                return subrace["traitTags"] if subrace["traitTags"] is not None else []
             else:
                 return []
         return self.get_race_traitTags(self.get_subrace_parent(subrace))
@@ -97,9 +152,14 @@ class API:
             if "data" not in subrace_entry.keys():
                 entries.append(subrace_entry)
             elif "overwrite" in subrace_entry["data"].keys():
+                found = False
                 for index, entry in enumerate(entries):
                     if entry["name"] == subrace_entry["data"]["overwrite"]:
+                        found = True
                         entries[index] = subrace_entry
+                        break
+                if not found:
+                    entries.append(subrace_entry)
         return entries
 
     def get_subrace_parent(self, subrace: dict) -> dict:
@@ -109,7 +169,8 @@ class API:
         if "overwrite" in subrace.keys() and "ability" in subrace["overwrite"]:
             return subrace["ability"]
         else:
-            self.get_race_ability(self.get_subrace_parent(subrace))
+            print("subrace didn't have ability, checking parent...")
+            return self.get_race_ability(self.get_subrace_parent(subrace))
 
     def get_book_from_source(self, source: str) -> dict:
         for book in self.books:

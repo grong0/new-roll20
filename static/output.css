@@ -2356,10 +2356,6 @@ details.collapse summary::-webkit-details-marker {
   display: table;
 }
 
-.grid {
-  display: grid;
-}
-
 .h-dvh {
   height: 100dvh;
 }
@@ -2368,16 +2364,12 @@ details.collapse summary::-webkit-details-marker {
   width: 100%;
 }
 
-.w-screen {
-  width: 100vw;
+.min-w-80 {
+  min-width: 20rem;
 }
 
 .list-none {
   list-style-type: none;
-}
-
-.grid-cols-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .flex-row {
@@ -2503,6 +2495,18 @@ details.collapse summary::-webkit-details-marker {
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgb(14, 17, 20);
+}
+
+.scroll-bar-none::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, and Opera */
+}
+
+.scroll-bar-none {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 @media (prefers-color-scheme: dark) {

@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 import uvicorn
 from fastapi import FastAPI
@@ -77,10 +78,31 @@ def compile_components(filename: str, *args, to_list: bool = False) -> str | lis
             current_mod = file
             for arg in args:
                 if to_list:
-                    content.append(current_mod.replace(arg[0], arg[1][i]))
+                    if arg[1][i][0] == "|" and arg[1][i][-1] == "|":
+                        content.append(arg[1][i])
+                    else:
+                        content.append(current_mod.replace(arg[0], arg[1][i]))
                 else:
-                    content += current_mod.replace(arg[0], arg[1][i])
+                    if arg[1][i][0] == "|" and arg[1][i][-1] == "|":
+                        content += " " + arg[1][i][1:-1] + " "
+                    else:
+                        content += current_mod.replace(arg[0], arg[1][i])
     return content
+
+
+def title_list(list: list[str]) -> list[str]:
+    for item in list:
+        item = item.title()
+    return list
+
+
+def ability_thats_missing(list: list[str]) -> Optional[str]:
+    all_abilities = ["str", "dex", "con", "int", "wis", "cha"]
+    for ability in list:
+        all_abilities.remove(ability)
+    if len(all_abilities) == 1:
+        return all_abilities[0]
+    return None
 
 
 def expand_ability_scores(race: dict, isRace: bool) -> list[str]:
@@ -88,16 +110,41 @@ def expand_ability_scores(race: dict, isRace: bool) -> list[str]:
         ability = api.get_race_ability(race)
     else:
         ability = api.get_subrace_ability(race)
-    if "ability" not in race.keys():
-        return ["error"]
-    elif ability is None:
-        return ["ability was None"]
     ability_score_strs = []
     for ability_scores in ability:
         for ability_score in ability_scores:
-            amount = ability_scores[ability_score]
-            name = ability_score.title()
-            ability_score_strs.append(f"{amount} {name}")
+            print(ability_score)
+            if ability_score == "Err":
+                print(f"race lineage: {race['lineage']}")
+                if race["lineage"] == "VRGR":
+                    return [
+                        "Choose any +2; choose any other +1",
+                        "|or|",
+                        "Choose three different +1",
+                    ]
+                return ["ability was None"]
+            if ability_score == "choose":
+                try:
+                    amount = ability_scores[ability_score]["amount"]
+                except Exception:
+                    amount = ability_scores[ability_score]["count"]
+                abilities = ability_scores[ability_score]["from"]
+                guarrenteed_ability = ability_thats_missing(abilities)
+                if len(abilities) == 6:
+                    abilities = "any"
+                elif (
+                    guarrenteed_ability is not None
+                    and guarrenteed_ability in ability_scores.keys()
+                ):
+                    ability_score_strs.append(f"Choose any other {amount}")
+                else:
+                    abilities = title_list(abilities)
+                    name = "Choose"
+                    ability_score_strs.append(f"{name} {abilities} {amount} ")
+            else:
+                amount = ability_scores[ability_score]
+                name = ability_score.title()
+                ability_score_strs.append(f"{amount} {name}")
     return ability_score_strs
 
 
@@ -217,31 +264,34 @@ async def subraces(parent_name: str, parent_source: str):
     return element
 
 
-@app.get("/race_details/{name}/{source}/{isRace}", response_class=HTMLResponse)
-async def race_details(name: str, source: str, isRace: str):
+@app.get("/race_details/{handle_name}/{source}/{isRace}", response_class=HTMLResponse)
+async def race_details(handle_name: str, source: str, isRace: str):
+    name = parse_slash(handle_name)
     isRace = isRace == "True"
     if isRace:
         object = api.get_race(name, source)
-        entries = object["entries"]
-        size = expand_size(object["size"])
-        speed = expand_speed(object["speed"])
+        entries = api.get_race_entries(object)
+        size = expand_size(api.get_race_size(object))
+        speed = expand_speed(api.get_race_speed(object))
     else:
         object = api.get_subrace(name, source)
         entries = api.get_subrace_entries(object)
-        size = expand_size(api.get_subrace_parent(object)["size"])
-        speed = expand_speed(api.get_subrace_parent(object)["speed"])
+        size = expand_size(api.get_race_size(api.get_subrace_parent(object)))
+        speed = expand_speed(api.get_race_speed(api.get_subrace_parent(object)))
     ability_scores = compile_components(
         "kbd-md", ("{content}", expand_ability_scores(object, isRace))
     )
 
     traits = ""
     for entry in entries:
-        content = ""
-        for sub_entry in entry["entries"]:
-            if isinstance(sub_entry, str):
-                content += compile_component("p", ("{content}", sub_entry))
-            else:
-                if sub_entry["type"] == "table":
+        if isinstance(entry, str):
+            traits += compile_component("p", ("{content}", entry))
+        else:
+            content = ""
+            for sub_entry in entry["entries"]:
+                if isinstance(sub_entry, str):
+                    content += compile_component("p", ("{content}", sub_entry))
+                elif sub_entry["type"] == "table":
                     headers = compile_components(
                         "th", ("{content}", sub_entry["colLabels"])
                     )
@@ -255,11 +305,10 @@ async def race_details(name: str, source: str, isRace: str):
                         "table", ("{headers}", headers), ("{content}", rows)
                     )
                 else:
-                    print("sub entry was something other than list or string")
-                    print(sub_entry)
-        traits += compile_component(
-            "race_trait", ("{name}", entry["name"]), ("{content}", content)
-        )
+                    print(f"{name} had an entry of a different type")
+            traits += compile_component(
+                "race_trait", ("{name}", entry["name"]), ("{content}", content)
+            )
     # print(f"traits: {traits}")
     return compile_component(
         "race_traits",

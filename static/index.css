@@ -26,3 +26,11 @@
 ::-webkit-scrollbar-thumb:hover {
 	background-color: rgb(14, 17, 20);
 }
+
+.scroll-bar-none::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+}
+.scroll-bar-none {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
