@@ -1,0 +1,71 @@
+# Character JSON Requirements
+
+## Things a Character Needs
+
+- Name
+- Class
+- Level
+- Background
+- Race
+- Alignment
+- Inspiration
+- Stats (str, con, wis, etc.)
+- Proficiency Bonus
+- Saving Throws
+- Ability Scores
+- Armor Class
+- Initiative
+- Speed
+- Hit Point Maximum
+- Current Hit Point
+- Temp Points
+- Total Hit Die
+- Current Hit Die
+- Success Death Saves
+- Fail Death Saves
+- Exhastion Level
+- Attacks
+- Currency
+  - Copper Piece
+  - Silver Piece
+  - Electrum Piece
+  - Gold Piece
+  - Platinum Piece
+- Equipment
+- Tool Proficiencies
+- Other Proficiencies
+- Characteristics
+  - Personality Traits
+  - Ideals
+  - Bonds
+  - Flaws
+- Bio
+  - Feats and Traits
+  - Age
+  - Size
+  - Height
+  - Weight
+  - Eyes
+  - Skin
+  - Hair
+  - Character Appearance
+  - Character Backstory
+  - Allies and Organizations
+  - Additional Features and Traits
+  - Treasure
+- Spellcasting Ability
+- Spell Save DC
+- Spell Attack Bonus
+- Spells
+- Hit Die
+- Carrying Capacity Modifier
+- Global Magic Attack Modifier
+- Magic Caster Level
+- Spell Save DC Mod
+- Spell Slot Modifiers
+- Initiative Modifier
+- Death Save Modifier
+- Global Saving Throw Modifier
+- Jack of All Trades
+- Reliable Talent
+- Passive Perception Modifier
