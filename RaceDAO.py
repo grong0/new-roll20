@@ -58,8 +58,8 @@ class Age:
 class LanguageProficiencies:
     languages: list[str] = []
     any_standard: int = 0
-    choose_count: int = 0
     choose_languages: list[str]
+    choose_count: int = 1
 
     def __init__(
         self, object: Optional[dict[str, bool | int | dict[str, int | list[str]]]]
@@ -71,10 +71,28 @@ class LanguageProficiencies:
                 elif type(object[key]) is int:
                     self.any_standard = object[key]
                 elif type(object[key]) is dict:
-                    self.choose_count = object["choose"]["count"]
                     self.choose_languages = object["choose"]["from"]
+                    self.choose_count = object["choose"]["count"]
                 else:
                     print(f"Language proficiency value was not expected")
+                    print(f"It was a {type(object[key])} with a value of {object[key]}")
+
+
+class SkillProficiencies:
+    skills: list[str] = []
+    choose_skills: list[str] = []
+    choose_count: int = 1
+
+    def __init__(self, object: Optional[dict[str, bool | dict[str, int | list[str]]]]) -> None:
+        if object is not None:
+            for key in object.keys():
+                if type(object[key]) is bool:
+                    self.skills.append(object[key])
+                elif type(object[key]) is dict:
+                    self.choose_skills = object[key]["from"]
+                    self.choose_count = object[key]["count"] if "count" in object[key].keys() else self.choose_count
+                else:
+                    print(f"Skill proficiency  value was not expected")
                     print(f"It was a {type(object[key])} with a value of {object[key]}")
 
 
@@ -82,7 +100,12 @@ class Source:
     source: str = ""
     page: int = None
 
-    def __init__(self, object: Optional[dict[str, str | int]] = None, source: str = None, page: int = None) -> None:
+    def __init__(
+        self,
+        object: Optional[dict[str, str | int]] = None,
+        source: str = None,
+        page: int = None,
+    ) -> None:
         if source is not None and page is not None:
             self.source = source
             self.page = page
@@ -91,24 +114,38 @@ class Source:
             self.page = object["page"] if "page" in object.keys else self.page
 
 
+class HeightAndWeight:
+    base_height: int = None
+    height_mod: str = None
+    base_weight: int = None
+    weight_mod: str = None
+
+    def __init__(self, object: Optional[dict[str, int | str]]) -> None:
+        if object is not None:
+            self.base_height = object["base_height"]
+            self.height_mod = object["height_mod"] if "height_mod" in object.keys() else self.height_mod
+            self.base_weight = object["base_weight"]
+            self.weight_mod = object["weight_mod"] if "weight_mod" in object.keys() else self.weight_mod
+
+
 class Race:
     name: str
     source: Source
-    srd: bool
-    basic_rules: bool
+    srd: Optional[bool]
+    basic_rules: Optional[bool]
     other_sources: list[Source]
-    reprinted_as
-    copy
-    lineage
-    creature_types
-    creature_type_tags
+    reprinted_as: Optional[str]
+    copy: list[self]
+    lineage: Optional[str]
+    creature_types: list[str]
+    creature_type_tags: list[str]
     size: list[str]
     speed: Speed
     ability: Ability
-    height_and_weight
+    height_and_weight: HeightAndWeight
     age: Age
     darkvision: int
-    trait_tags
+    trait_tags: list[str]
     skill_proficiencies: SkillProficiencies
     language_proficiencies: LanguageProficiencies
     tool_proficiencies: ToolProficiencies
