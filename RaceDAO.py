@@ -129,10 +129,9 @@ class WeaponProficiencies:
                     self.choose_tools = object[key]["fromFilter"]
                     self.choose_amount = object[key]["count"]
                 else:
-                    self.proficiencies.append({
-                        "name": key.split("|")[0],
-                        "source": key.split("|")[1]
-                    })
+                    self.proficiencies.append(
+                        {"name": key.split("|")[0], "source": key.split("|")[1]}
+                    )
 
     def has_proficiency(self, name: str) -> bool:
         for item in self.proficiencies:
@@ -221,43 +220,57 @@ class AdditionalSpells:
                     for level in spell_object["innate"].keys():
                         if type(spell_object["innate"][level]) is list:
                             for spell in spell_object["innate"][level]:
-                                self.spells.append({
-                                    "name": spell,
-                                    "ability": spell_object["ability"],
-                                    "reset_when": Reset.NEVER,
-                                    "aquired_at": int(level)
-                                })
-                        elif type(spell_object["innate"][level]) is dict:
-                            if "daily" in spell_object["innate"][level].keys():
-                                for spell in spell_object["innate"][level]["daily"]["1"]:
-                                    self.spells.append({
+                                self.spells.append(
+                                    {
                                         "name": spell,
                                         "ability": spell_object["ability"],
-                                        "reset_when": Reset.DAILY,
-                                        "aquired_at": int(level)
-                                    })
+                                        "reset_when": Reset.NEVER,
+                                        "aquired_at": int(level),
+                                    }
+                                )
+                        elif type(spell_object["innate"][level]) is dict:
+                            if "daily" in spell_object["innate"][level].keys():
+                                for spell in spell_object["innate"][level]["daily"][
+                                    "1"
+                                ]:
+                                    self.spells.append(
+                                        {
+                                            "name": spell,
+                                            "ability": spell_object["ability"],
+                                            "reset_when": Reset.DAILY,
+                                            "aquired_at": int(level),
+                                        }
+                                    )
                             else:
-                                print("spell_object['innate'][level] was a dict with an unknown key")
+                                print(
+                                    "spell_object['innate'][level] was a dict with an unknown key"
+                                )
                 if "known" in spell_object.keys():
                     if type(spell_object["known"]["1"]) is list:
                         for spell in spell_object["known"]["1"]:
-                            self.spells.append({
-                                "name": spell,
-                                "ability": spell_object["ability"],
-                                "reset_when": Reset.NEVER,
-                                "aquired_at": 0
-                            })
+                            self.spells.append(
+                                {
+                                    "name": spell,
+                                    "ability": spell_object["ability"],
+                                    "reset_when": Reset.NEVER,
+                                    "aquired_at": 0,
+                                }
+                            )
                     elif type(spell_object["known"]["1"]) is dict:
                         if "rest" in spell_object["known"]["1"].keys():
                             for spell in spell_object["known"]["1"]["rest"]:
-                                self.spells.append({
-                                    "name": spell,
-                                    "ability": spell_object["ability"],
-                                    "reset_when": Reset.REST,
-                                    "aquired_at": 0
-                                })
+                                self.spells.append(
+                                    {
+                                        "name": spell,
+                                        "ability": spell_object["ability"],
+                                        "reset_when": Reset.REST,
+                                        "aquired_at": 0,
+                                    }
+                                )
                         else:
-                            print("spell_object['known'] was a dict with an unknown key")
+                            print(
+                                "spell_object['known'] was a dict with an unknown key"
+                            )
 
     def new_spells_at(self, level: int) -> list[str]:
         new_spells: list[str] = []
@@ -302,38 +315,64 @@ class Race:
     def __init__(self, object: dict[str, any]) -> None:
         self.name = object["name"]
         self.source = object["source"]
-        self.srd = object["srd"] if "immune" in object.keys() else self.immune
-        self.basic_rules = object["basicRules"] if "immune" in object.keys() else self.immune
-        self.other_sources = object["otherSources"] if "immune" in object.keys() else self.immune
-        self.reprinted_as = object["reprintedAs"] if "immune" in object.keys() else self.immune
-        self.copy = object["_copy"] if "immune" in object.keys() else self.immune
-        self.lineage = object["lineage"] if "immune" in object.keys() else self.immune
-        self.creature_types = object["creatureTypes"] if "immune" in object.keys() else self.immune
-        self.creature_type_tags = object["createTypeTags"] if "immune" in object.keys() else self.immune
-        self.size = object["size"] # leave for copy
+        self.srd = object["srd"] if "srd" in object.keys() else self.srd
+        self.basic_rules = (
+            object["basicRules"] if "basicRules" in object.keys() else self.basic_rules
+        )
+        self.other_sources = (
+            object["otherSources"] if "otherSources" in object.keys() else self.other_sources
+        )
+        self.reprinted_as = (
+            object["reprintedAs"] if "reprintedAs" in object.keys() else self.reprinted_as
+        )
+        self.copy = object["_copy"] if "_copy" in object.keys() else self.copy
+        self.lineage = object["lineage"] if "lineage" in object.keys() else self.lineage
+        self.creature_types = (
+            object["creatureTypes"] if "creatureTypes" in object.keys() else self.creature_types
+        )
+        self.creature_type_tags = (
+            object["createTypeTags"] if "createTypeTags" in object.keys() else self.creature_type_tags
+        )
+        self.size = object["size"]  # leave for copy
         self.speed = Speed(object["speed"])
-        self.ability = Ability(object["ability"])
+        self.ability = Ability(object["ability"][0])
         self.height_and_weight = HeightAndWeight(object["heightAndWeight"])
         self.age = Age(object["age"])
-        self.darkvision = object["darkvision"] if "darkvision" in object.keys() else self.darkvision
-        self.trait_tags = object["traitTags"] if "immune" in object.keys() else self.immune
+        self.darkvision = (
+            object["darkvision"] if "darkvision" in object.keys() else self.darkvision
+        )
+        self.trait_tags = (
+            object["traitTags"] if "immune" in object.keys() else self.immune
+        )
         self.skill_proficiencies = SkillProficiencies(object["skillProficiencies"])
-        self.language_proficiencies = LanguageProficiencies(object["languageProficiencies"])
+        self.language_proficiencies = LanguageProficiencies(
+            object["languageProficiencies"]
+        )
         self.tool_proficiencies = ToolProficiencies(object["toolProficiencies"])
         self.weapon_proficiencies = WeaponProficiencies(object["weaponProficiencies"])
         self.armor_proficiencies = ArmorProficiencies(object["armorProficiencies"])
         self.resist = Resist(object["resist"])
         self.additional_spells = AdditionalSpells(object["additionalSpells"])
         self.immune = object["immune"] if "immune" in object.keys() else self.immune
-        self.conditionImmune = object["conditionImmune"] if "immune" in object.keys() else self.immune
+        self.conditionImmune = (
+            object["conditionImmune"] if "immune" in object.keys() else self.immune
+        )
         self.entries = object["entries"] if "entries" in object.keys() else self.entries
-        self.has_fluff = object["hasFluff"] if "hasFluff" in object.keys() else self.has_fluff
-        self.has_fluff_images = object["hasFluffImages"] if "hasFluffImages" in object.keys() else self.has_fluff_images
-        self.versions = object["_versions"] if "_versions" in object.keys() else self.versions
+        self.has_fluff = (
+            object["hasFluff"] if "hasFluff" in object.keys() else self.has_fluff
+        )
+        self.has_fluff_images = (
+            object["hasFluffImages"]
+            if "hasFluffImages" in object.keys()
+            else self.has_fluff_images
+        )
+        self.versions = (
+            object["_versions"] if "_versions" in object.keys() else self.versions
+        )
 
 
 class Races:
-    races: list[Race]
+    races: list[Race] = []
 
     def __init__(self) -> None:
         with open("./data/raw/races.json") as f:
@@ -341,4 +380,11 @@ class Races:
 
             for race in object["race"]:
                 self.races.append(Race(race))
-                print(f"finished {self.races[-1].name} | {len(self.races)}/{len(object["race"])}")
+                print(
+                    f"finished {self.races[-1].name} | {len(self.races)}/{len(object['race'])}"
+                )
+
+
+if __name__ == "__main__":
+    races = Races()
+    print("races are done")
