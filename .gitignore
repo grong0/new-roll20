@@ -4,5 +4,10 @@ dist
 venv
 main.spec
 node_modules
-data/raw/*.json
-data/raw/*/*
+data/raw/***/*
+data/schema/***/*
+
+
+# Added by cargo
+
+/target

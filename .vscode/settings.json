@@ -1,0 +1,7 @@
+{
+	"json.schema": [
+		{
+			"fileMatch": ["/data/schema/***/*.json"]
+		}
+	]
+}
