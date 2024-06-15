@@ -34,3 +34,9 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
+
+#charsheet-container {
+    display: grid;
+    grid-template-rows: 208px auto;
+    grid-template-columns: 120px 200px auto;
+}

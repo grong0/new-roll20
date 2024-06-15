@@ -15,6 +15,7 @@ impl Source {
     }
 }
 
+#[derive(Debug)]
 pub struct ModifyRaceCopy {
     mode: String,
     name: String,
@@ -24,7 +25,7 @@ pub struct ModifyRaceCopy {
 impl ModifyRaceCopy {
     pub fn new(entry: &Value) -> ModifyRaceCopy {
         let mut entries: Vec<String> = vec![];
-        for entry in entry.get("items").unwrap().get("entries").unwrap_or(&to_value(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter() {
+        for entry in entry.get("items").unwrap().get("entries").unwrap_or(&to_value::<Vec<String>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter() {
             entries.push(entry.as_str().unwrap_or("N/A").to_string());
         }
         return ModifyRaceCopy {
@@ -35,24 +36,37 @@ impl ModifyRaceCopy {
     }
 }
 
+#[derive(Debug)]
 pub struct RaceCopy {
     name: String,
     source: String,
     modifying: Vec<ModifyRaceCopy>,
-    preserve: Vec<String>
+    preserving: Vec<String>
 }
 
 impl RaceCopy {
     pub fn new(copy: Option<&Value>) -> RaceCopy {
+        if copy.is_none() {
+            return RaceCopy {
+                name: "N/A".to_string(),
+                source: "N/A".to_string(),
+                modifying: vec![],
+                preserving: vec![]
+            }
+        }
         let mut modifying: Vec<ModifyRaceCopy> = vec![];
-        for modify in copy.unwrap().get("_mod").unwrap().get("entries").unwrap_or(&to_value(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter() {
+        for modify in copy.unwrap().get("_mod").unwrap().get("entries").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter() {
             modifying.push(ModifyRaceCopy::new(modify))
+        }
+        let mut preserving: Vec<String> = vec![];
+        for modify in copy.unwrap().get("_preserve").unwrap().as_object().unwrap().keys().into_iter() {
+            preserving.push(modify.to_owned());
         }
         return RaceCopy {
             name: copy.unwrap().get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
             source: copy.unwrap().get("source").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
             modifying,
-            preserve: copy.unwrap().get("_preserve").unwrap().as_object().unwrap().keys().
+            preserving
         }
     }
 }
@@ -66,7 +80,7 @@ pub struct Race {
     pub other_sources: Vec<Source>,
     pub reprinted_as: Vec<String>,
     pub copy: RaceCopy,
-    // pub lineage: String,
+    pub lineage: String,
     // pub creature_types: Vec<String>,
     // pub creature_type_tags: Vec<String>,
     // pub size: Vec<String>,
@@ -111,7 +125,9 @@ impl Race {
             srd: race.get("srd").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
             basic_rules: race.get("basicRules").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
             other_sources,
-            reprinted_as
+            reprinted_as,
+            copy: RaceCopy::new(race.get("_copy")),
+            lineage: race.get("lineage").unwrap_or(&to_value("N/A").unwrap()).to_string()
         }
     }
 }
