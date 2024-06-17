@@ -22,7 +22,9 @@ def compile_component(filename: str, *args) -> str:
         return file
 
 
-#
+def get_asset(filename: str, group: str):
+    with open("./assets/" + group + "/" + filename + ".svg") as f:
+        return f.read()
 
 
 def get_class_color(class_name: str):
@@ -68,7 +70,10 @@ async def root():
 
 @app.get("/sheet/workspace", response_class=HTMLResponse)
 async def selected_workspace(workspace: str = "workspace"):
-    return workspace
+    try:
+        return compile_component(workspace + "-workspace")
+    except:
+        return workspace
 
 
 @app.get("/title-card", response_class=HTMLResponse)
@@ -154,6 +159,42 @@ def player_skill_status(skill: str):
 @app.get("/player/skills/{skill}/bonus", response_class=HTMLResponse)
 def player_skill_bonus(skill: str):
     return "5"
+
+
+@app.get("/player/attacks", response_class=HTMLResponse)
+def player_attacks(actions_filter: str = "attack"):
+    print(actions_filter)
+    attacks = [
+        {
+            "name": "Ray of Frost",
+            "type": "Cantrip - Wizard",
+            "range": 60,
+            "hitdc": 11,
+            "damage": {"dice": "4d8", "type": "cold"},
+            "notes": "V/S",
+        },
+        {
+            "name": "Unarmed Strike",
+            "type": "Melee Attack",
+            "range": 5,
+            "hitdc": 5,
+            "damage": {"dice": "0", "type": "bludgeoning"},
+            "notes": "",
+        },
+    ]
+
+    content = ""
+    for attack in attacks:
+        content += compile_component(
+            "actions-workspace-attack",
+            ("{name}", attack["name"]),
+            ("{type}", attack["type"]),
+            ("{range}", str(attack["range"])),
+            ("{hitdc}", str(attack["hitdc"])),
+            ("{damage}", attack["damage"]["dice"] + get_asset(attack["damage"]["type"], "damage types")),
+            ("{notes}", attack["notes"]),
+        )
+    return content
 
 
 if __name__ == "__main__":
