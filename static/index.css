@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
 /* width */
 ::-webkit-scrollbar {
 	width: 10px;
@@ -11,8 +13,8 @@
 ::-webkit-scrollbar-track {
 	border-radius: 10px;
 	background: rgb(25, 30, 36);
-    padding: 4px;
-    box-sizing: border-box;
+	padding: 4px;
+	box-sizing: border-box;
 }
 
 /* Handle */
@@ -28,15 +30,30 @@
 }
 
 .scroll-bar-none::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, and Opera */
+	display: none; /* Chrome, Safari, and Opera */
 }
 .scroll-bar-none {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
 }
 
 #charsheet-container {
-    display: grid;
-    grid-template-rows: 208px auto;
-    grid-template-columns: 120px 200px auto;
+	display: grid;
+	grid-template-rows: 208px auto;
+	grid-template-columns: 120px 200px 200px auto;
+}
+
+.tabs-fixed {
+    @apply tabs;
+
+    grid-template-rows: min-content 1fr;
+}
+
+.rounded-box-tablerow td:first-child {
+    border-top-left-radius: var(--rounded-box, 1rem/* 16px */);
+    border-bottom-left-radius: var(--rounded-box, 1rem/* 16px */);
+}
+.rounded-box-tablerow td:last-child {
+    border-top-right-radius: var(--rounded-box, 1rem/* 16px */);
+    border-bottom-right-radius: var(--rounded-box, 1rem/* 16px */);
 }

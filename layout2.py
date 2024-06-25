@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 
 def read_file(filename: str):
@@ -66,14 +67,6 @@ def ability_score_to_modifier(value: int):
 @app.get("/", response_class=HTMLResponse)
 async def root():
     return read_file("layout2")
-
-
-@app.get("/sheet/workspace", response_class=HTMLResponse)
-async def selected_workspace(workspace: str = "workspace"):
-    try:
-        return compile_component(workspace + "-workspace")
-    except:
-        return workspace
 
 
 @app.get("/title-card", response_class=HTMLResponse)
@@ -162,8 +155,8 @@ def player_skill_bonus(skill: str):
 
 
 @app.get("/player/attacks", response_class=HTMLResponse)
-def player_attacks(actions_filter: str = "attack"):
-    print(actions_filter)
+def player_attacks(action_filter: str = "attack"):
+    print(action_filter)
     attacks = [
         {
             "name": "Ray of Frost",
@@ -181,6 +174,14 @@ def player_attacks(actions_filter: str = "attack"):
             "damage": {"dice": "0", "type": "bludgeoning"},
             "notes": "",
         },
+        {
+            "name": "Melf's Minute Meteors",
+            "type": "3rd Level - Wizard",
+            "range": "Self",
+            "hitdc": "DEX 14",
+            "damage": {"dice": "2d6", "type": "fire"},
+            "notes": "Concentration, V/S/M",
+        },
     ]
 
     content = ""
@@ -191,7 +192,8 @@ def player_attacks(actions_filter: str = "attack"):
             ("{type}", attack["type"]),
             ("{range}", str(attack["range"])),
             ("{hitdc}", str(attack["hitdc"])),
-            ("{damage}", attack["damage"]["dice"] + get_asset(attack["damage"]["type"], "damage types")),
+            ("{damage}", attack["damage"]["dice"]),
+            ("{damage_type}", attack["damage"]["type"]),
             ("{notes}", attack["notes"]),
         )
     return content
@@ -199,5 +201,8 @@ def player_attacks(actions_filter: str = "attack"):
 
 if __name__ == "__main__":
     app.mount("/static", StaticFiles(directory="static"), name="static")
-    os.system("uvicorn layout2:app --reload")  # dev
+    app.mount("/assets", StaticFiles(directory="assets"), name="assets")
+    os.system(
+        "uvicorn layout2:app --reload --reload-dir static --reload-include output.css"
+    )  # dev
     # uvicorn.run(app, host="127.0.0.1", port=8000) #production

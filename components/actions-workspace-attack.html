@@ -1,8 +1,18 @@
-<tr class="actions-workspace-attack">
-    <!-- <td>{icon}</td> -->
-    <td>{name}</td>
-    <td>{range}</td>
-    <td>{hitdc}</td>
-    <td>{damage}</td>
-    <td>{notes}</td>
+<tr class="rounded-box-tablerow w-full bg-base-200 shadow-md h-20 hover:shadow-lg transition-shadow duration-300">
+	<td class="">
+		<div class="text-xl font-bold">{name}</div>
+		<div class="text-md italic">{type}</div>
+	</td>
+	<td><span class="text-xl font-bold mr-1">{range}</span>ft.</td>
+	<td class="text-xl font-bold">{hitdc}</td>
+	<td class="text-xl font-bold">
+		<span class="flex items-center"
+			>{damage}<span
+				hx-get="/assets/damagetypes/{damage_type}.svg"
+				hx-trigger="load once"
+				hx-swap="outerHTML"
+			></span
+		></span>
+	</td>
+	<td>{notes}</td>
 </tr>
