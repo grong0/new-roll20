@@ -444,7 +444,7 @@
 
 			<!-- Workspace -->
 			<div class="w-full h-full p-2 rounded-lg">
-                <!-- TODO: `shadow-lg` is causing a shadow problem with the border-radius -->
+				<!-- TODO: `shadow-lg` is causing a shadow problem with the border-radius -->
 				<div role="tablist" class="tabs-fixed tabs-lifted h-full shadow-lg">
 					<input
 						type="radio"
@@ -458,29 +458,119 @@
 					<div class="tab-content h-full bg-base-100 rounded-box p-6">
 						<div role="tablist" class="tabs tabs-boxed shadow-md">
 							<a role="tab" class="tab tab-active">All</a>
-							<a role="tab" class="tab">Attack</a>
-							<a role="tab" class="tab">Action</a>
-							<a role="tab" class="tab">Bonus Action</a>
-							<a role="tab" class="tab">Reaction</a>
+							<a role="tab" class="tab">Actions</a>
+							<a role="tab" class="tab">Bonus Actions</a>
+							<a role="tab" class="tab">Reactions</a>
 							<a role="tab" class="tab">Other</a>
 							<a role="tab" class="tab">Limited Use</a>
 						</div>
-						<table class="w-full table border-separate border-spacing-y-4">
-							<thead>
-								<tr>
-									<th>Name</th>
-									<th>Range</th>
-									<th>Hit/DC</th>
-									<th>Damage</th>
-									<th>Notes</th>
-								</tr>
-							</thead>
-							<tbody
-								hx-get="/player/attacks"
-								hx-trigger="load once, change from:#actions-filter"
-								hx-include="#actions-filter"
-							></tbody>
-						</table>
+						<div class="overflow-y-scroll">
+							<div class="divider">Actions</div>
+							<table class="w-full table border-separate border-spacing-y-4">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Range</th>
+										<th>Hit/DC</th>
+										<th>Damage</th>
+										<th>Notes</th>
+									</tr>
+								</thead>
+								<tbody
+									hx-get="/player/actions/action"
+									hx-trigger="load once"
+								></tbody>
+							</table>
+							<article class="prose">
+								<h3>Actions in Combat</h3>
+								<blockquote hx-get="/player/actionsincombat/action">
+									Attack, Cast a Spell, Dash, Disengage, Dodge, Grapple, Help,
+									Hide, Improvise, Ready, Search, Shove, Use an Object
+								</blockquote>
+							</article>
+
+							<div class="divider">Bonus Actions</div>
+							<table class="w-full table border-separate border-spacing-y-4">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Range</th>
+										<th>Hit/DC</th>
+										<th>Damage</th>
+										<th>Notes</th>
+									</tr>
+								</thead>
+								<tbody
+									hx-get="/player/actions/bonusaction"
+									hx-trigger="load once"
+								></tbody>
+							</table>
+							<article class="prose">
+								<h3>Actions in Combat</h3>
+								<blockquote
+									hx-get="/player/actionsincombat/bonusaction"
+								></blockquote>
+							</article>
+
+							<div class="divider">Reactions</div>
+							<table class="w-full table border-separate border-spacing-y-4">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Range</th>
+										<th>Hit/DC</th>
+										<th>Damage</th>
+										<th>Notes</th>
+									</tr>
+								</thead>
+								<tbody
+									hx-get="/player/actions/reaction"
+									hx-trigger="load once"
+								></tbody>
+							</table>
+							<article class="prose">
+								<h3>Actions in Combat</h3>
+								<blockquote hx-get="/player/actionsincombat/reaction"></blockquote>
+							</article>
+
+							<div class="divider">Other</div>
+							<table class="w-full table border-separate border-spacing-y-4">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Range</th>
+										<th>Hit/DC</th>
+										<th>Damage</th>
+										<th>Notes</th>
+									</tr>
+								</thead>
+								<tbody
+									hx-get="/player/actions/other"
+									hx-trigger="load once"
+								></tbody>
+							</table>
+							<article class="prose">
+								<h3>Actions in Combat</h3>
+								<blockquote hx-get="/player/actionsincombat/other"></blockquote>
+							</article>
+
+							<div class="divider">Limited Use</div>
+							<table class="w-full table border-separate border-spacing-y-4">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Range</th>
+										<th>Hit/DC</th>
+										<th>Damage</th>
+										<th>Notes</th>
+									</tr>
+								</thead>
+								<tbody
+									hx-get="/player/actions/limiteduse"
+									hx-trigger="load once"
+								></tbody>
+							</table>
+						</div>
 					</div>
 
 					<input

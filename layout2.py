@@ -154,10 +154,9 @@ def player_skill_bonus(skill: str):
     return "5"
 
 
-@app.get("/player/attacks", response_class=HTMLResponse)
-def player_attacks(action_filter: str = "attack"):
-    print(action_filter)
-    attacks = [
+@app.get("/player/actions/action", response_class=HTMLResponse)
+def player_actions_action():
+    actions = [
         {
             "name": "Ray of Frost",
             "type": "Cantrip - Wizard",
@@ -185,16 +184,128 @@ def player_attacks(action_filter: str = "attack"):
     ]
 
     content = ""
-    for attack in attacks:
+    for action in actions:
         content += compile_component(
             "actions-workspace-attack",
-            ("{name}", attack["name"]),
-            ("{type}", attack["type"]),
-            ("{range}", str(attack["range"])),
-            ("{hitdc}", str(attack["hitdc"])),
-            ("{damage}", attack["damage"]["dice"]),
-            ("{damage_type}", attack["damage"]["type"]),
-            ("{notes}", attack["notes"]),
+            ("{name}", action["name"]),
+            ("{type}", action["type"]),
+            ("{range}", str(action["range"])),
+            ("{hitdc}", str(action["hitdc"])),
+            ("{damage}", action["damage"]["dice"]),
+            ("{damage_type}", action["damage"]["type"]),
+            ("{notes}", action["notes"]),
+        )
+    return content
+
+
+@app.get("/player/actions/bonusaction", response_class=HTMLResponse)
+def player_actions_bonusaction():
+    bonus_actions = [
+        {
+            "name": "Melf's Minute Meteors",
+            "type": "3rd Level - Wizard",
+            "range": "Self",
+            "hitdc": "DEX 14",
+            "damage": {"dice": "2d6", "type": "fire"},
+            "notes": "Concentration, V/S/M",
+        }
+    ]
+
+    content = ""
+    for bonus_action in bonus_actions:
+        content += compile_component(
+            "actions-workspace-attack",
+            ("{name}", bonus_action["name"]),
+            ("{type}", bonus_action["type"]),
+            ("{range}", str(bonus_action["range"])),
+            ("{hitdc}", str(bonus_action["hitdc"])),
+            ("{damage}", bonus_action["damage"]["dice"]),
+            ("{damage_type}", bonus_action["damage"]["type"]),
+            ("{notes}", bonus_action["notes"]),
+        )
+    return content
+
+
+@app.get("/player/actions/reaction", response_class=HTMLResponse)
+def player_actions_reaction():
+    reactions = [
+        {
+            "name": "",
+            "type": "",
+            "range": "",
+            "hitdc": "",
+            "damage": {"dice": "", "type": ""},
+            "notes": "",
+        }
+    ]
+
+    content = ""
+    for reaction in reactions:
+        content += compile_component(
+            "actions-workspace-attack",
+            ("{name}", reaction["name"]),
+            ("{type}", reaction["type"]),
+            ("{range}", str(reaction["range"])),
+            ("{hitdc}", str(reaction["hitdc"])),
+            ("{damage}", reaction["damage"]["dice"]),
+            ("{damage_type}", reaction["damage"]["type"]),
+            ("{notes}", reaction["notes"]),
+        )
+    return content
+
+
+@app.get("/player/actions/other", response_class=HTMLResponse)
+def player_actions_other():
+    other_actions = [
+        {
+            "name": "",
+            "type": "",
+            "range": "",
+            "hitdc": "",
+            "damage": {"dice": "", "type": ""},
+            "notes": "",
+        }
+    ]
+
+    content = ""
+    for action in other_actions:
+        content += compile_component(
+            "actions-workspace-attack",
+            ("{name}", action["name"]),
+            ("{type}", action["type"]),
+            ("{range}", str(action["range"])),
+            ("{hitdc}", str(action["hitdc"])),
+            ("{damage}", action["damage"]["dice"]),
+            ("{damage_type}", action["damage"]["type"]),
+            ("{notes}", action["notes"]),
+        )
+    return content
+
+
+@app.get("/player/actions/limiteduse", response_class=HTMLResponse)
+def player_actions_limiteduse():
+    limiteduse_actions = [
+        {
+            "name": "",
+            "type": "",
+            "range": "",
+            "hitdc": "",
+            "damage": {"dice": "", "type": ""},
+            "notes": "",
+        }
+    ]
+
+    content = ""
+    for action in limiteduse_actions:
+        content += compile_component(
+            "actions-workspace-attack",
+            ("{name}", action["name"]),
+            ("{type}", action["type"]),
+            ("{range}", str(action["range"])),
+            ("{hitdc}", str(action["hitdc"])),
+            ("{damage}", action["damage"]["dice"]),
+            ("{damage_type}", action["damage"]["type"]),
+            ("{notes}", action["notes"]),
         )
     return content
 
