@@ -39,8 +39,8 @@
 
 #charsheet-container {
 	display: grid;
-	grid-template-rows: 208px 1fr;
-	grid-template-columns: 120px 200px 200px 1fr;
+	grid-template-rows: 120px 1fr;
+	grid-template-columns: 120px 250px 250px 1fr;
 }
 
 .tabs-fixed {
@@ -56,4 +56,35 @@
 .rounded-box-tablerow td:last-child {
     border-top-right-radius: var(--rounded-box, 1rem/* 16px */);
     border-bottom-right-radius: var(--rounded-box, 1rem/* 16px */);
+}
+
+.hitpoints {
+    clip-path: polygon(
+        25% 0%,
+        75% 0,
+        75% 25%,
+        100% 25%,
+        100% 75%,
+        75% 75%,
+        75% 100%,
+        25% 100%,
+        25% 75%,
+        0% 75%,
+        0% 25%,
+        25% 25%
+    );
+}
+
+.btn-dimensions-override {
+    @apply btn;
+
+    width: 100%;
+    height: 100%;
+}
+
+.input-dimensions-override {
+    @apply input;
+
+    width: 100%;
+    height: 100%;
 }
