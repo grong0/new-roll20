@@ -4,8 +4,8 @@ dist
 /venv
 main.spec
 node_modules
-data/raw/***/*
-data/schema/***/*
+data
+schema
 
 
 # Added by cargo

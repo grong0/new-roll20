@@ -6,4 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+git-download = "0.1.1"
+serde = "1.0.215"
 serde_json = "1.0.117"
+typify = "0.2.0"

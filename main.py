@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
-from data.raw_api import API
+from raw_api import API
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
