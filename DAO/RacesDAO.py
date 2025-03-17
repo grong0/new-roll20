@@ -1,5 +1,6 @@
-from enum import StrEnum
+import datetime
 import json
+from enum import StrEnum
 from typing import Optional
 
 
@@ -106,8 +107,9 @@ class SkillProficiencies:
                         else self.choose_count
                     )
                 else:
-                    print(f"Skill proficiency  value was not expected")
-                    print(f"It was a {type(object[key])} with a value of {object[key]}")
+                    # print(f"Skill proficiency  value was not expected")
+                    # print(f"It was a {type(object[key])} with a value of {object[key]}")
+                    pass
 
 
 class ToolProficiencies:
@@ -136,7 +138,7 @@ class WeaponProficiencies:
                     self.choose_tools = object[key]["fromFilter"]
                     self.choose_amount = object[key]["count"]
                 else:
-                    print(f"key: {key}")
+                    # print(f"key: {key}")
                     if "|" in key:
                         self.weapons.append(
                             {"name": key.split("|")[0], "source": key.split("|")[1]}
@@ -279,7 +281,7 @@ class AdditionalSpells:
                                     self.spells.append(
                                         {
                                             "name": spell,
-                                            "ability": spell_object["ability"],
+                                            "ability": spell_object["ability"] if "ability" in spell_object.keys() else "base",
                                             "reset_when": Reset.NEVER,
                                             "aquired_at": int(level),
                                         }
@@ -290,7 +292,7 @@ class AdditionalSpells:
                                         self.spells.append(
                                             {
                                                 "name": spell,
-                                                "ability": spell_object["ability"],
+                                                "ability": spell_object["ability"] if "ability" in spell_object.keys() else "base",
                                                 "reset_when": Reset.REST,
                                                 "aquired_at": int(level),
                                             }
@@ -335,7 +337,7 @@ class Race:
     additional_spells: AdditionalSpells
     immune: list[str] = []
     conditionImmune: list[str] = []
-    entries: list[dict[str, list[str] | str]] = []
+    entries: list[dict[str, list[str] | str]] | str = []
     has_fluff: bool = False
     has_fluff_images: bool = False
     versions: list[dict[str, any]] = []
@@ -444,19 +446,36 @@ class Race:
 
 
 class Races:
-    races: list[Race] = []
+    races: dict[str, Race]
 
     def __init__(self) -> None:
-        with open("./data/raw/races.json") as f:
+        self.races = {}
+        with open("../data/races.json") as f:
             object = json.load(f)
 
             for race in object["race"]:
-                self.races.append(Race(race))
-                print(
-                    f"finished {self.races[-1].name} | {len(self.races)}/{len(object['race'])}"
-                )
+                self.races[race["name"]] = Race(race)
+                # print(
+                #     f"finished {self.races[-1].name} | {len(self.races)}/{len(object['race'])}"
+                # )
+    
+    def get_race(self, name: str) -> Optional[Race]:
+        try:
+            return self.races[name]
+        except:
+            return None
 
 
-if __name__ == "__main__":
-    races = Races()
-    print("races are done")
+if __name__ == "__main__":    
+    times = []
+    count = 1000
+    for _ in range(0, count):
+        start = datetime.datetime.now()
+        races = Races()
+        end = datetime.datetime.now()
+        times.append((end - start).microseconds)
+        del races
+    
+    average_time = sum(times) / count
+    
+    print(f"average time was {average_time} microseconds")

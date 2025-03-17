@@ -1,4 +1,5 @@
 import json
+from pprint import pprint
 from typing import Optional
 
 
@@ -8,11 +9,11 @@ class API:
     books: list[dict]
 
     def __init__(self) -> None:
-        with open("./data/raw/races.json") as f:
+        with open("./data/races.json") as f:
             object = json.load(f)
             self.races = object["race"]
             self.subraces = object["subrace"]
-        with open("./data/raw/books.json") as f:
+        with open("./data/books.json") as f:
             object = json.load(f)
             self.books = object["book"]
 
@@ -182,6 +183,6 @@ if __name__ == "__main__":
     api = API()
     race = api.get_race("Dragonborn", "PHB")
     subraces = api.get_race_subraces(race)
-    print(subraces)
+    print(json.dumps(race, indent=4))
     # subrace = api.get_subrace("Ravenite", "EGW")
     # parent_race = api.get_subrace_parent(subrace)
