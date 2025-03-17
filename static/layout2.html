@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="halloween">
+<html lang="en" data-theme="autumn">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -23,7 +23,10 @@
 	<body class="w-screen h-screen bg-base-300">
 		<div id="charsheet-container" class="w-full h-full gap-4 p-4">
 			<!-- Title Card -->
-			<div class="col-span-3 w-full h-full overflow-hidden bg-base-100 rounded-box shadow-md">
+			<div
+				id="title-card"
+				class="col-span-2 w-full h-full overflow-hidden bg-base-100 rounded-box shadow-md"
+			>
 				<div class="flex flex-row h-full">
 					<div class="w-[120px] h-[120px] p-2">
 						<span class="w-full h-full">
@@ -63,30 +66,63 @@
 			</div>
 
 			<!-- Important Stats -->
-            <div class="stats shadow">
-              <div class="stat">
-                <div class="stat-title">Hit Points</div>
-                <div class="stat-value" hx-get="/player/hitpoints/current" hx-trigger="load once"></div>
-                <div class="stat-desc">/ <span hx-get="/player/hitpoints/max" hx-trigger="load once"></span></div>
-                <div class="stat-figure text-primary" hx-get="/assets/hitpoints.svg" hx-trigger="load once"></div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Armor Class</div>
-                <div class="stat-value" hx-get="/player/armorclass" hx-trigger="load once"></div>
-                <div class="stat-figure text-primary" hx-get="/assets/armorclass.svg" hx-trigger="load once"></div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Initiative</div>
-                <div class="stat-value" hx-get="/player/initiative" hx-trigger="load once"></div>
-                <div class="stat-figure text-primary" hx-get="/assets/initiative.svg" hx-trigger="load once"></div>
-              </div>
-              <div class="stat">
-                <div class="stat-title">Speed</div>
-                <div class="stat-value" hx-get="/player/speed/walking" hx-trigger="load once"></div>
-                <div class="stat-figure text-primary" hx-get="/assets/speed.svg" hx-trigger="load once"></div>
-              </div>
-
-            </div>
+			<div id="important-stats" class="stats shadow">
+				<div class="stat">
+					<div class="stat-title">Hit Points</div>
+					<div
+						class="stat-value"
+						hx-get="/player/hitpoints/current"
+						hx-trigger="load once"
+					></div>
+					<div class="stat-desc">
+						/ <span hx-get="/player/hitpoints/max" hx-trigger="load once"></span>
+					</div>
+					<div
+						class="stat-figure text-primary"
+						hx-get="/assets/hitpoints.svg"
+						hx-trigger="load once"
+					></div>
+				</div>
+				<div class="stat">
+					<div class="stat-title">Armor Class</div>
+					<div
+						class="stat-value"
+						hx-get="/player/armorclass"
+						hx-trigger="load once"
+					></div>
+					<div
+						class="stat-figure text-primary"
+						hx-get="/assets/armorclass.svg"
+						hx-trigger="load once"
+					></div>
+				</div>
+				<div class="stat">
+					<div class="stat-title">Initiative</div>
+					<div
+						class="stat-value"
+						hx-get="/player/initiative"
+						hx-trigger="load once"
+					></div>
+					<div
+						class="stat-figure text-primary"
+						hx-get="/assets/initiative.svg"
+						hx-trigger="load once"
+					></div>
+				</div>
+				<div class="stat">
+					<div class="stat-title">Speed</div>
+					<div
+						class="stat-value"
+						hx-get="/player/speed/walking"
+						hx-trigger="load once"
+					></div>
+					<div
+						class="stat-figure text-primary"
+						hx-get="/assets/speed.svg"
+						hx-trigger="load once"
+					></div>
+				</div>
+			</div>
 			<!-- <div class="w-full h-full overflow-hidden grid grid-cols-7 gap-2">
 				<div
 					class="bg-base-100 rounded-box shadow-lg h-full w-full p-2 flex flex-col justify-center items-center"
@@ -148,503 +184,501 @@
 			</div> -->
 
 			<!-- Abilities -->
-			<div class="flex flex-col justify-between w-full h-full overflow-hidden">
+			<!-- <div id="abilities" class="flex flex-col justify-between w-full h-full overflow-hidden"> -->
+			<div
+				id="str"
+				class="relative flex flex-col justify-center items-center w-full h-auto aspect-square"
+			>
 				<div
-					class="relative flex flex-col justify-center items-center w-full h-auto aspect-square"
+					id="attribute"
+					class="absolute top-2 left-2 badge badge-lg badge-ghost shadow-md"
 				>
-					<div
-						id="attribute"
-						class="absolute top-2 left-2 badge badge-lg badge-ghost shadow-md"
-					>
-						STR
-					</div>
-					<div
-						id="main-number"
-						class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
-						hx-get="/player/abilities/str/modifier"
-						hx-trigger="load once"
-					></div>
-					<div
-						id="sub-number"
-						class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
-						hx-get="/player/abilities/wis/score"
-						hx-trigger="load once"
-					></div>
+					STR
 				</div>
 				<div
-					class="relative flex flex-col justify-center items-center w-full h-auto aspect-square"
-				>
-					<div
-						id="attribute"
-						class="absolute top-2 left-2 badge badge-lg badge-ghost shadow-md"
-					>
-						DEX
-					</div>
-					<div
-						id="main-number"
-						class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
-						hx-get="/player/abilities/str/modifier"
-						hx-trigger="load once"
-					></div>
-					<div
-						id="sub-number"
-						class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
-						hx-get="/player/abilities/wis/score"
-						hx-trigger="load once"
-					></div>
-				</div>
+					id="main-number"
+					class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
+					hx-get="/player/abilities/str/modifier"
+					hx-trigger="load once"
+				></div>
 				<div
-					class="relative flex flex-col justify-center items-center w-full h-auto aspect-square"
-				>
-					<div
-						id="attribute"
-						class="absolute top-2 left-2 badge badge-lg badge-ghost shadow-md"
-					>
-						CON
-					</div>
-					<div
-						id="main-number"
-						class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
-						hx-get="/player/abilities/str/modifier"
-						hx-trigger="load once"
-					></div>
-					<div
-						id="sub-number"
-						class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
-						hx-get="/player/abilities/wis/score"
-						hx-trigger="load once"
-					></div>
-				</div>
-				<div
-					class="relative flex flex-col justify-center items-center w-full h-auto aspect-square"
-				>
-					<div
-						id="attribute"
-						class="absolute top-2 left-2 badge badge-lg badge-ghost shadow-md"
-					>
-						INT
-					</div>
-					<div
-						id="main-number"
-						class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
-						hx-get="/player/abilities/str/modifier"
-						hx-trigger="load once"
-					></div>
-					<div
-						id="sub-number"
-						class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
-						hx-get="/player/abilities/wis/score"
-						hx-trigger="load once"
-					></div>
-				</div>
-				<div
-					class="relative flex flex-col justify-center items-center w-full h-auto aspect-square"
-				>
-					<div
-						id="attribute"
-						class="absolute top-2 left-2 badge badge-lg badge-ghost shadow-md"
-					>
-						WIS
-					</div>
-					<div
-						id="main-number"
-						class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
-						hx-get="/player/abilities/str/modifier"
-						hx-trigger="load once"
-					></div>
-					<div
-						id="sub-number"
-						class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
-						hx-get="/player/abilities/wis/score"
-						hx-trigger="load once"
-					></div>
-				</div>
-				<div
-					class="relative flex flex-col justify-center items-center w-full h-auto aspect-square"
-				>
-					<div
-						id="attribute"
-						class="absolute top-2 left-2 badge badge-lg badge-ghost shadow-md"
-					>
-						CHA
-					</div>
-					<div
-						id="main-number"
-						class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
-						hx-get="/player/abilities/str/modifier"
-						hx-trigger="load once"
-					></div>
-					<div
-						id="sub-number"
-						class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
-						hx-get="/player/abilities/wis/score"
-						hx-trigger="load once"
-					></div>
-				</div>
+					id="sub-number"
+					class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
+					hx-get="/player/abilities/wis/score"
+					hx-trigger="load once"
+				></div>
 			</div>
+			<div
+				id="dex"
+				class="relative flex flex-col justify-center items-center w-full h-auto aspect-square"
+			>
+				<div
+					id="attribute"
+					class="absolute top-2 left-2 badge badge-lg badge-ghost shadow-md"
+				>
+					DEX
+				</div>
+				<div
+					id="main-number"
+					class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
+					hx-get="/player/abilities/str/modifier"
+					hx-trigger="load once"
+				></div>
+				<div
+					id="sub-number"
+					class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
+					hx-get="/player/abilities/wis/score"
+					hx-trigger="load once"
+				></div>
+			</div>
+			<div
+				id="con"
+				class="relative flex flex-col justify-center items-center w-full h-auto aspect-square"
+			>
+				<div
+					id="attribute"
+					class="absolute top-2 left-2 badge badge-lg badge-ghost shadow-md"
+				>
+					CON
+				</div>
+				<div
+					id="main-number"
+					class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
+					hx-get="/player/abilities/str/modifier"
+					hx-trigger="load once"
+				></div>
+				<div
+					id="sub-number"
+					class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
+					hx-get="/player/abilities/wis/score"
+					hx-trigger="load once"
+				></div>
+			</div>
+			<div
+				id="int"
+				class="relative flex flex-col justify-center items-center w-full h-auto aspect-square"
+			>
+				<div
+					id="attribute"
+					class="absolute top-2 left-2 badge badge-lg badge-ghost shadow-md"
+				>
+					INT
+				</div>
+				<div
+					id="main-number"
+					class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
+					hx-get="/player/abilities/str/modifier"
+					hx-trigger="load once"
+				></div>
+				<div
+					id="sub-number"
+					class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
+					hx-get="/player/abilities/wis/score"
+					hx-trigger="load once"
+				></div>
+			</div>
+			<div
+				id="wis"
+				class="relative flex flex-col justify-center items-center w-full h-auto aspect-square"
+			>
+				<div
+					id="attribute"
+					class="absolute top-2 left-2 badge badge-lg badge-ghost shadow-md"
+				>
+					WIS
+				</div>
+				<div
+					id="main-number"
+					class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
+					hx-get="/player/abilities/str/modifier"
+					hx-trigger="load once"
+				></div>
+				<div
+					id="sub-number"
+					class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
+					hx-get="/player/abilities/wis/score"
+					hx-trigger="load once"
+				></div>
+			</div>
+			<div
+				id="cha"
+				class="relative flex flex-col justify-center items-center w-full h-auto aspect-square"
+			>
+				<div
+					id="attribute"
+					class="absolute top-2 left-2 badge badge-lg badge-ghost shadow-md"
+				>
+					CHA
+				</div>
+				<div
+					id="main-number"
+					class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
+					hx-get="/player/abilities/str/modifier"
+					hx-trigger="load once"
+				></div>
+				<div
+					id="sub-number"
+					class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
+					hx-get="/player/abilities/wis/score"
+					hx-trigger="load once"
+				></div>
+			</div>
+			<!-- </div> -->
 
 			<!-- Skills -->
-			<div class="flex flex-col gap-4 overflow-hidden">
-				<div
-					class="w-full h-auto flex flex-col bg-base-100 rounded-box p-4 gap-1 shadow-lg"
-				>
-					<div class="w-full h-fit text-center font-bold">
-						<h1 class="font-2xl">Saving Throws</h1>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/acrobatics/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
-							<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
-						</div>
-						<div class="ml-2">Strength</div>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/acrobatics/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
-							<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
-						</div>
-						<div class="ml-2">Dexterity</div>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/acrobatics/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
-							<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
-						</div>
-						<div class="ml-2">Constitution</div>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/acrobatics/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
-							<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
-						</div>
-						<div class="ml-2">Intelligence</div>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/acrobatics/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
-							<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
-						</div>
-						<div class="ml-2">Wisdom</div>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/acrobatics/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
-							<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
-						</div>
-						<div class="ml-2">Charisma</div>
-					</div>
+			<!-- <div class="flex flex-col gap-4 overflow-hidden"> -->
+			<div
+				id="saving-throws"
+				class="w-full h-auto flex flex-col bg-base-100 rounded-box p-4 gap-1 shadow-lg"
+			>
+				<div class="w-full h-fit text-center font-bold">
+					<h1 class="font-2xl">Saving Throws</h1>
 				</div>
-				<div
-					class="w-full h-auto flex flex-col bg-base-100 rounded-box p-4 gap-1 shadow-lg"
-				>
-					<div class="w-full h-fit text-center font-bold">
-						<h1 class="font-2xl">Skills</h1>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/acrobatics/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
+						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
 					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/acrobatics/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
-							<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
-						</div>
-						<span class="ml-2">Acrobatics</span>
+					<div class="ml-2">Strength</div>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/acrobatics/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
+						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
 					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/animalhandling/status"
-							hx-trigger="load once"
-						></div>
-						<div
-							hx-get="/player/skills/animalhandling/bonus"
-							hx-trigger="load once"
-						></div>
-						<span class="ml-2">Animal Handling</span>
+					<div class="ml-2">Dexterity</div>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/acrobatics/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
+						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
 					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/arcana/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/arcana/bonus" hx-trigger="load once"></div>
-						<span class="ml-2">Arcana</span>
+					<div class="ml-2">Constitution</div>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/acrobatics/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
+						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
 					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/athletics/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/athletics/bonus" hx-trigger="load once"></div>
-						<span class="ml-2">Athletics</span>
+					<div class="ml-2">Intelligence</div>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/acrobatics/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
+						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
 					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/deception/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/deception/bonus" hx-trigger="load once"></div>
-						<span class="ml-2">Deception</span>
+					<div class="ml-2">Wisdom</div>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/acrobatics/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
+						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
 					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/history/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/history/bonus" hx-trigger="load once"></div>
-						<span class="ml-2">History</span>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/insight/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/insight/bonus" hx-trigger="load once"></div>
-						<span class="ml-2">Insight</span>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/intimidation/status"
-							hx-trigger="load once"
-						></div>
-						<div
-							hx-get="/player/skills/intimidation/bonus"
-							hx-trigger="load once"
-						></div>
-						<span class="ml-2">Intimidation</span>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/investigation/status"
-							hx-trigger="load once"
-						></div>
-						<div
-							hx-get="/player/skills/investigation/bonus"
-							hx-trigger="load once"
-						></div>
-						<span class="ml-2">Investigation</span>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/medicine/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/medicine/bonus" hx-trigger="load once"></div>
-						<span class="ml-2">Medicine</span>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/nature/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/nature/bonus" hx-trigger="load once"></div>
-						<span class="ml-2">Nature</span>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/perception/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/perception/bonus" hx-trigger="load once"></div>
-						<span class="ml-2">Perception</span>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/performance/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/performance/bonus" hx-trigger="load once"></div>
-						<span class="ml-2">Performance</span>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/persuasion/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/persuasion/bonus" hx-trigger="load once"></div>
-						<span class="ml-2">Persuasion</span>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/religion/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/religion/bonus" hx-trigger="load once"></div>
-						<span class="ml-2">Religion</span>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/slightofhand/status"
-							hx-trigger="load once"
-						></div>
-						<div
-							hx-get="/player/skills/slightofhand/bonus"
-							hx-trigger="load once"
-						></div>
-						<span class="ml-2">Slight of Hand</span>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/stealth/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/stealth/bonus" hx-trigger="load once"></div>
-						<span class="ml-2">Stealth</span>
-					</div>
-					<div class="bg-base-100 rounded-lg flex flex-row items-center">
-						<div
-							class="ml-1 mr-1 flex justify-center items-center"
-							hx-get="/player/skills/survival/status"
-							hx-trigger="load once"
-						></div>
-						<div hx-get="/player/skills/survival/bonus" hx-trigger="load once"></div>
-						<span class="ml-2">Survival</span>
-					</div>
+					<div class="ml-2">Charisma</div>
 				</div>
 			</div>
+			<div
+				id="skills"
+				class="w-full h-auto flex flex-col bg-base-100 rounded-box p-4 gap-1 shadow-lg"
+			>
+				<div class="w-full h-fit text-center font-bold">
+					<h1 class="font-2xl">Skills</h1>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/acrobatics/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/acrobatics/bonus" hx-trigger="load once">
+						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
+					</div>
+					<span class="ml-2">Acrobatics</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/animalhandling/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/animalhandling/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Animal Handling</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/arcana/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/arcana/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Arcana</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/athletics/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/athletics/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Athletics</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/deception/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/deception/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Deception</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/history/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/history/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">History</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/insight/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/insight/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Insight</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/intimidation/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/intimidation/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Intimidation</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/investigation/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/investigation/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Investigation</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/medicine/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/medicine/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Medicine</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/nature/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/nature/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Nature</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/perception/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/perception/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Perception</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/performance/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/performance/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Performance</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/persuasion/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/persuasion/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Persuasion</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/religion/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/religion/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Religion</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/slightofhand/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/slightofhand/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Slight of Hand</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/stealth/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/stealth/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Stealth</span>
+				</div>
+				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+					<div
+						class="ml-1 mr-1 flex justify-center items-center"
+						hx-get="/player/skills/survival/status"
+						hx-trigger="load once"
+					></div>
+					<div hx-get="/player/skills/survival/bonus" hx-trigger="load once"></div>
+					<span class="ml-2">Survival</span>
+				</div>
+			</div>
+			<!-- </div> -->
 
 			<!-- Senses and Proficiencies -->
-			<div class="w-full h-auto overflow-hidden flex flex-col gap-4">
-				<div
-					class="w-full h-auto bg-base-100 rounded-box p-4 flex flex-col gap-2 shadow-md"
-				>
-					<div class="w-full h-fit text-center font-bold">
-						<h1 class="font-2xl">Senses</h1>
+			<!-- <div class="w-full h-auto overflow-hidden flex flex-col gap-4"> -->
+			<div
+				id="senses"
+				class="w-full h-auto bg-base-100 rounded-box p-4 flex flex-col gap-2 shadow-md"
+			>
+				<div class="w-full h-fit text-center font-bold">
+					<h1 class="font-2xl">Senses</h1>
+				</div>
+				<div class="flex flex-row items-center relative">
+					<div
+						class="rounded-full h-10 aspect-square bg-base-300 flex justify-center items-center shadow-md font-bold text-lg z-10 absolute left-0"
+					>
+						<p
+							class="absolute"
+							hx-get="/player/senses/perception"
+							hx-trigger="load once"
+						></p>
 					</div>
-					<div class="flex flex-row items-center relative">
-						<div
-							class="rounded-full h-10 aspect-square bg-base-300 flex justify-center items-center shadow-md font-bold text-lg z-10 absolute left-0"
-						>
-							<p
-								class="absolute"
-								hx-get="/player/senses/perception"
-								hx-trigger="load once"
-							></p>
-						</div>
-						<div class="rounded-btn w-full bg-base-200 h-10 flex items-center ml-3">
-							<p class="ml-8">Passive Perception</p>
-						</div>
-					</div>
-					<div class="flex flex-row items-center relative">
-						<div
-							class="rounded-full h-10 aspect-square bg-base-300 flex justify-center items-center shadow-md font-bold text-lg z-10 absolute left-0"
-						>
-							<p
-								class="absolute"
-								hx-get="/player/senses/investigation"
-								hx-trigger="load once"
-							></p>
-						</div>
-						<div class="rounded-btn w-full bg-base-200 h-10 flex items-center ml-3">
-							<p class="ml-8">Passive Investigation</p>
-						</div>
-					</div>
-					<div class="flex flex-row items-center relative">
-						<div
-							class="rounded-full h-10 aspect-square bg-base-300 flex justify-center items-center shadow-md font-bold text-lg z-10 absolute left-0"
-						>
-							<p
-								class="absolute"
-								hx-get="/player/senses/insight"
-								hx-trigger="load once"
-							></p>
-						</div>
-						<div class="rounded-btn w-full bg-base-200 h-10 flex items-center ml-3">
-							<p class="ml-8">Passive Insight</p>
-						</div>
+					<div class="rounded-btn w-full bg-base-200 h-10 flex items-center ml-3">
+						<p class="ml-8">Passive Perception</p>
 					</div>
 				</div>
-				<div
-					class="w-full h-auto bg-base-100 rounded-box p-4 flex flex-col gap-2 shadow-lg"
-				>
-					<div class="w-full h-fit text-center font-bold">
-						<h1 class="font-2xl">Proficiencies</h1>
-					</div>
-					<div class="bg-base-200 rounded-btn p-2">
-						<div class="w-full h-fit font-bold">
-							<h1 class="font-xl">Armor</h1>
-						</div>
-						<article
-							class="prose text-base"
-							hx-get="/player/proficiencies/armor"
+				<div class="flex flex-row items-center relative">
+					<div
+						class="rounded-full h-10 aspect-square bg-base-300 flex justify-center items-center shadow-md font-bold text-lg z-10 absolute left-0"
+					>
+						<p
+							class="absolute"
+							hx-get="/player/senses/investigation"
 							hx-trigger="load once"
-						></article>
+						></p>
 					</div>
-					<div class="bg-base-200 rounded-btn p-2">
-						<div class="w-full h-fit font-bold">
-							<h1 class="font-xl">Weapons</h1>
-						</div>
-						<article
-							class="prose text-base"
-							hx-get="/player/proficiencies/weapons"
-							hx-trigger="load once"
-						></article>
+					<div class="rounded-btn w-full bg-base-200 h-10 flex items-center ml-3">
+						<p class="ml-8">Passive Investigation</p>
 					</div>
-					<div class="bg-base-200 rounded-btn p-2">
-						<div class="w-full h-fit font-bold">
-							<h1 class="font-xl">Tools</h1>
-						</div>
-						<article
-							class="prose text-base"
-							hx-get="/player/proficiencies/tools"
+				</div>
+				<div class="flex flex-row items-center relative">
+					<div
+						class="rounded-full h-10 aspect-square bg-base-300 flex justify-center items-center shadow-md font-bold text-lg z-10 absolute left-0"
+					>
+						<p
+							class="absolute"
+							hx-get="/player/senses/insight"
 							hx-trigger="load once"
-						></article>
+						></p>
 					</div>
-					<div class="bg-base-200 rounded-btn p-2">
-						<div class="w-full h-fit font-bold">
-							<h1 class="font-xl">Languages</h1>
-						</div>
-						<article
-							class="prose text-base"
-							hx-get="/player/proficiencies/languages"
-							hx-trigger="load once"
-						></article>
+					<div class="rounded-btn w-full bg-base-200 h-10 flex items-center ml-3">
+						<p class="ml-8">Passive Insight</p>
 					</div>
 				</div>
 			</div>
+			<div
+				id="proficiencies"
+				class="w-full h-auto bg-base-100 rounded-box p-4 flex flex-col gap-2 shadow-lg"
+			>
+				<div class="w-full h-fit text-center font-bold">
+					<h1 class="font-2xl">Proficiencies</h1>
+				</div>
+				<div class="bg-base-200 rounded-btn p-2">
+					<div class="w-full h-fit font-bold">
+						<h1 class="font-xl">Armor</h1>
+					</div>
+					<article
+						class="prose text-base"
+						hx-get="/player/proficiencies/armor"
+						hx-trigger="load once"
+					></article>
+				</div>
+				<div class="bg-base-200 rounded-btn p-2">
+					<div class="w-full h-fit font-bold">
+						<h1 class="font-xl">Weapons</h1>
+					</div>
+					<article
+						class="prose text-base"
+						hx-get="/player/proficiencies/weapons"
+						hx-trigger="load once"
+					></article>
+				</div>
+				<div class="bg-base-200 rounded-btn p-2">
+					<div class="w-full h-fit font-bold">
+						<h1 class="font-xl">Tools</h1>
+					</div>
+					<article
+						class="prose text-base"
+						hx-get="/player/proficiencies/tools"
+						hx-trigger="load once"
+					></article>
+				</div>
+				<div class="bg-base-200 rounded-btn p-2">
+					<div class="w-full h-fit font-bold">
+						<h1 class="font-xl">Languages</h1>
+					</div>
+					<article
+						class="prose text-base"
+						hx-get="/player/proficiencies/languages"
+						hx-trigger="load once"
+					></article>
+				</div>
+			</div>
+			<!-- </div> -->
 
 			<!-- Workspace -->
-			<div class="w-full h-full rounded-lg overflow-hidden">
+			<div id="workspace" class="w-full h-full rounded-lg overflow-hidden">
 				<!-- TODO: `shadow-lg` is causing a shadow problem with the border-radius -->
 				<div role="tablist" class="tabs-fixed tabs-lifted h-full shadow-lg">
 					<input
@@ -660,6 +694,63 @@
 						role="tabpanel"
 						class="tab-content h-full bg-base-100 rounded-box p-4 overflow-y-scroll"
 					>
+						<div role="tablist" class="tabs tabs-boxed shadow-md">
+							<input
+								type="radio"
+								name="actions-filter"
+								role="tab"
+								class="tab"
+								aria-label="All"
+								value="actions-all"
+								checked
+							/>
+							<input
+								type="radio"
+								name="actions-filter"
+								role="tab"
+								class="tab"
+								aria-label="Actions"
+								value="actions-actions"
+							/>
+							<input
+								type="radio"
+								name="actions-filter"
+								role="tab"
+								class="tab"
+								aria-label="Bonus Actions"
+								value="actions-bonus"
+							/>
+							<input
+								type="radio"
+								name="actions-filter"
+								role="tab"
+								class="tab"
+								aria-label="Reactions"
+								value="actions-reactions"
+							/>
+							<input
+								type="radio"
+								name="actions-filter"
+								role="tab"
+								class="tab"
+								aria-label="Other"
+								value="actions-other"
+							/>
+							<input
+								type="radio"
+								name="actions-filter"
+								role="tab"
+								class="tab"
+								aria-label="Limited Use"
+								value="actions-limited"
+							/>
+							<!-- <a role="tab" class="tab tab-active">All</a>
+							<a role="tab" class="tab">Actions</a>
+							<a role="tab" class="tab">Bonus Actions</a>
+							<a role="tab" class="tab">Reactions</a>
+							<a role="tab" class="tab">Other</a>
+							<a role="tab" class="tab">Limited Use</a> -->
+						</div>
 						<div role="tablist" class="tabs tabs-boxed shadow-md">
 							<a role="tab" class="tab tab-active">All</a>
 							<a role="tab" class="tab">Actions</a>

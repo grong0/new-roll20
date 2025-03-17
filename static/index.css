@@ -39,52 +39,137 @@
 
 #charsheet-container {
 	display: grid;
-	grid-template-rows: 120px 1fr;
+	grid-template-rows: 120px 1fr 1fr 1fr 1fr 1fr 1fr;
 	grid-template-columns: 120px 250px 250px 1fr;
 }
 
-.tabs-fixed {
-    @apply tabs;
+/* title card */
+#title-card {
+	grid-row-start: 1;
+	grid-row-end: 2;
+	grid-column-start: 1;
+	grid-column-end: 3;
+}
+/* important stats */
+#important-stats {
+	grid-row-start: 1;
+	grid-row-end: 2;
+	grid-column-start: 4;
+	grid-column-end: 5;
+}
+/* abilities */
+#str {
+	grid-row-start: 2;
+	grid-row-end: 3;
+	grid-column-start: 1;
+	grid-column-end: 2;
+}
+#dex {
+	grid-row-start: 4;
+	grid-row-end: 5;
+	grid-column-start: 1;
+	grid-column-end: 2;
+}
+#con {
+	grid-row-start: 3;
+	grid-row-end: 4;
+	grid-column-start: 1;
+	grid-column-end: 2;
+}
+#int {
+	grid-row-start: 5;
+	grid-row-end: 6;
+	grid-column-start: 1;
+	grid-column-end: 2;
+}
+#wis {
+	grid-row-start: 6;
+	grid-row-end: 7;
+	grid-column-start: 1;
+	grid-column-end: 2;
+}
+#cha {
+	grid-row-start: 7;
+	grid-row-end: 8;
+	grid-column-start: 1;
+	grid-column-end: 2;
+}
+/* skills */
+#saving-throws {
+	grid-row-start: 3;
+	grid-row-end: 4;
+	grid-column-start: 1;
+	grid-column-end: 2;
+}
+#skills {
+	grid-row-start: 3;
+	grid-row-end: 4;
+	grid-column-start: 2;
+	grid-column-end: 8;
+}
+/* senses and proficiencies */
+#senses {
+	grid-row-start: 2;
+	grid-row-end: 3;
+	grid-column-start: 2;
+	grid-column-end: 4;
+}
+#proficiencies {
+	grid-row-start: 2;
+	grid-row-end: 3;
+	grid-column-start: 4;
+	grid-column-end: 8;
+}
+/* workspace */
+#workspace {
+	grid-row-start: 2;
+	grid-row-end: 8;
+	grid-column-start: 4;
+	grid-column-end: 5;
+}
 
-    grid-template-rows: min-content 1fr;
+.tabs-fixed {
+	@apply tabs;
+
+	grid-template-rows: min-content 1fr;
 }
 
 .rounded-box-tablerow td:first-child {
-    border-top-left-radius: var(--rounded-box, 1rem/* 16px */);
-    border-bottom-left-radius: var(--rounded-box, 1rem/* 16px */);
+	border-top-left-radius: var(--rounded-box, 1rem /* 16px */);
+	border-bottom-left-radius: var(--rounded-box, 1rem /* 16px */);
 }
 .rounded-box-tablerow td:last-child {
-    border-top-right-radius: var(--rounded-box, 1rem/* 16px */);
-    border-bottom-right-radius: var(--rounded-box, 1rem/* 16px */);
+	border-top-right-radius: var(--rounded-box, 1rem /* 16px */);
+	border-bottom-right-radius: var(--rounded-box, 1rem /* 16px */);
 }
 
 .hitpoints {
-    clip-path: polygon(
-        25% 0%,
-        75% 0,
-        75% 25%,
-        100% 25%,
-        100% 75%,
-        75% 75%,
-        75% 100%,
-        25% 100%,
-        25% 75%,
-        0% 75%,
-        0% 25%,
-        25% 25%
-    );
+	clip-path: polygon(
+		25% 0%,
+		75% 0,
+		75% 25%,
+		100% 25%,
+		100% 75%,
+		75% 75%,
+		75% 100%,
+		25% 100%,
+		25% 75%,
+		0% 75%,
+		0% 25%,
+		25% 25%
+	);
 }
 
 .btn-dimensions-override {
-    @apply btn;
+	@apply btn;
 
-    width: 100%;
-    height: 100%;
+	width: 100%;
+	height: 100%;
 }
 
 .input-dimensions-override {
-    @apply input;
+	@apply input;
 
-    width: 100%;
-    height: 100%;
+	width: 100%;
+	height: 100%;
 }

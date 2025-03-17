@@ -2,6 +2,7 @@ __pycache__
 build
 dist
 /venv
+/venv-linux
 main.spec
 node_modules
 data/raw/***/*
