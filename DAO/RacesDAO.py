@@ -450,7 +450,7 @@ class Races:
 
     def __init__(self) -> None:
         self.races = {}
-        with open("../data/races.json") as f:
+        with open("../data/raw/races.json") as f:
             object = json.load(f)
 
             for race in object["race"]:
@@ -458,7 +458,7 @@ class Races:
                 # print(
                 #     f"finished {self.races[-1].name} | {len(self.races)}/{len(object['race'])}"
                 # )
-    
+
     def get_race(self, name: str) -> Optional[Race]:
         try:
             return self.races[name]
@@ -466,7 +466,7 @@ class Races:
             return None
 
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     times = []
     count = 1000
     for _ in range(0, count):
@@ -475,7 +475,7 @@ if __name__ == "__main__":
         end = datetime.datetime.now()
         times.append((end - start).microseconds)
         del races
-    
+
     average_time = sum(times) / count
-    
+
     print(f"average time was {average_time} microseconds")
