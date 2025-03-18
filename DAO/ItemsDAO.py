@@ -185,9 +185,7 @@ class MundaneItem:
 
 
 class MagicItem:
-    
-
-    def __init__(self) -> None:
+    def __init__(self, object: dict) -> None:
         pass
 
 
@@ -230,5 +228,5 @@ if __name__ == "__main__":
     # print(f"average time was {average_time} microseconds")
 
     items = Items()
-    print(items.items_base)
-    print(items.items)
+    print(items.mundane_items)
+    print(items.magic_items)
