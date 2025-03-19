@@ -1,95 +1,7 @@
 import json
 import datetime
 from typing import Any
-
-
-class Time:
-    quantity: int
-    unit: str
-
-    def __init__(self, object: dict) -> None:
-        self.quantity = object["number"]
-        self.unit = object["unit"]
-
-
-class Range:
-    type: str
-    form: str
-    amount: int
-
-    def __init__(self, object: dict) -> None:
-        self.type = object["type"]
-        if self.type == "special":
-            self.form = ""
-            self.amount = -1
-            return
-        self.form = object["distance"]["type"]
-        if self.form not in ["self", "touch", "sight", "unlimited"]:
-            self.amount = object["distance"]["amount"]
-            return
-        self.amount = -1
-
-
-class Components:
-    v: bool
-    s: bool
-    m: str
-    r: str
-
-    def __init__(self, object: dict) -> None:
-        # impl 1
-        # v = "v" in object.keys()
-        # s = "s" in object.keys()
-        # m = object["m"] if "m" in object.keys() else ""
-
-        # impl 2
-        self.v = False
-        self.s = False
-        self.m = ""
-        self.r = ""
-
-        for key in object.keys():
-            if key == "v":
-                self.v = True
-            elif key == "s":
-                self.s = True
-            elif key == "m":
-                self.m = object["m"]
-            elif key == "r":
-                self.r = object["r"]
-            else:
-                print(key)
-
-
-class Duration:
-    type: str
-    unit: str
-    amount: int
-    concentration: bool
-    ends: list[str]
-
-    def __init__(self, object: dict) -> None:
-        self.type = object["type"]
-        self.ends = []
-        self.concentration = (
-            object["concentration"] if "concentration" in object.keys() else False
-        )
-        if "duration" in object.keys():
-            self.unit = object["duration"]["type"]
-            self.amount = object["duration"]["amount"]
-        else:
-            self.amount = 0
-            self.unit = ""
-        self.ends = object["ends"] if "ends" in object.keys() else []
-
-
-class ScalingLevelDice:
-    type: str
-    scaling: dict[int, str]
-
-    def __init__(self, object: dict) -> None:
-        self.type = object["label"][: object["label"].find(" ")]
-        self.scaling = object["scaling"]
+from DAO.MiscClasses import Time, Range, Components, Duration, ScalingLevelDice
 
 
 class Spell:
@@ -166,6 +78,14 @@ class Spell:
             object["damageResist"] if "damageResist" in object.keys() else []
         )
 
+        self.__dict__["time"] = self.time.__dict__
+        self.__dict__["range"] = self.range.__dict__
+        self.__dict__["components"] = self.components.__dict__
+        self.__dict__["duration"] = self.duration.__dict__
+        self.__dict__["scaling_level_dice"] = [
+            scale.__dict__ for sclae in self.scaling_level_dice
+        ]
+
 
 class Spells:
     spells: dict[str, dict[str, Spell]]
@@ -173,13 +93,13 @@ class Spells:
     def __init__(self) -> None:
         self.spells = {}
 
-        with open("../data/raw/spells/index.json") as f:
+        with open("data/raw/spells/index.json") as f:
             index = json.load(f)
 
             for source in index.keys():
                 self.spells[source] = {}
 
-                with open(f"../data/raw/spells/{index[source]}") as f:
+                with open(f"data/raw/spells/{index[source]}") as f:
                     spells = json.load(f)
 
                     for spell in spells["spell"]:
