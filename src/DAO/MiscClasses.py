@@ -502,3 +502,61 @@ class ContainerCapacity:
         copy = self.__dict__.copy()
         copy['slots'] = [slot.__dict__ for slot in copy['slots']]
         return copy
+
+
+class StartingEquipment:
+    """
+    list of dict with keys of 'a', 'b', and '_'
+    """
+    def __init__(self, object: dict[str, Any]) -> None:
+        pass
+
+
+class ClassPrerequisite:
+    name: str
+    level: int
+    visible: bool
+    
+    def __init__(self, object: dict[str, Any]) -> None:
+        self.name = object['class']['name']
+        self.level = object['level']
+        self.visible = object['class']['visible']
+
+
+class Prerequisite:
+    campaign_requirement: list[str]
+    requires_campaign: bool
+    class_requirement: list[ClassPrerequisite]
+    requires_class: bool
+
+    def __init__(self, list: Optional[list[dict[str, Any]]]) -> None:
+        if list is None:
+            self.campaign_requirement = []
+            self.requires_campaign = False
+            self.class_requirement = []
+            self.requires_class = False
+            return
+        
+        for object in list:
+            if "level" in object.keys():
+                self.class_requirement = [ClassPrerequisite(class_level) for class_level in object['level']]
+                self.requires_class = True
+            if "campaign" in object.keys():
+                self.campaign_requirement = object['campaign']
+                self.requires_campaign = True
+    
+    def as_dict(self) -> dict[str, Any]:
+        """This is effectivaly read only as it creates a copy
+
+        Returns:
+            dict[str, Any]: the class as a dict
+        """
+        
+        copy = self.__dict__.copy()
+        copy['class_requirement'] = [class_level.__dict__ for class_level in self.class_requirement]
+        return copy
+
+
+class SkillLanguageToolProficiencies:
+    def __init__(self, object: dict[str, Any]) -> None:
+        pass
