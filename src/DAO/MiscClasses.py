@@ -1,5 +1,5 @@
 from enum import StrEnum
-from typing import Optional
+from typing import Any, Optional
 
 
 class Speed:
@@ -52,23 +52,19 @@ class Ability:
         if object is None:
             return
 
-        self.strength = object["str"] if "str" in object.keys() and object['str'] is int else self.strength
-        self.dexterity = object["dex"] if "dex" in object.keys() and object['dex'] is int else self.dexterity
-        self.constitution = (
-            object["con"] if "con" in object.keys() and object['con'] is int else self.constitution
-        )
-        self.intelligence = (
-            object["int"] if "int" in object.keys() and object['int'] is int else self.intelligence
-        )
-        self.wisdom = object["wis"] if "wis" in object.keys() and object['wis'] is int else self.wisdom
-        self.charisma = object["cha"] if "cha" in object.keys() and object['cha'] is int else self.charisma
-        if "choose" in object.keys() and object['choose'] is not int:
+        self.strength = object["str"] if "str" in object.keys() and object["str"] is int else self.strength
+        self.dexterity = object["dex"] if "dex" in object.keys() and object["dex"] is int else self.dexterity
+        self.constitution = object["con"] if "con" in object.keys() and object["con"] is int else self.constitution
+        self.intelligence = object["int"] if "int" in object.keys() and object["int"] is int else self.intelligence
+        self.wisdom = object["wis"] if "wis" in object.keys() and object["wis"] is int else self.wisdom
+        self.charisma = object["cha"] if "cha" in object.keys() and object["cha"] is int else self.charisma
+        if "choose" in object.keys() and object["choose"] is not int:
             # makes sure it's a list
             chooses: list[dict] = []
-            if object['choose'] is dict:
-                chooses = [object['choose']]
-            elif object['choose'] is list[dict]:
-                chooses = object['choose']
+            if object["choose"] is dict:
+                chooses = [object["choose"]]
+            elif object["choose"] is list[dict]:
+                chooses = object["choose"]
 
             for choose in chooses:
                 self.chooses.append(Choose(choose))
@@ -90,18 +86,16 @@ class LanguageProficiencies:
     choose_languages: list[str]
     choose_count: int = 1
 
-    def __init__(
-        self, object: Optional[dict[str, bool | int | dict[str, int | list[str]]]]
-    ) -> None:
+    def __init__(self, object: Optional[dict[str, bool | int | dict[str, int | list[str]]]]) -> None:
         if object is not None:
             for key in object.keys():
                 if type(object[key]) is bool:
                     self.languages.append(key)
                 elif type(object[key]) is int:
-                    self.any_standard = object[key] # type: ignore
-                elif type(object[key]) is dict and type(object[key]['from']) is list and type(object[key]['count']) is int: # type: ignore
-                    self.choose_languages = object["choose"]["from"] # type: ignore
-                    self.choose_count = object["choose"]["count"] # type: ignore
+                    self.any_standard = object[key]  # type: ignore
+                elif type(object[key]) is dict and type(object[key]["from"]) is list and type(object[key]["count"]) is int:  # type: ignore
+                    self.choose_languages = object["choose"]["from"]  # type: ignore
+                    self.choose_count = object["choose"]["count"]  # type: ignore
                 else:
                     print("Language proficiency value was not expected")
                     print(f"It was a {type(object[key])} with a value of {object[key]}")
@@ -112,20 +106,18 @@ class SkillProficiencies:
     choose_skills: list[str] = []
     choose_count: int = 1
 
-    def __init__(
-        self, object: Optional[dict[str, bool | dict[str, int | list[str]]]]
-    ) -> None:
+    def __init__(self, object: Optional[dict[str, bool | dict[str, int | list[str]]]]) -> None:
         if object is None:
             return
-            
+
         for key in object.keys():
             if type(object[key]) is bool:
                 self.skills.append(key)
             elif type(object[key]) is dict:
-                self.choose_skills = object[key]["from"] # type: ignore
+                self.choose_skills = object[key]["from"]  # type: ignore
                 self.choose_count = (
-                    object[key]["count"] # type: ignore
-                    if "count" in object[key].keys() # type: ignore
+                    object[key]["count"]  # type: ignore
+                    if "count" in object[key].keys()  # type: ignore
                     else self.choose_count
                 )
             else:
@@ -162,9 +154,7 @@ class WeaponProficiencies:
                 else:
                     # print(f"key: {key}")
                     if "|" in key:
-                        self.weapons.append(
-                            {"name": key.split("|")[0], "source": key.split("|")[1]}
-                        )
+                        self.weapons.append({"name": key.split("|")[0], "source": key.split("|")[1]})
                     else:
                         self.weapons.append({"name": key, "source": "N/A"})
 
@@ -213,13 +203,9 @@ class HeightAndWeight:
     def __init__(self, object: Optional[dict[str, int | str]]) -> None:
         if object is not None:
             self.base_height = object["baseHeight"]
-            self.height_mod = (
-                object["heightMod"] if "heightMod" in object.keys() else self.height_mod
-            )
+            self.height_mod = object["heightMod"] if "heightMod" in object.keys() else self.height_mod
             self.base_weight = object["baseWeight"]
-            self.weight_mod = (
-                object["weightMod"] if "weightMod" in object.keys() else self.weight_mod
-            )
+            self.weight_mod = object["weightMod"] if "weightMod" in object.keys() else self.weight_mod
 
 
 class Resist:
@@ -242,10 +228,10 @@ class Reset(StrEnum):
 
 
 class AdditionalSpells:
-    spells: list[dict[str, any]] = []
+    spells: list[dict[str, Any]] = []
     choose: list[dict[str, str]] = []
 
-    def __init__(self, object: Optional[list[dict[str, dict[str, any]]]]) -> None:
+    def __init__(self, object: Optional[list[dict[str, dict[str, Any]]]]) -> None:
         if object is None:
             return
 
@@ -274,9 +260,7 @@ class AdditionalSpells:
                                     }
                                 )
                         else:
-                            print(
-                                "spell_object['innate'][level] was a dict with an unknown key"
-                            )
+                            print("spell_object['innate'][level] was a dict with an unknown key")
             if "known" in spell_object.keys():
                 for level in spell_object["known"].keys():
                     # for now, the only thing that has this is koblod from MPMM so its hard coded
@@ -286,13 +270,9 @@ class AdditionalSpells:
                             self.choose.append(
                                 {
                                     "spell_list": spell["choose"][
-                                        spell["choose"]
-                                        .find("level=") : spell["choose"]
-                                        .find("|")
+                                        spell["choose"].find("level=") : spell["choose"].find("|")
                                     ],
-                                    "count": spell["choose"][
-                                        spell["choose"].find("class=") :
-                                    ],
+                                    "count": spell["choose"][spell["choose"].find("class=") :],
                                     "ability": spell_object["ability"],
                                     "aquired_at": 0,
                                 }
@@ -304,9 +284,7 @@ class AdditionalSpells:
                                     {
                                         "name": spell,
                                         "ability": (
-                                            spell_object["ability"]
-                                            if "ability" in spell_object.keys()
-                                            else "base"
+                                            spell_object["ability"] if "ability" in spell_object.keys() else "base"
                                         ),
                                         "reset_when": Reset.NEVER,
                                         "aquired_at": int(level),
@@ -319,18 +297,14 @@ class AdditionalSpells:
                                         {
                                             "name": spell,
                                             "ability": (
-                                                spell_object["ability"]
-                                                if "ability" in spell_object.keys()
-                                                else "base"
+                                                spell_object["ability"] if "ability" in spell_object.keys() else "base"
                                             ),
                                             "reset_when": Reset.REST,
                                             "aquired_at": int(level),
                                         }
                                     )
                             else:
-                                print(
-                                    "spell_object['known'] was a dict with an unknown key"
-                                )
+                                print("spell_object['known'] was a dict with an unknown key")
 
     def new_spells_at(self, level: int) -> list[str]:
         new_spells: list[str] = []
@@ -408,9 +382,7 @@ class Duration:
     def __init__(self, object: dict) -> None:
         self.type = object["type"]
         self.ends = []
-        self.concentration = (
-            object["concentration"] if "concentration" in object.keys() else False
-        )
+        self.concentration = object["concentration"] if "concentration" in object.keys() else False
         if "duration" in object.keys():
             self.unit = object["duration"]["type"]
             self.amount = object["duration"]["amount"]
@@ -514,4 +486,13 @@ class ContainerCapacity:
 
         self.weightless = True if "weightless" in object.keys() else False
 
-        self.__dict__["slots"] = [slot.__dict__ for slot in self.slots]
+    def as_dict(self) -> dict[str, Any]:
+        """This is effectivaly read only as it creates a copy
+
+        Returns:
+            dict[str, Any]: the class as a dict
+        """
+        
+        copy = self.__dict__.copy()
+        copy['slots'] = [slot.__dict__ for slot in copy['slots']]
+        return copy

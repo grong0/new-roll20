@@ -1,7 +1,7 @@
 import json
 import datetime
 from typing import Any
-from DAO.MiscClasses import Time, Range, Components, Duration, ScalingLevelDice
+from src.DAO.MiscClasses import Time, Range, Components, Duration, ScalingLevelDice
 
 
 class Spell:
@@ -42,49 +42,36 @@ class Spell:
         self.entries = object["entries"]
         if "scalingLevelDice" in object.keys():
             if object["scalingLevelDice"] is list:
-                self.scaling_level_dice = [
-                    ScalingLevelDice(scaling) for scaling in object["scalingLevelDice"]
-                ]
+                self.scaling_level_dice = [ScalingLevelDice(scaling) for scaling in object["scalingLevelDice"]]
             elif object["scalingLevelDice"] is dict:
                 self.scaling_level_dice = [ScalingLevelDice(object["scalingLevelDice"])]
         else:
             self.scaling_level_dice = []
-        self.damage_inflict = (
-            object["damageInflict"] if "damageInflict" in object.keys() else []
-        )
-        self.saving_throw = (
-            object["savingThrow"] if "savingThrow" in object.keys() else ""
-        )
+        self.damage_inflict = object["damageInflict"] if "damageInflict" in object.keys() else []
+        self.saving_throw = object["savingThrow"] if "savingThrow" in object.keys() else ""
         self.misc_tags = object["miscTags"] if "miscTags" in object.keys() else []
         self.area_tags = object["areaTags"] if "areaTags" in object.keys() else []
-        self.other_sources = (
-            object["otherSources"] if "otherSources" in object.keys() else []
-        )
-        self.entries_higher_levels = (
-            object["entriesHigherLevels"]
-            if "entriesHigherLevels" in object.keys()
-            else ""
-        )
+        self.other_sources = object["otherSources"] if "otherSources" in object.keys() else []
+        self.entries_higher_levels = object["entriesHigherLevels"] if "entriesHigherLevels" in object.keys() else ""
         self.ritual = object["meta"]["ritual"] if "meta" in object.keys() else False
-        self.condition_inflict = (
-            object["conditionInflict"] if "conditionInflict" in object.keys() else []
-        )
-        self.affects_creature_type = (
-            object["affectsCreatureType"]
-            if "affectsCreatureType" in object.keys()
-            else []
-        )
-        self.damage_resist = (
-            object["damageResist"] if "damageResist" in object.keys() else []
-        )
+        self.condition_inflict = object["conditionInflict"] if "conditionInflict" in object.keys() else []
+        self.affects_creature_type = object["affectsCreatureType"] if "affectsCreatureType" in object.keys() else []
+        self.damage_resist = object["damageResist"] if "damageResist" in object.keys() else []
 
-        self.__dict__["time"] = self.time.__dict__
-        self.__dict__["range"] = self.range.__dict__
-        self.__dict__["components"] = self.components.__dict__
-        self.__dict__["duration"] = self.duration.__dict__
-        self.__dict__["scaling_level_dice"] = [
-            scale.__dict__ for sclae in self.scaling_level_dice
-        ]
+    def as_dict(self) -> dict[str, Any]:
+        """This is effectivaly read only as it creates a copy
+
+        Returns:
+            dict[str, Any]: the class as a dict
+        """
+
+        copy = self.__dict__.copy()
+        copy["time"] = copy['time'].__dict__
+        copy["range"] = copy['range'].__dict__
+        copy["components"] = copy['components'].__dict__
+        copy["duration"] = copy['duration'].__dict__
+        copy["scaling_level_dice"] = [scale.__dict__ for scale in copy['scaling_level_dice']]
+        return copy
 
 
 class Spells:
@@ -105,17 +92,32 @@ class Spells:
                     for spell in spells["spell"]:
                         self.spells[source][spell["name"]] = Spell(spell)
 
+    def as_dict(self) -> dict[str, Any]:
+        """This is effectivaly read only as it creates a copy
+
+        Returns:
+            dict[str, Any]: the class as a dict
+        """
+
+        copy = self.__dict__.copy()
+        for source in copy['spells'].keys():
+            for spell_name in copy['spells'][source].keys():
+                copy['spells'][source][spell_name] = copy['spells'][source][spell_name].as_dict()
+        return copy
+
 
 if __name__ == "__main__":
-    times = []
-    count = 1000
-    for _ in range(0, count):
-        start = datetime.datetime.now()
-        spells = Spells()
-        end = datetime.datetime.now()
-        times.append((end - start).microseconds)
-        del spells
+    # times = []
+    # count = 1000
+    # for _ in range(0, count):
+    #     start = datetime.datetime.now()
+    #     spells = Spells()
+    #     end = datetime.datetime.now()
+    #     times.append((end - start).microseconds)
+    #     del spells
 
-    average_time = sum(times) / count
+    # average_time = sum(times) / count
 
-    print(f"average time was {average_time} microseconds")
+    # print(f"average time was {average_time} microseconds")
+    spells = Spells()
+    print(spells.as_dict())

@@ -1,5 +1,6 @@
 import json
 import datetime
+from typing import Any
 from enum import StrEnum
 from src.DAO.MiscClasses import PackItem, Source, Ability, ContainerCapacity
 
@@ -57,9 +58,7 @@ class MundaneItem:
         self.type = object["type"] if "type" in object.keys() else ""
         self.rarity = object["rarity"] if "rarity" in object.keys() else "none"
         self.weight = object["weight"] if "weight" in object.keys() else 0
-        self.weapon_category = (
-            object["weaponCategory"] if "weaponCategory" in object.keys() else ""
-        )
+        self.weapon_category = object["weaponCategory"] if "weaponCategory" in object.keys() else ""
         self.age = object["age"] if "age" in object.keys() else ""
         self.property = object["property"] if "property" in object.keys() else []
         self.range = object["range"] if "range" in object.keys() else ""
@@ -69,14 +68,10 @@ class MundaneItem:
         self.weapon = object["weapon"] if "weapon" in object.keys() else False
         self.ammo_type = object["ammoType"] if "ammoType" in object.keys() else ""
         self.srd = object["srd"] if "srd" in object.keys() else False
-        self.basic_rules = (
-            object["basicRules"] if "basicRules" in object.keys() else False
-        )
+        self.basic_rules = object["basicRules"] if "basicRules" in object.keys() else False
         self.value = object["value"] if "value" in object.keys() else -1
         self.pack_contents = (
-            [PackItem(item) for item in object["packContents"]]
-            if "packContents" in object.keys()
-            else []
+            [PackItem(item) for item in object["packContents"]] if "packContents" in object.keys() else []
         )
         self.dmg2 = object["dmg2"] if "dmg2" in object.keys() else ""
         self.entries = object["entries"] if "entries" in object.keys() else []
@@ -100,14 +95,19 @@ class MundaneItem:
         self.mace = object["mace"] if "mace" in object.keys() else False
         self.net = object["net"] if "net" in object.keys() else False
         self.staff = object["staff"] if "staff" in object.keys() else False
-        self.bullet_sling = (
-            object["bulletSling"] if "bulletSling" in object.keys() else False
-        )
+        self.bullet_sling = object["bulletSling"] if "bulletSling" in object.keys() else False
         # self.item_type = self.get_item_type(object)
 
-        self.__dict__["pack_contents"] = [
-            pack_item.__dict__ for pack_item in self.pack_contents
-        ]
+    def as_dict(self) -> dict[str, Any]:
+        """This is effectivaly read only as it creates a copy
+
+        Returns:
+            dict[str, Any]: the class as a dict
+        """
+
+        copy = self.__dict__.copy()
+        copy["pack_contents"] = [pack_content.__dict__ for pack_content in copy["pack_contents"]]
+        return copy
 
     # def get_item_type(self, object: dict) -> ItemType:
     #     types = [
@@ -251,190 +251,121 @@ class MagicItem:
         self.page = object["page"] if "page" in object.keys() else -1
         self.rarity = object["rarity"] if "rarity" in object.keys() else ""
         self.req_attune = object["reqAttune"] if "reqAttune" in object.keys() else ""
-        self.req_attune_tags = (
-            object["reqAttuneTags"] if "reqAttuneTags" in object.keys() else []
-        )
+        self.req_attune_tags = object["reqAttuneTags"] if "reqAttuneTags" in object.keys() else []
         self.wondrous = object["wondrous"] if "wondrous" in object.keys() else False
-        self.bonus_spell_attack = (
-            object["bonusSpellAttack"] if "bonusSpellAttack" in object.keys() else ""
-        )
-        self.bonus_spell_save_DC = (
-            object["bonusSpellSaveDc"] if "bonusSpellSaveDc" in object.keys() else ""
-        )
+        self.bonus_spell_attack = object["bonusSpellAttack"] if "bonusSpellAttack" in object.keys() else ""
+        self.bonus_spell_save_DC = object["bonusSpellSaveDc"] if "bonusSpellSaveDc" in object.keys() else ""
         self.focus = object["focus"] if "focus" in object.keys() else []
         self.entries = object["entries"] if "entries" in object.keys() else ""
         self.weight = object["weight"] if "weight" in object.keys() else -1
-        self.has_fluff_Images = (
-            object["hasFluffImages"] if "hasFluffImages" in object.keys() else False
-        )
+        self.has_fluff_Images = object["hasFluffImages"] if "hasFluffImages" in object.keys() else False
         self.base_item = object["baseItem"] if "baseItem" in object.keys() else ""
         self.type = object["type"] if "type" in object.keys() else ""
-        self.weapon_category = (
-            object["weaponCategory"] if "weaponCategory" in object.keys() else ""
-        )
+        self.weapon_category = object["weaponCategory"] if "weaponCategory" in object.keys() else ""
         self.property = object["property"] if "property" in object.keys() else []
         self.dmg1 = object["dmg1"] if "dmg1" in object.keys() else ""
         self.dmg_type = object["dmgType"] if "dmgType" in object.keys() else ""
-        self.bonus_weapon = (
-            object["bonusWeapon"] if "bonusWeapon" in object.keys() else ""
-        )
+        self.bonus_weapon = object["bonusWeapon"] if "bonusWeapon" in object.keys() else ""
         self.tier = object["tier"] if "tier" in object.keys() else ""
         self.loot_tables = object["lootTables"] if "lootTables" in object.keys() else []
         self.srd = object["srd"] if "srd" in object.keys() else ""
         self.copy = object["_copy"] if "_copy" in object.keys() else ""
         self.bonus_AC = object["bonusAc"] if "bonusAc" in object.keys() else ""
-        self.bonus_saving_throw = (
-            object["bonusSavingThrow"] if "bonusSavingThrow" in object.keys() else ""
-        )
-        self.optionalfeatures = (
-            object["optionalfeatures"] if "optionalfeatures" in object.keys() else []
-        )
+        self.bonus_saving_throw = object["bonusSavingThrow"] if "bonusSavingThrow" in object.keys() else ""
+        self.optionalfeatures = object["optionalfeatures"] if "optionalfeatures" in object.keys() else []
         self.resist = object["resist"] if "resist" in object.keys() else []
         self.ac = object["ac"] if "ac" in object.keys() else -1
         self.basic_rules = object["basicRules"] if "basicRules" in object.keys() else False
         self.value = object["value"] if "value" in object.keys() else -1
         self.recharge = object["recharge"] if "recharge" in object.keys() else ""
-        self.recharge_amount = (
-            object["rechargeAmount"] if "rechargeAmount" in object.keys() else ""
-        )
+        self.recharge_amount = object["rechargeAmount"] if "rechargeAmount" in object.keys() else ""
         self.charges = object["charges"] if "charges" in object.keys() else -1
         self.misc_tags = object["miscTags"] if "miscTags" in object.keys() else []
         self.detail1 = object["detail1"] if "detail1" in object.keys() else ""
         self.tattoo = object["tattoo"] if "tattoo" in object.keys() else False
         self.has_refs = object["hasRefs"] if "hasRefs" in object.keys() else False
-        self.attached_spells = (
-            object["attachedSpells"] if "attachedSpells" in object.keys() else []
-        )
+        self.attached_spells = object["attachedSpells"] if "attachedSpells" in object.keys() else []
         self.crew = object["crew"] if "crew" in object.keys() else -1
         self.veh_AC = object["vehAc"] if "vehAc" in object.keys() else -1
         self.veh_HP = object["vehHp"] if "vehHp" in object.keys() else -1
         self.veh_speed = object["vehSpeed"] if "vehSpeed" in object.keys() else -1
-        self.cap_passenger = (
-            object["capPassenger"] if "capPassenger" in object.keys() else -1
-        )
+        self.cap_passenger = object["capPassenger"] if "capPassenger" in object.keys() else -1
         self.cap_cargo = object["capCargo"] if "capCargo" in object.keys() else -1
-        self.condition_immune = (
-            object["conditionImmune"] if "conditionImmune" in object.keys() else []
-        )
+        self.condition_immune = object["conditionImmune"] if "conditionImmune" in object.keys() else []
         self.dmg2 = object["dmg2"] if "dmg2" in object.keys() else ""
-        self.grants_proficiency = (
-            object["grantsProficiency"] if "grantsProficiency" in object.keys() else False
-        )
+        self.grants_proficiency = object["grantsProficiency"] if "grantsProficiency" in object.keys() else False
         self.additional_sources = (
-            [Source(source) for source in object["additionalSources"]]
-            if "additionalSources" in object.keys()
-            else []
+            [Source(source) for source in object["additionalSources"]] if "additionalSources" in object.keys() else []
         )
-        self.additional_entries = (
-            object["additionalEntries"] if "additionalEntries" in object.keys() else ""
-        )
-        self.modify_speed = (
-            object["modifySpeed"] if "modifySpeed" in object.keys() else ""
-        )
+        self.additional_entries = object["additionalEntries"] if "additionalEntries" in object.keys() else ""
+        self.modify_speed = object["modifySpeed"] if "modifySpeed" in object.keys() else ""
         self.scf_type = object["scfType"] if "scfType" in object.keys() else ""
         self.curse = object["curse"] if "curse" in object.keys() else False
-        self.ability = (
-            Ability(object["ability"]) if "ability" in object.keys() else Ability(None)
-        )
-        self.see_also_vehicle = (
-            object["seeAlsoVehicle"] if "seeAlsoVehicle" in object.keys() else []
-        )
+        self.ability = Ability(object["ability"]) if "ability" in object.keys() else Ability(None)
+        self.see_also_vehicle = object["seeAlsoVehicle"] if "seeAlsoVehicle" in object.keys() else []
         self.range = object["range"] if "range" in object.keys() else ""
         self.strength = object["strength"] if "strength" in object.keys() else ""
         self.stealth = object["stealth"] if "stealth" in object.keys() else False
         self.immune = object["immune"] if "immune" in object.keys() else []
         self.vulnerable = object["vulnerable"] if "vulnerable" in object.keys() else []
         self.poison = object["poison"] if "poison" in object.keys() else False
-        self.poison_types = (
-            object["poisonTypes"] if "poisonTypes" in object.keys() else []
-        )
+        self.poison_types = object["poisonTypes"] if "poisonTypes" in object.keys() else []
         self.sentient = object["sentient"] if "sentient" in object.keys() else False
         self.container_capacity = (
             ContainerCapacity(object["containerCapacity"])
             if "containerCapacity" in object.keys()
             else ContainerCapacity(None)
         )
-        self.pack_contents = (
-            object["packContents"] if "packContents" in object.keys() else ""
-        )
-        self.atomic_pack_contents = (
-            object["atomicPackContents"]
-            if "atomicPackContents" in object.keys()
-            else False
-        )
-        self.bonus_weapon_attack = (
-            object["bonusWeaponAttack"] if "bonusWeaponAttack" in object.keys() else ""
-        )
+        self.pack_contents = object["packContents"] if "packContents" in object.keys() else ""
+        self.atomic_pack_contents = object["atomicPackContents"] if "atomicPackContents" in object.keys() else False
+        self.bonus_weapon_attack = object["bonusWeaponAttack"] if "bonusWeaponAttack" in object.keys() else ""
         self.other_sources = (
-            [Source(source) for source in object["otherSources"]]
-            if "otherSources" in object.keys()
-            else []
+            [Source(source) for source in object["otherSources"]] if "otherSources" in object.keys() else []
         )
-        self.grants_language = (
-            object["grantsLanguage"] if "grantsLanguage" in object.keys() else False
-        )
+        self.grants_language = object["grantsLanguage"] if "grantsLanguage" in object.keys() else False
         self.staff = object["staff"] if "staff" in object.keys() else False
         self.age = object["age"] if "age" in object.keys() else ""
-        self.veh_dmg_thresh = (
-            object["vehDmgThresh"] if "vehDmgThresh" in object.keys() else -1
-        )
-        self.bonus_weapon_damage = (
-            object["bonusWeaponDamage"] if "bonusWeaponDamage" in object.keys() else ""
-        )
-        self.crit_threshold = (
-            object["critThreshold"] if "critThreshold" in object.keys() else -1
-        )
-        self.carrying_capacity = (
-            object["carryingCapacity"] if "carryingCapacity" in object.keys() else ""
-        )
+        self.veh_dmg_thresh = object["vehDmgThresh"] if "vehDmgThresh" in object.keys() else -1
+        self.bonus_weapon_damage = object["bonusWeaponDamage"] if "bonusWeaponDamage" in object.keys() else ""
+        self.crit_threshold = object["critThreshold"] if "critThreshold" in object.keys() else -1
+        self.carrying_capacity = object["carryingCapacity"] if "carryingCapacity" in object.keys() else ""
         self.speed = object["speed"] if "speed" in object.keys() else -1
         self.ammo_type = object["ammoType"] if "ammoType" in object.keys() else ""
         self.alias = object["alias"] if "alias" in object.keys() else []
-        self.see_also_deck = (
-            object["seeAlsoDeck"] if "seeAlsoDeck" in object.keys() else []
-        )
-        self.reprinted_as = (
-            object["reprintedAs"] if "reprintedAs" in object.keys() else []
-        )
+        self.see_also_deck = object["seeAlsoDeck"] if "seeAlsoDeck" in object.keys() else []
+        self.reprinted_as = object["reprintedAs"] if "reprintedAs" in object.keys() else []
         self.has_fluff = object["hasFluff"] if "hasFluff" in object.keys() else False
-        self.req_attune_alt = (
-            object["reqAttuneAlt"] if "reqAttuneAlt" in object.keys() else ""
-        )
+        self.req_attune_alt = object["reqAttuneAlt"] if "reqAttuneAlt" in object.keys() else ""
         self.reach = object["reach"] if "reach" in object.keys() else -1
         self.bonus_proficiency_bonus = (
-            object["bonusProficiencyBonus"]
-            if "bonusProficiencyBonus" in object.keys()
-            else ""
+            object["bonusProficiencyBonus"] if "bonusProficiencyBonus" in object.keys() else ""
         )
         self.firearm = object["firearm"] if "firearm" in object.keys() else False
         self.bonus_saving_throw_concentration = (
-            object["bonusSavingThrowConcentration"]
-            if "bonusSavingThrowConcentration" in object.keys()
-            else ""
+            object["bonusSavingThrowConcentration"] if "bonusSavingThrowConcentration" in object.keys() else ""
         )
         self.type_alt = object["typeAlt"] if "typeAlt" in object.keys() else ""
         self.crew_min = object["crewMin"] if "crewMin" in object.keys() else -1
         self.crew_max = object["crewMax"] if "crewMax" in object.keys() else -1
         self.travel_cost = object["travelCost"] if "travelCost" in object.keys() else -1
-        self.shipping_cost = (
-            object["shippingCost"] if "shippingCost" in object.keys() else -1
-        )
-        self.spell_scroll_level = (
-            object["spellScrollLevel"] if "spellScrollLevel" in object.keys() else -1
-        )
-        self.bonus_ability_check = (
-            object["bonusAbilityCheck"] if "bonusAbilityCheck" in object.keys() else ""
-        )
+        self.shipping_cost = object["shippingCost"] if "shippingCost" in object.keys() else -1
+        self.spell_scroll_level = object["spellScrollLevel"] if "spellScrollLevel" in object.keys() else -1
+        self.bonus_ability_check = object["bonusAbilityCheck"] if "bonusAbilityCheck" in object.keys() else ""
         self.weight_note = object["weightNote"] if "weightNote" in object.keys() else ""
 
-        self.__dict__["additional_sources"] = [
-            source.__dict__ for source in self.additional_sources
-        ]
-        self.__dict__["ability"] = self.ability.__dict__
-        self.__dict__["container_capacity"] = self.container_capacity.__dict__
-        self.__dict__["other_sources"] = [
-            source.__dict__ for source in self.other_sources
-        ]
+    def as_dict(self) -> dict[str, Any]:
+        """This is effectivaly read only as it creates a copy
+
+        Returns:
+            dict[str, Any]: the class as a dict
+        """
+
+        copy = self.__dict__.copy()
+        copy["additional_sources"] = [source.__dict__ for source in copy["additional_sources"]]
+        copy["ability"] = copy["ability"].__dict__
+        copy["container_capacity"] = copy["container_capacity"].as_dict()
+        copy["other_sources"] = [source.__dict__ for source in copy["other_sources"]]
+        return copy
 
 
 class Items:
@@ -451,57 +382,40 @@ class Items:
         self.mundane_items = {}
         self.magic_items = {}
 
-        for base_item in mundane_object["baseitem"]:
-            self.mundane_items[base_item["name"]] = MundaneItem(base_item)
+        for mundane_item in mundane_object["baseitem"]:
+            self.mundane_items[mundane_item["name"]] = MundaneItem(mundane_item)
 
-        for item in magic_object["item"]:
-            self.magic_items[item["name"]] = MagicItem(item)
-
-        self.__dict__["mundane_items"] = [
-            self.mundane_items[item].__dict__ for item in self.mundane_items.keys()
-        ]
-        self.__dict__["magic_items"] = [
-            self.magic_items[item].__dict__ for item in self.magic_items.keys()
-        ]
+        for magic_item in magic_object["item"]:
+            self.magic_items[magic_item["name"]] = MagicItem(magic_item)
 
         mundane_f.close()
         magic_f.close()
 
+    def as_dict(self) -> dict[str, Any]:
+        """This is effectivaly read only as it creates a copy
 
-import os
+        Returns:
+            dict[str, Any]: the class as a dict
+        """
+
+        copy = self.__dict__.copy()
+        for item_name in copy['mundane_items'].keys():
+            copy['mundane_items'][item_name] = copy["mundane_items"][item_name].as_dict()
+        for item_name in copy['magic_items'].keys():
+            copy['magic_items'][item_name] = copy["magic_items"][item_name].as_dict()
+        return copy
+
 
 if __name__ == "__main__":
-    # times = []
-    # count = 1000
-    # for _ in range(0, count):
-    #     start = datetime.datetime.now()
-    #     items = Items()
-    #     end = datetime.datetime.now()
-    #     times.append((end - start).microseconds)
-    #     del items
+    times = []
+    count = 1000
+    for _ in range(0, count):
+        start = datetime.datetime.now()
+        items = Items()
+        end = datetime.datetime.now()
+        times.append((end - start).microseconds)
+        del items
 
-    # average_time = sum(times) / count
+    average_time = sum(times) / count
 
-    # print(f"average time was {average_time} microseconds")
-
-    items = Items()
-    # print(items.mundane_items)
-    # print(json.dumps(dict(items.magic_items['Backpack'].__dict__), indent=4))
-    print(
-        str(items.magic_items["Backpack"].__dict__)
-        .replace("'", '"')
-        .replace("True", "true")
-        .replace("False", "false")
-    )
-
-    # with open("../data/raw/items-base.json") as f:
-    #     obj = json.load(f)
-
-    #     keys = []
-
-    #     for item in obj['baseitem']:
-    #         for key in item.keys():
-    #             if key not in keys:
-    #                 keys.append(key)
-
-    #     print(keys)
+    print(f"average time was {average_time} microseconds")
