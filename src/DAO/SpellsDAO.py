@@ -22,7 +22,7 @@ class Spell:
     misc_tags: list[str]
     area_tags: list[str]
     other_sources: list[str]
-    entries_higher_levels: str  # is a dict[str, list[str] | str] in the json
+    entries_higher_levels: str  # TODO: Make a class for this | is a dict[str, list[str] | str] in the json
     ritual: bool
     condition_inflict: list[str]
     affects_creature_type: list[str]
@@ -107,17 +107,15 @@ class Spells:
 
 
 if __name__ == "__main__":
-    # times = []
-    # count = 1000
-    # for _ in range(0, count):
-    #     start = datetime.datetime.now()
-    #     spells = Spells()
-    #     end = datetime.datetime.now()
-    #     times.append((end - start).microseconds)
-    #     del spells
+    times = []
+    count = 1000
+    for _ in range(0, count):
+        start = datetime.datetime.now()
+        spells = Spells()
+        end = datetime.datetime.now()
+        times.append((end - start).microseconds)
+        del spells
 
-    # average_time = sum(times) / count
+    average_time = sum(times) / count
 
-    # print(f"average time was {average_time} microseconds")
-    spells = Spells()
-    print(spells.as_dict())
+    print(f"average time was {average_time} microseconds")

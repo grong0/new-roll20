@@ -131,13 +131,15 @@ class ToolProficiencies:
     choose_any_amount: int = 0
 
     def __init__(self, object: Optional[list[dict[str, int | str]]]) -> None:
-        if object is not None:
-            for item in object:
-                for key in item.keys():
-                    if key == "any":
-                        self.choose_any_amount = item["any"]
-                    else:
-                        self.tools.append(key)
+        if object is None:
+            return
+
+        for item in object:
+            for key in item.keys():
+                if key == "any" and type(item["any"]) is str:
+                    self.choose_any_amount = item["any"] # type: ignore
+                else:
+                    self.tools.append(key)
 
 
 class WeaponProficiencies:
@@ -318,7 +320,11 @@ class Time:
     quantity: int
     unit: str
 
-    def __init__(self, object: dict) -> None:
+    def __init__(self, object: Optional[dict]) -> None:
+        if object is None:
+            self.quantity = 0
+            self.unit = ""
+            return
         self.quantity = object["number"]
         self.unit = object["unit"]
 
