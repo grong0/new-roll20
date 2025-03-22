@@ -87,18 +87,26 @@ class LanguageProficiencies:
     choose_count: int = 1
 
     def __init__(self, object: Optional[dict[str, bool | int | dict[str, int | list[str]]]]) -> None:
-        if object is not None:
-            for key in object.keys():
-                if type(object[key]) is bool:
-                    self.languages.append(key)
-                elif type(object[key]) is int:
-                    self.any_standard = object[key]  # type: ignore
-                elif type(object[key]) is dict and type(object[key]["from"]) is list and type(object[key]["count"]) is int:  # type: ignore
-                    self.choose_languages = object["choose"]["from"]  # type: ignore
-                    self.choose_count = object["choose"]["count"]  # type: ignore
-                else:
-                    print("Language proficiency value was not expected")
-                    print(f"It was a {type(object[key])} with a value of {object[key]}")
+        self.languages = []
+        self.any_standard =  0
+        self.choose_languages = []
+        self.choose_count =  1
+
+        if object is None:
+            return
+
+        for key in object.keys():
+            if type(object[key]) is bool:
+                self.languages.append(key)
+            elif type(object[key]) is int:
+                self.any_standard = object[key]  # type: ignore
+            elif type(object[key]) is dict and type(object[key]["from"]) is list:  # type: ignore
+                if 'count' in object[key].keys(): # type: ignore
+                    self.choose_count = object[key]['count']  # type: ignore
+                self.choose_languages = object["choose"]["from"]  # type: ignore
+            else:
+                print("Language proficiency value was not expected")
+                print(f"It was a {type(object[key])} with a value of {object[key]}")
 
 
 class SkillProficiencies:
@@ -137,7 +145,7 @@ class ToolProficiencies:
         for item in object:
             for key in item.keys():
                 if key == "any" and type(item["any"]) is str:
-                    self.choose_any_amount = item["any"] # type: ignore
+                    self.choose_any_amount = item["any"]  # type: ignore
                 else:
                     self.tools.append(key)
 
@@ -413,11 +421,11 @@ class PackItem:
     special: bool
 
     def __init__(self, object: dict | str) -> None:
-        self.special = False
+        self.is_special = False
         if type(object) == dict:
             if "special" in object.keys():
                 self.name = object["special"]
-                self.special = True
+                self.is_special = True
             else:
                 self.name = object["item"]
             self.quantity = object["quantity"] if "quantity" in object.keys() else 1
@@ -498,29 +506,140 @@ class ContainerCapacity:
         Returns:
             dict[str, Any]: the class as a dict
         """
-        
+
         copy = self.__dict__.copy()
-        copy['slots'] = [slot.__dict__ for slot in copy['slots']]
+        copy["slots"] = [slot.__dict__ for slot in copy["slots"]]
         return copy
+
+
+class StartingItem:
+    name: str
+    quantity: int
+    value: int
+    contains_value: int
+    display_name: str
+    is_pouch: bool
+    is_special: bool
+    is_equipment_type: bool
+    is_money: bool
+
+    def __init__(self, item: str | dict) -> None:
+        self.quantity = 1
+        self.value = -1
+        self.contains_value = 0
+        self.display_name = ""
+        self.is_pouch = False
+        self.is_special = False
+        self.is_equipment_type = False
+        self.is_money = False
+
+        if type(item) is str:
+            self.name = item
+            return
+
+        if type(item) is not dict:
+            print(f"found type other than str and dict: {type(item)}")
+            print(item, "\n")
+            self.name = ""
+            return
+
+        for key in item.keys():
+            match key:
+                case "item":
+                    self.name = item[key]
+                case "special":
+                    self.name = item[key]
+                    self.is_special = True
+                case "worthValue":
+                    self.value = item[key]
+                case "containsValue":
+                    self.is_pouch = True
+                    self.contains_value = item[key]
+                case "quantity":
+                    self.quantity = item[key]
+                case "equipmentType":
+                    self.name = item[key]
+                    self.is_equipment_type = True
+                case "displayName":
+                    self.display_name = item[key]
+                case "value":
+                    self.value = item[key]
+                    self.is_money = True
+                case _:
+                    print(f"found key not accounted for: {key} = {item[key]}")
+
+        # self.name = item['item']
+        # if 'quantity' in item.keys(): self.quantity = item['quantity']
+        # if 'containsValue' in item.keys():
+        #     self.pouch = True
+        #     self.contains_value = item['containsValue']
 
 
 class StartingEquipment:
     """
     list of dict with keys of 'a', 'b', and '_'
     """
-    def __init__(self, object: dict[str, Any]) -> None:
-        pass
+
+    items: list[StartingItem]
+    choose_between: list[list[StartingItem]]
+
+    def __init__(self, object: list[dict[str, Any]]) -> None:
+        self.items = []
+        self.choose_between = []
+
+        for category in object:
+            if "_" in category.keys():
+                for item in category["_"]:
+                    # if type(item) is str:
+                    #     self.items.append(item)
+                    # elif type(item) is dict:
+                    #     if "special" in item.keys():
+                    #         self.is_special_items = item['special']
+                    #     elif 'item' in item.keys() and item['item'] == "pouch|phb":
+                    #         self.pouch = True
+                    #         self.money = item['containsValue']
+                    # else:
+                    #     print(f"type not accounting for: {type(item)}")
+                    #     print(item)
+
+                    if type(item) is list:
+                        self.items.extend([StartingItem(item) for item in item])
+                        continue
+
+                    self.items.append(StartingItem(item))
+                continue
+
+            if "c" in category.keys():
+                items = zip(category["a"], category["b"], category["c"])
+            else:
+                items = zip(category["a"], category["b"])
+
+            for items_zipped in items:
+                classed_items = [StartingItem(item) for item in items_zipped]
+                self.choose_between.append(classed_items)
+
+    def as_dict(self) -> dict[str, Any]:
+        """This is effectivaly read only as it creates a copy
+
+        Returns:
+            dict[str, Any]: the class as a dict
+        """
+
+        copy = self.__dict__.copy()
+        copy["items"] = [item.__dict__ for item in self.items]
+        copy["choose_between"] = [[item.__dict__ for item in choose] for choose in self.choose_between]
+        return copy
 
 
 class ClassPrerequisite:
     name: str
     level: int
     visible: bool
-    
+
     def __init__(self, object: dict[str, Any]) -> None:
-        self.name = object['class']['name']
-        self.level = object['level']
-        self.visible = object['class']['visible']
+        self.name = object["class"]["name"]
+        self.level = object["level"]
+        self.visible = object["class"]["visible"]
 
 
 class Prerequisite:
@@ -530,33 +649,62 @@ class Prerequisite:
     requires_class: bool
 
     def __init__(self, list: Optional[list[dict[str, Any]]]) -> None:
+        self.campaign_requirement = []
+        self.class_requirement = []
+
         if list is None:
-            self.campaign_requirement = []
             self.requires_campaign = False
-            self.class_requirement = []
             self.requires_class = False
             return
-        
+
         for object in list:
             if "level" in object.keys():
-                self.class_requirement = [ClassPrerequisite(class_level) for class_level in object['level']]
+                self.class_requirement.append(ClassPrerequisite(object['level']))
                 self.requires_class = True
             if "campaign" in object.keys():
-                self.campaign_requirement = object['campaign']
+                self.campaign_requirement.append(object['campaign'])
                 self.requires_campaign = True
-    
+
     def as_dict(self) -> dict[str, Any]:
         """This is effectivaly read only as it creates a copy
 
         Returns:
             dict[str, Any]: the class as a dict
         """
-        
+
         copy = self.__dict__.copy()
-        copy['class_requirement'] = [class_level.__dict__ for class_level in self.class_requirement]
+        copy["class_requirement"] = [class_level.__dict__ for class_level in self.class_requirement]
         return copy
 
 
-class SkillLanguageToolProficiencies:
+class SkillToolLanguageChoice:
+    language_amount: int
+    tool_amount: int
+
     def __init__(self, object: dict[str, Any]) -> None:
-        pass
+        self.language_amount = object["anyLanguage"] if "anyLanguage" in object.keys() else 0
+        self.tool_amount = object["anyTool"] if "anyTool" in object.keys() else 0
+
+
+class SkillToolLanguageProficiencies:
+    choices: list[SkillToolLanguageChoice]
+
+    def __init__(self, object: Optional[list[dict[str, Any]]]) -> None:
+        self.choices = []
+
+        if object is None:
+            return
+
+        for choice in object:
+            self.choices.append(SkillToolLanguageChoice(choice))
+
+    def as_dict(self) -> dict[str, Any]:
+        """This is effectivaly read only as it creates a copy
+
+        Returns:
+            dict[str, Any]: the class as a dict
+        """
+
+        copy = self.__dict__.copy()
+        copy["choices"] = [choice.__dict__ for choice in self.choices]
+        return copy

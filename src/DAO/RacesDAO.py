@@ -64,12 +64,12 @@ class Race:
             object["createTypeTags"] if "createTypeTags" in object.keys() else self.creature_type_tags
         )
         self.size = object["size"] if "size" in object.keys() else self.size  # leave for copy
-        self.speed = Speed(object["speed"]) if "speed" in object.keys() else Speed(None)
+        self.speed = Speed(object["speed"]) if "speed" in object.keys() else Speed(-1)
         self.ability = Ability(object["ability"][0]) if "ability" in object.keys() else Ability(None)
         self.height_and_weight = (
             HeightAndWeight(object["heightAndWeight"]) if "heightAndWeight" in object.keys() else HeightAndWeight(None)
         )
-        self.age = Age(object["age"]) if "age" in object.keys() else HeightAndWeight(None)
+        self.age = Age(object["age"]) if "age" in object.keys() else Age(None)
         self.darkvision = object["darkvision"] if "darkvision" in object.keys() else self.darkvision
         self.trait_tags = object["traitTags"] if "immune" in object.keys() else self.immune
         self.skill_proficiencies = (
