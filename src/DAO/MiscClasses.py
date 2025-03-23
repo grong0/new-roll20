@@ -642,7 +642,7 @@ class ClassPrerequisite:
         self.visible = object["class"]["visible"]
 
 
-class Prerequisite:
+class Prerequisite: # add support for choice from
     campaign_requirement: list[str]
     requires_campaign: bool
     class_requirement: list[ClassPrerequisite]
@@ -680,6 +680,7 @@ class Prerequisite:
 class SkillToolLanguageChoice:
     language_amount: int
     tool_amount: int
+    global_count: int
 
     def __init__(self, object: dict[str, Any]) -> None:
         self.language_amount = object["anyLanguage"] if "anyLanguage" in object.keys() else 0
@@ -708,3 +709,40 @@ class SkillToolLanguageProficiencies:
         copy = self.__dict__.copy()
         copy["choices"] = [choice.__dict__ for choice in self.choices]
         return copy
+
+
+class OptionalFeatureProgression:
+    def __init__(self, object: Optional[dict]) -> None:
+        pass
+
+
+class SavingThrowProficiencies:
+    """
+    Only found in one background (Resilient)
+    so not a lot to go off of 
+    """
+
+    def __init__(self, object: Optional[dict]) -> None:
+        pass
+
+
+class Expertise:
+    """
+    Only found in one background (Skill Expert)
+    so not a lot to go off of
+    """
+
+    skill: str
+    can_choose: bool
+    amount: int
+
+    def __init__(self, object: Optional[dict]) -> None:
+        if object is None or object[0] != 'anyProficientSkill':
+            self.skill = ""
+            self.can_choose = False
+            self.amount = 0
+            return
+
+        self.skill = object[0]
+        self.can_choose = True
+        self.amount = object[self.skill]
