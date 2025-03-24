@@ -7,14 +7,17 @@ mod update_data;
 mod generate_types;
 
 fn main() {
-	let file = fs::read_dir("data");
-	if file.is_ok() {
-		println!("{:?}", file);
-	} else {
-		println!("no such file or directory")
-	}
+	generate_types::build();
+	// generate_types::testing_build();
+	// let file = fs::read_dir("data");
+	// if file.is_ok() {
+	// 	println!("{:?}", file);
+	// } else {
+	// 	println!("no such file or directory")
+	// }
 
-	update_data::update_data();
+	// update_data::update_data();
+
 
 
     // let file = fs::read_to_string("data/raw/races.json").unwrap();
