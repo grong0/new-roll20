@@ -9,9 +9,9 @@ class Speed:
     climb: Optional[int] = None
 
     def __init__(self, object: int | dict[str, int]) -> None:
-        if object is int:
+        if type(object) is int:
             self.walk = object
-        elif object is dict:
+        elif type(object) is dict:
             self.walk = object["walk"]
             self.fly = object["fly"] if "fly" in object.keys() else self.fly
             self.swim = object["swim"] if "swim" in object.keys() else self.swim
@@ -81,16 +81,16 @@ class Age:
 
 
 class LanguageProficiencies:
-    languages: list[str] = []
-    any_standard: int = 0
+    languages: list[str]
+    any_standard: int
     choose_languages: list[str]
-    choose_count: int = 1
+    choose_count: int
 
     def __init__(self, object: Optional[dict[str, bool | int | dict[str, int | list[str]]]]) -> None:
         self.languages = []
-        self.any_standard =  0
+        self.any_standard = 0
         self.choose_languages = []
-        self.choose_count =  1
+        self.choose_count = 1
 
         if object is None:
             return
@@ -101,8 +101,8 @@ class LanguageProficiencies:
             elif type(object[key]) is int:
                 self.any_standard = object[key]  # type: ignore
             elif type(object[key]) is dict and type(object[key]["from"]) is list:  # type: ignore
-                if 'count' in object[key].keys(): # type: ignore
-                    self.choose_count = object[key]['count']  # type: ignore
+                if "count" in object[key].keys():  # type: ignore
+                    self.choose_count = object[key]["count"]  # type: ignore
                 self.choose_languages = object["choose"]["from"]  # type: ignore
             else:
                 print("Language proficiency value was not expected")
@@ -123,7 +123,7 @@ class SkillProficiencies:
                 self.skills.append(key)
             elif type(object[key]) is dict:
                 self.choose_skills = object[key]["from"]  # type: ignore
-                self.choose_count = (
+                self.choose_count = (  # type: ignore
                     object[key]["count"]  # type: ignore
                     if "count" in object[key].keys()  # type: ignore
                     else self.choose_count
@@ -135,10 +135,13 @@ class SkillProficiencies:
 
 
 class ToolProficiencies:
-    tools: list[str] = []
-    choose_any_amount: int = 0
+    tools: list[str]
+    choose_any_amount: int
 
     def __init__(self, object: Optional[list[dict[str, int | str]]]) -> None:
+        self.tools = []
+        self.choose_any_amount = 0
+
         if object is None:
             return
 
@@ -151,25 +154,31 @@ class ToolProficiencies:
 
 
 class WeaponProficiencies:
-    weapons: list[dict[str, str]] = []
-    choose_tool_filter: list[str] = []
-    choose_amount: int = 0
+    weapons: list[dict[str, str]]
+    choose_tool_filter: list[str]
+    choose_amount: int
 
-    def __init__(self, object: Optional[dict[str, bool]]) -> None:
-        if object is not None:
-            for key in object.keys():
-                if key == "choose":
-                    self.choose_tools = object[key]["fromFilter"]
-                    self.choose_amount = object[key]["count"]
+    def __init__(self, object: Optional[dict[str, bool | dict]]) -> None:
+        self.weapons = []
+        self.choose_tool_filter = []
+
+        if object is None:
+            self.choose_amount = 0
+            return
+
+        for key in object.keys():
+            if key == "choose":
+                self.choose_tool_filter = object[key]["fromFilter"]  # type: ignore
+                self.choose_amount = object[key]["count"]  # type: ignore
+            else:
+                # print(f"key: {key}")
+                if "|" in key:
+                    self.weapons.append({"name": key.split("|")[0], "source": key.split("|")[1]})
                 else:
-                    # print(f"key: {key}")
-                    if "|" in key:
-                        self.weapons.append({"name": key.split("|")[0], "source": key.split("|")[1]})
-                    else:
-                        self.weapons.append({"name": key, "source": "N/A"})
+                    self.weapons.append({"name": key, "source": "N/A"})
 
     def has_proficiency(self, name: str) -> bool:
-        for item in self.proficiencies:
+        for item in self.weapons:
             if item["name"] == name:
                 return True
         return False
@@ -183,39 +192,48 @@ class ArmorProficiencies:
             # not checking whether or not it has any because
             # as of Mar 13, the only race that has a armor
             # proficiency just has a defined armor type
-            armor = object.keys()
+            self.armor = list(object.keys())
 
 
 class Source:
-    source: str = ""
-    page: Optional[int] = -1
+    source: str
+    page: Optional[int]
 
     def __init__(
         self,
         object: Optional[dict[str, str | int]] = None,
-        source: str = None,
-        page: int = None,
+        source: Optional[str] = None,
+        page: Optional[int] = None,
     ) -> None:
+        self.source = ""
+        self.page = -1
+
         if source is not None and page is not None:
             self.source = source
             self.page = page
         elif object is not None:
-            self.source = object["source"]
-            self.page = object["page"] if "page" in object.keys() else self.page
+            self.source = object["source"]  # type: ignore
+            self.page = object["page"] if "page" in object.keys() else self.page  # type: ignore
 
 
 class HeightAndWeight:
-    base_height: int = None
-    height_mod: str = None
-    base_weight: int = None
-    weight_mod: str = None
+    base_height: int
+    height_mod: str
+    base_weight: int
+    weight_mod: str
 
     def __init__(self, object: Optional[dict[str, int | str]]) -> None:
-        if object is not None:
-            self.base_height = object["baseHeight"]
-            self.height_mod = object["heightMod"] if "heightMod" in object.keys() else self.height_mod
-            self.base_weight = object["baseWeight"]
-            self.weight_mod = object["weightMod"] if "weightMod" in object.keys() else self.weight_mod
+        if object is None:
+            self.base_height = -1
+            self.height_mod = ""
+            self.base_weight = -1
+            self.weight_mod = ""
+            return
+
+        self.base_height = object["baseHeight"]  # type: ignore
+        self.height_mod = object["heightMod"] if "heightMod" in object.keys() else ""  # type: ignore
+        self.base_weight = object["baseWeight"]  # type: ignore
+        self.weight_mod = object["weightMod"] if "weightMod" in object.keys() else ""  # type: ignore
 
 
 class Resist:
@@ -239,7 +257,7 @@ class Reset(StrEnum):
 
 class AdditionalSpells:
     spells: list[dict[str, Any]] = []
-    choose: list[dict[str, str]] = []
+    choose: list[dict[str, Any]] = []
 
     def __init__(self, object: Optional[list[dict[str, dict[str, Any]]]]) -> None:
         if object is None:
@@ -642,7 +660,7 @@ class ClassPrerequisite:
         self.visible = object["class"]["visible"]
 
 
-class Prerequisite: # add support for choice from
+class Prerequisite:  # TODO: add support for choice from, just level, ability, summaries?, feats, other,
     campaign_requirement: list[str]
     requires_campaign: bool
     class_requirement: list[ClassPrerequisite]
@@ -659,10 +677,10 @@ class Prerequisite: # add support for choice from
 
         for object in list:
             if "level" in object.keys():
-                self.class_requirement.append(ClassPrerequisite(object['level']))
+                self.class_requirement.append(ClassPrerequisite(object["level"]))
                 self.requires_class = True
             if "campaign" in object.keys():
-                self.campaign_requirement.append(object['campaign'])
+                self.campaign_requirement.append(object["campaign"])
                 self.requires_campaign = True
 
     def as_dict(self) -> dict[str, Any]:
@@ -712,23 +730,54 @@ class SkillToolLanguageProficiencies:
 
 
 class OptionalFeatureProgression:
+    """_summary_
+    Only found in four features
+    (Eldritch Adept, Fighting Style,
+    Martial Adept, Metamagic Adept)
+    """
+
+    name: str
+    feature_type: list[str]
+    progression_type: str
+    progression_amount: int
+
     def __init__(self, object: Optional[dict]) -> None:
-        pass
+        if object is None:
+            self.name = ""
+            self.feature_type = []
+            self.progression_type = ""
+            self.progression_amount = 0
+            return
+
+        self.name = object["name"]
+        self.feature_type = object["featureType"]
+        self.progression_type = list(object["progression"].keys())[0]
+        self.progression_amount = object["progression"][self.progression_type]
 
 
 class SavingThrowProficiencies:
     """
-    Only found in one background (Resilient)
-    so not a lot to go off of 
+    Only found in one feat (Resilient)
+    so not a lot to go off of
     """
 
+    options: list[str]
+    amount: int
+
     def __init__(self, object: Optional[dict]) -> None:
-        pass
+        self.options = []
+
+        if object is None:
+            self.amount = 0
+            return
+
+        self.options = object["from"]
+        self.amount = object["count"] if "count" in object.keys() else 1
 
 
 class Expertise:
     """
-    Only found in one background (Skill Expert)
+    Only found in one feat (Skill Expert)
     so not a lot to go off of
     """
 
@@ -737,7 +786,7 @@ class Expertise:
     amount: int
 
     def __init__(self, object: Optional[dict]) -> None:
-        if object is None or object[0] != 'anyProficientSkill':
+        if object is None or object[0] != "anyProficientSkill":
             self.skill = ""
             self.can_choose = False
             self.amount = 0
