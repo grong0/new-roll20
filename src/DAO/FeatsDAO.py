@@ -30,7 +30,7 @@ class Feat:
     has_fluff_images: bool
     tool_proficiencies: ToolProficiencies
     optional_feature_progression: OptionalFeatureProgression
-    resist: list[str]
+    resist: list[dict[str, list[str] | str]] | str
     language_proficiencies: LanguageProficiencies
     weapon_proficiencies: WeaponProficiencies
     armor_proficiencies: ArmorProficiencies
