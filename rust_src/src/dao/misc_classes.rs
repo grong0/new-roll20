@@ -270,3 +270,29 @@ impl AdditionalSpells {
 		}
 	}
 }
+
+#[derive(Debug)]
+pub struct Time {
+	quantity: u64,
+	unit: String
+}
+
+impl Time {
+	pub fn new(quantity: Option<&Value>, unit: Option<&Value>) -> Time {
+		return Time {
+			quantity: quantity.unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
+			unit: unit.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string()
+		}
+	}
+}
+
+#[derive(Debug)]
+pub struct Range {
+	typer: String,
+	form: String,
+	amount: u64
+}
+
+// impl Range {
+// 	pub fn new()
+// }
