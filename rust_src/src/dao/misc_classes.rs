@@ -293,6 +293,103 @@ pub struct Range {
 	amount: u64
 }
 
-// impl Range {
-// 	pub fn new()
-// }
+impl Range {
+	pub fn new(typer: Option<&Value>, distance: Option<&Value>) -> Range {
+		let parsed_distance = distance.unwrap().as_object().unwrap(); // TODO: add defaults here
+		return Range {
+			typer: typer.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+			form: parsed_distance.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+			amount: parsed_distance.get("amount").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0)
+		}
+	}
+}
+
+#[derive(Debug)]
+pub struct Components {
+	v: bool,
+	s: bool,
+	m: String,
+	r: String
+}
+
+impl Components {
+	pub fn new(v: Option<&Value>, s: Option<&Value>, m: Option<&Value>, r: Option<&Value>) -> Components {
+		return Components {
+			v: v.unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
+			s: s.unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
+			m: m.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+			r: r.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string()
+		}
+	}
+}
+
+#[derive(Debug)]
+pub struct Duration {
+	typed: String,
+	unit: String,
+	amount: u64,
+	concentration: bool,
+	ends: Vec<String>
+}
+
+impl Duration {
+	pub fn new(object: Option<&Value>) -> Duration {
+		let parsed_object = object.unwrap().as_object().unwrap(); // TODO: add defaults here
+		let mut ends = vec![];
+
+		for end in parsed_object.get("ends").unwrap().as_array().unwrap() { // TODO: add defaults here
+			ends.push(end.as_str().unwrap_or("N/A").to_string());
+		}
+
+		let mut unit: String = "N/A".to_string();
+		let mut amount: u64 = 0;
+
+		match parsed_object.get("duration") {
+			Some(duration) => {
+				unit = duration.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
+				amount = duration.get("amount").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0);
+			}
+			None => {}
+		}
+
+		return Duration {
+			typed: parsed_object.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+			unit,
+			amount,
+			concentration: parsed_object.get("concentration").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
+			ends
+		}
+	}
+}
+
+#[derive(Debug)]
+struct LevelDie {
+	level: String,
+	die: String
+}
+
+#[derive(Debug)]
+struct ScalingLevelDice {
+	label: String,
+	scaling: Vec<LevelDie>
+}
+
+impl ScalingLevelDice {
+	pub fn new (object: Option<&Value>) -> ScalingLevelDice {
+		let parsed_object = object.unwrap().as_object().unwrap(); // TODO: add defaults here
+
+		let mut scaling = vec![];
+		let scaling_object = parsed_object.get("scaling").unwrap().as_object().unwrap(); // TODO: add defaults here
+		for level in scaling_object.keys() {
+			scaling.push(LevelDie {
+				level: level.to_string(),
+				die: scaling_object.get(level).unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string()
+			});
+		}
+
+		return ScalingLevelDice {
+			label: parsed_object.get("label").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+			scaling
+		}
+	}
+}
