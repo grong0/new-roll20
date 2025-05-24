@@ -786,12 +786,12 @@ class Expertise:
     amount: int
 
     def __init__(self, object: Optional[dict]) -> None:
-        if object is None or object[0] != "anyProficientSkill":
+        if object is None or "anyProficientSkill" not in object.keys():
             self.skill = ""
             self.can_choose = False
             self.amount = 0
             return
 
-        self.skill = object[0]
+        self.skill = list(object.keys())[0]
         self.can_choose = True
         self.amount = object[self.skill]

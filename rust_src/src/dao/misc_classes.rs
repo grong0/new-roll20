@@ -1,4 +1,4 @@
-use std::{any::type_name, iter::zip};
+use std::{any::type_name, iter::zip, option};
 
 use serde_json::{to_value, Map, Value};
 
@@ -741,46 +741,44 @@ impl StartingItem {
         let mut is_equipment_type = false;
         let mut is_money = false;
 
-        match item.unwrap_or(&to_value("N/A").unwrap()).as_object() {
-            Some(object) => {
-                for (key, key_value) in object {
-                    match key.as_str() {
-                        "item" => {
-                            name = key_value.as_str().unwrap_or(&name).to_string();
-                        }
-                        "special" => {
-                            name = key_value.as_str().unwrap_or(&name).to_string();
-                            is_special = true;
-                        }
-                        "worthValue" => {
-                            value = key_value.as_u64().unwrap_or(value);
-                        }
-                        "containsValue" => {
-                            is_pouch = true;
-                            contains_value = key_value.as_u64().unwrap_or(contains_value);
-                        }
-                        "quantity" => {
-                            quantity = key_value.as_u64().unwrap_or(quantity);
-                        }
-                        "equipmentType" => {
-                            name = key_value.as_str().unwrap_or(&name).to_string();
-                            is_equipment_type = true;
-                        }
-                        "displayName" => {
-                            display_name = key_value.as_str().unwrap_or(&display_name).to_string();
-                        }
-                        "value" => {
-                            value = key_value.as_u64().unwrap_or(value);
-                            is_money = true;
-                        }
-                        _ => {
-                            println!("key not accounted for: {:?} -> {:?}", key, value);
-                        }
-                    }
-                }
-            }
-            None => {}
-        }
+		if item.as_object().is_some() {
+			let object = item.as_object().unwrap();
+			for (key, key_value) in object {
+				match key.as_str() {
+					"item" => {
+						name = key_value.as_str().unwrap_or(&name).to_string();
+					}
+					"special" => {
+						name = key_value.as_str().unwrap_or(&name).to_string();
+						is_special = true;
+					}
+					"worthValue" => {
+						value = key_value.as_u64().unwrap_or(value);
+					}
+					"containsValue" => {
+						is_pouch = true;
+						contains_value = key_value.as_u64().unwrap_or(contains_value);
+					}
+					"quantity" => {
+						quantity = key_value.as_u64().unwrap_or(quantity);
+					}
+					"equipmentType" => {
+						name = key_value.as_str().unwrap_or(&name).to_string();
+						is_equipment_type = true;
+					}
+					"displayName" => {
+						display_name = key_value.as_str().unwrap_or(&display_name).to_string();
+					}
+					"value" => {
+						value = key_value.as_u64().unwrap_or(value);
+						is_money = true;
+					}
+					_ => {
+						println!("key not accounted for: {:?} -> {:?}", key, value);
+					}
+				}
+			}
+		}
 
         return StartingItem {
             name,
@@ -968,4 +966,102 @@ impl SkillToolLanguageProficiencies {
 	}
 }
 
+/**
+ * Only found in four features
+ * (Eldritch Adept, Fighting Style,
+ * Martial Adept, Metamagic Adept)
+ */
+#[derive(Debug)]
+struct OptionalFeatureProgression {
+	name: String,
+	freature_type: Vec<String>,
+	progression_type: String,
+	progression_amount: u64
+}
 
+impl OptionalFeatureProgression {
+	pub fn new(object: Option<&Value>) -> OptionalFeatureProgression {
+		let mut name = "N/A".to_string();
+		let mut freature_type = vec![];
+		let mut progression_type = "N/A".to_string();
+		let mut progression_amount = 0;
+
+		if object.is_some() && object.unwrap().as_object().is_some() {
+			let parsed_object = object.unwrap().as_object().unwrap();
+			name = parsed_object.get("name").unwrap_or(&to_value(&name).unwrap()).as_str().unwrap_or(name.as_str()).to_string();
+			freature_type = parsed_object.get("featureType").unwrap().as_array().unwrap().iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(); // TODO: add defaults here
+			if parsed_object.get("progression").is_some() && parsed_object.get("progression").unwrap().as_object().is_some() {
+				let parsed_progression = parsed_object.get("progression").unwrap().as_object().unwrap();
+				progression_type = parsed_progression.keys().into_iter().collect::<Vec<_>>()[0].to_owned();
+				progression_amount = parsed_progression.get(&progression_type).unwrap().as_u64().unwrap_or(0);
+			}
+		}
+
+		return OptionalFeatureProgression {
+			name,
+			freature_type,
+			progression_type,
+			progression_amount
+		}
+	}
+}
+
+/**
+ * Only found in one feat (Resilient)
+ * so not a lot to go off of
+ */
+#[derive(Debug)]
+struct SavingThrowProficiencies {
+	options: Vec<String>,
+	amount: u64
+}
+
+impl SavingThrowProficiencies {
+	pub fn new(object: Option<&Value>) -> SavingThrowProficiencies {
+		let mut options = vec![];
+		let mut amount = 0;
+
+		if object.is_some() && object.unwrap().as_object().is_some() {
+			let parsed_object = object.unwrap().as_object().unwrap();
+			options = parsed_object.get("from").unwrap().as_array().unwrap().iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect();
+			amount = parsed_object.get("count").unwrap_or(&to_value(amount).unwrap()).as_u64().unwrap_or(amount);
+		}
+
+		return SavingThrowProficiencies {
+			options,
+			amount
+		}
+	}
+}
+
+/**
+ * Only found in one feat (Skill Expert)
+ * so not a lot to go off of
+ */
+#[derive(Debug)]
+struct Expertise {
+	skill: String,
+	can_choose: bool,
+	amount: u64
+}
+
+impl Expertise {
+	pub fn new(object: Option<&Value>) -> Expertise {
+		let mut skill = "N/A".to_string();
+		let mut can_choose = false;
+		let mut amount = 0;
+
+		if object.is_some() && object.unwrap().as_object().is_some() {
+			let parsed_object = object.unwrap().as_object().unwrap();
+			skill = parsed_object.keys().into_iter().collect::<Vec<_>>()[0].to_owned();
+			can_choose = skill == "anyProficientSkill";
+			amount = parsed_object.get(&skill).unwrap_or(&to_value(amount).unwrap()).as_u64().unwrap_or(amount);
+		}
+
+		return Expertise {
+			skill,
+			can_choose,
+			amount
+		}
+	}
+}
