@@ -1,6 +1,71 @@
-use std::{any::type_name, iter::zip, option};
+use std::iter::zip;
 
 use serde_json::{to_value, Map, Value};
+
+#[derive(Debug)]
+pub struct Speed {
+	walk: u64,
+	fly: u64,
+	swim: u64,
+	climb: u64,
+}
+
+impl Speed {
+	pub fn new(object: Option<&Value>) -> Speed {
+		let mut walk = 30;
+		let mut fly = 0;
+		let mut swim = 0;
+		let mut climb = 0;
+
+		if object.is_some() {
+			match object.unwrap().as_object() {
+				Some(new_object) => {
+					walk = new_object.get("walk").unwrap_or(&to_value(walk).unwrap()).as_u64().unwrap_or(walk);
+					let default_fly_val = to_value(fly).unwrap();
+					let fly_val = new_object.get("fly").unwrap_or(&default_fly_val);
+					match fly_val.as_u64() {
+						Some(fly_int) => {
+							fly = fly_int
+						}
+						None => {
+							fly = if fly_val.as_bool().unwrap_or(false) {walk} else {fly}
+						}
+					}
+					let default_swim_val = to_value(swim).unwrap();
+					let swim_val = new_object.get("swim").unwrap_or(&default_swim_val);
+					match swim_val.as_u64() {
+						Some(swim_int) => {
+							swim = swim_int
+						}
+						None => {
+							swim = if swim_val.as_bool().unwrap_or(false) {walk} else {swim}
+						}
+					}
+					let default_climb_val = to_value(climb).unwrap();
+					let climb_val = new_object.get("climb").unwrap_or(&default_climb_val);
+					match climb_val.as_u64() {
+						Some(climb_int) => {
+							climb = climb_int
+						}
+						None => {
+							climb = if climb_val.as_bool().unwrap_or(false) {walk} else {climb}
+						}
+					}
+				}
+				None => {
+					walk = object.unwrap().as_u64().unwrap_or(walk);
+				}
+			}
+		}
+
+		return Speed {
+			walk,
+			fly,
+			swim,
+			climb
+		}
+	}
+}
 
 #[derive(Debug)]
 pub struct Source {
@@ -11,11 +76,7 @@ pub struct Source {
 impl Source {
     pub fn new(source: Option<&Value>, page: Option<&Value>) -> Source {
         return Source {
-            name: source
-                .unwrap_or(&to_value("N/A").unwrap())
-                .as_str()
-                .unwrap_or("N/A")
-                .to_string(),
+            name: source.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
             page: page.unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
         };
     }
@@ -30,31 +91,12 @@ pub struct HeightAndWeight {
 }
 
 impl HeightAndWeight {
-    pub fn new(
-        base_height: Option<&Value>,
-        height_mod: Option<&Value>,
-        base_weight: Option<&Value>,
-        weight_mod: Option<&Value>,
-    ) -> HeightAndWeight {
+    pub fn new(base_height: Option<&Value>, height_mod: Option<&Value>, base_weight: Option<&Value>, weight_mod: Option<&Value>) -> HeightAndWeight {
         return HeightAndWeight {
-            base_height: base_height
-                .unwrap_or(&to_value(0).unwrap())
-                .as_u64()
-                .unwrap_or(0),
-            height_mod: height_mod
-                .unwrap_or(&to_value("N/A").unwrap())
-                .as_str()
-                .unwrap_or("N/A")
-                .to_string(),
-            base_weight: base_weight
-                .unwrap_or(&to_value(0).unwrap())
-                .as_u64()
-                .unwrap_or(0),
-            weight_mod: weight_mod
-                .unwrap_or(&to_value("N/A").unwrap())
-                .as_str()
-                .unwrap_or("N/A")
-                .to_string(),
+            base_height: base_height.unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
+            height_mod: height_mod.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+            base_weight: base_weight.unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
+            weight_mod: weight_mod.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
         };
     }
 }
@@ -68,10 +110,7 @@ pub struct Age {
 impl Age {
     pub fn new(mature: Option<&Value>, max: Option<&Value>) -> Age {
         return Age {
-            mature: mature
-                .unwrap_or(&to_value(0).unwrap())
-                .as_u64()
-                .unwrap_or(0),
+            mature: mature.unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
             max: max.unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
         };
     }
@@ -99,30 +138,14 @@ impl SkillProficiencies {
                 any = value.as_u64().unwrap();
             } else if key == "choose" {
                 let choose = value.as_object().unwrap();
-                choose_skills = choose
-                    .get("from")
-                    .unwrap()
-                    .as_array()
-                    .unwrap()
-                    .iter()
-                    .map(|skl| skl.to_string())
-                    .collect(); // TODO: add defaults here
-                choose_count = choose
-                    .get("count")
-                    .unwrap_or(&to_value(1).unwrap())
-                    .as_u64()
-                    .unwrap_or(1);
+                choose_skills = choose.get("from").unwrap().as_array().unwrap().iter().map(|skl| skl.to_string()).collect(); // TODO: add defaults here
+                choose_count = choose.get("count").unwrap_or(&to_value(1).unwrap()).as_u64().unwrap_or(1);
             } else {
                 skills.push(key.to_string());
             }
         }
 
-        return SkillProficiencies {
-            skills,
-            any,
-            choose_skills,
-            choose_count,
-        };
+        return SkillProficiencies { skills, any, choose_skills, choose_count };
     }
 }
 
@@ -149,19 +172,8 @@ impl LanguageProficiencies {
                 any_standard = value.as_u64().unwrap();
             } else if key == "choose" {
                 let choose = value.as_object().unwrap();
-                choose_languages = choose
-                    .get("from")
-                    .unwrap()
-                    .as_array()
-                    .unwrap()
-                    .iter()
-                    .map(|lan| lan.to_string())
-                    .collect();
-                choose_count = choose
-                    .get("count")
-                    .unwrap_or(&to_value(1).unwrap())
-                    .as_u64()
-                    .unwrap_or(1);
+                choose_languages = choose.get("from").unwrap().as_array().unwrap().iter().map(|lan| lan.to_string()).collect();
+                choose_count = choose.get("count").unwrap_or(&to_value(1).unwrap()).as_u64().unwrap_or(1);
             } else {
                 languages.push(key.to_string());
             }
@@ -197,10 +209,7 @@ impl ToolProficiencies {
             }
         }
 
-        return ToolProficiencies {
-            tools,
-            choose_any_amount,
-        };
+        return ToolProficiencies { tools, choose_any_amount };
     }
 }
 
@@ -229,11 +238,7 @@ impl WeaponProficiencies {
             }
         }
 
-        return WeaponProficiencies {
-            weapons,
-            choose_filter,
-            choose_amount,
-        };
+        return WeaponProficiencies { weapons, choose_filter, choose_amount };
     }
 }
 
@@ -247,11 +252,7 @@ impl ArmorProficiencies {
         let parsed_object = object.unwrap().as_object().unwrap(); // TODO: add defaults here
 
         return ArmorProficiencies {
-            armor: parsed_object
-                .keys()
-                .into_iter()
-                .map(|arm| arm.to_string())
-                .collect(),
+            armor: parsed_object.keys().into_iter().map(|arm| arm.to_string()).collect(),
         };
     }
 }
@@ -270,25 +271,13 @@ impl Resist {
         for item in list.unwrap().as_array().unwrap() {
             // TODO: add defaults here
             if item.is_object() {
-                choose_from = item
-                    .as_object()
-                    .unwrap()
-                    .get("from")
-                    .unwrap()
-                    .as_array()
-                    .unwrap()
-                    .iter()
-                    .map(|res| res.to_string())
-                    .collect();
+                choose_from = item.as_object().unwrap().get("from").unwrap().as_array().unwrap().iter().map(|res| res.to_string()).collect();
             } else {
                 resistances.push(item.as_str().unwrap_or("").to_string());
             }
         }
 
-        return Resist {
-            resistances,
-            choose_from,
-        };
+        return Resist { resistances, choose_from };
     }
 }
 
@@ -322,10 +311,7 @@ pub struct AdditionalSpells {
 
 impl AdditionalSpells {
     pub fn new(list: Option<&Value>) -> AdditionalSpells {
-        return AdditionalSpells {
-            spells: vec![],
-            choose: vec![],
-        };
+        return AdditionalSpells { spells: vec![], choose: vec![] };
     }
 }
 
@@ -338,15 +324,8 @@ pub struct Time {
 impl Time {
     pub fn new(quantity: Option<&Value>, unit: Option<&Value>) -> Time {
         return Time {
-            quantity: quantity
-                .unwrap_or(&to_value(0).unwrap())
-                .as_u64()
-                .unwrap_or(0),
-            unit: unit
-                .unwrap_or(&to_value("N/A").unwrap())
-                .as_str()
-                .unwrap_or("N/A")
-                .to_string(),
+            quantity: quantity.unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
+            unit: unit.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
         };
     }
 }
@@ -362,22 +341,9 @@ impl Range {
     pub fn new(typer: Option<&Value>, distance: Option<&Value>) -> Range {
         let parsed_distance = distance.unwrap().as_object().unwrap(); // TODO: add defaults here
         return Range {
-            typer: typer
-                .unwrap_or(&to_value("N/A").unwrap())
-                .as_str()
-                .unwrap_or("N/A")
-                .to_string(),
-            form: parsed_distance
-                .get("type")
-                .unwrap_or(&to_value("N/A").unwrap())
-                .as_str()
-                .unwrap_or("N/A")
-                .to_string(),
-            amount: parsed_distance
-                .get("amount")
-                .unwrap_or(&to_value(0).unwrap())
-                .as_u64()
-                .unwrap_or(0),
+            typer: typer.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+            form: parsed_distance.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+            amount: parsed_distance.get("amount").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
         };
     }
 }
@@ -391,27 +357,12 @@ pub struct Components {
 }
 
 impl Components {
-    pub fn new(
-        v: Option<&Value>,
-        s: Option<&Value>,
-        m: Option<&Value>,
-        r: Option<&Value>,
-    ) -> Components {
+    pub fn new(v: Option<&Value>, s: Option<&Value>, m: Option<&Value>, r: Option<&Value>) -> Components {
         return Components {
-            v: v.unwrap_or(&to_value(false).unwrap())
-                .as_bool()
-                .unwrap_or(false),
-            s: s.unwrap_or(&to_value(false).unwrap())
-                .as_bool()
-                .unwrap_or(false),
-            m: m.unwrap_or(&to_value("N/A").unwrap())
-                .as_str()
-                .unwrap_or("N/A")
-                .to_string(),
-            r: r.unwrap_or(&to_value("N/A").unwrap())
-                .as_str()
-                .unwrap_or("N/A")
-                .to_string(),
+            v: v.unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
+            s: s.unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
+            m: m.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+            r: r.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
         };
     }
 }
@@ -440,35 +391,17 @@ impl Duration {
 
         match parsed_object.get("duration") {
             Some(duration) => {
-                unit = duration
-                    .get("type")
-                    .unwrap_or(&to_value("N/A").unwrap())
-                    .as_str()
-                    .unwrap_or("N/A")
-                    .to_string();
-                amount = duration
-                    .get("amount")
-                    .unwrap_or(&to_value(0).unwrap())
-                    .as_u64()
-                    .unwrap_or(0);
+                unit = duration.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
+                amount = duration.get("amount").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0);
             }
             None => {}
         }
 
         return Duration {
-            typed: parsed_object
-                .get("type")
-                .unwrap_or(&to_value("N/A").unwrap())
-                .as_str()
-                .unwrap_or("N/A")
-                .to_string(),
+            typed: parsed_object.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
             unit,
             amount,
-            concentration: parsed_object
-                .get("concentration")
-                .unwrap_or(&to_value(false).unwrap())
-                .as_bool()
-                .unwrap_or(false),
+            concentration: parsed_object.get("concentration").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
             ends,
         };
     }
@@ -495,22 +428,12 @@ impl ScalingLevelDice {
         for level in scaling_object.keys() {
             scaling.push(LevelDie {
                 level: level.to_string(),
-                die: scaling_object
-                    .get(level)
-                    .unwrap_or(&to_value("N/A").unwrap())
-                    .as_str()
-                    .unwrap_or("N/A")
-                    .to_string(),
+                die: scaling_object.get(level).unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
             });
         }
 
         return ScalingLevelDice {
-            label: parsed_object
-                .get("label")
-                .unwrap_or(&to_value("N/A").unwrap())
-                .as_str()
-                .unwrap_or("N/A")
-                .to_string(),
+            label: parsed_object.get("label").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
             scaling,
         };
     }
@@ -534,31 +457,18 @@ impl PackItem {
                         name = special.as_str().unwrap_or("NOT_STRING_SPECIAL").to_string();
                     }
                     None => {
-                        name = object
-                            .get("item")
-                            .unwrap_or(&to_value("N/A").unwrap())
-                            .as_str()
-                            .unwrap_or("N/A")
-                            .to_string();
+                        name = object.get("item").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
                     }
                 }
                 return PackItem {
                     name,
-                    quantity: object
-                        .get("quantity")
-                        .unwrap_or(&to_value(1).unwrap())
-                        .as_u64()
-                        .unwrap_or(1),
+                    quantity: object.get("quantity").unwrap_or(&to_value(1).unwrap()).as_u64().unwrap_or(1),
                     special: false,
                 };
             }
             None => {
                 return PackItem {
-                    name: item
-                        .unwrap_or(&to_value("N/A").unwrap())
-                        .as_str()
-                        .unwrap_or("N/A")
-                        .to_string(),
+                    name: item.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
                     quantity: 1,
                     special: false,
                 }
@@ -591,11 +501,7 @@ enum ItemType {
 
 impl ItemType {
     pub fn new(item_type: Option<&Value>) -> ItemType {
-        match item_type
-            .unwrap_or(&to_value("N/A").unwrap())
-            .as_str()
-            .unwrap_or("N/A")
-        {
+        match item_type.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A") {
             "firearm" => return ItemType::Firearm,
             "arrow" => return ItemType::Arrow,
             "axe" => return ItemType::Axe,
@@ -646,10 +552,7 @@ impl ContainerSlot {
             valid_items.push(ValidContainerSlotItem::new(key, value));
         }
 
-        return ContainerSlot {
-            weight_limit,
-            valid_items,
-        };
+        return ContainerSlot { weight_limit, valid_items };
     }
 }
 
@@ -689,9 +592,7 @@ impl ContainerCapacity {
         let parsed_weights_len = parsed_weights.len();
         let parsed_items_len = parsed_items.len();
         if parsed_weights_len < parsed_items_len {
-            let extension: Vec<u64> = (0..parsed_items_len - parsed_weights_len)
-                .map(|_| 0)
-                .collect();
+            let extension: Vec<u64> = (0..parsed_items_len - parsed_weights_len).map(|_| 0).collect();
             parsed_weights.extend(extension);
         } else if parsed_items_len < parsed_weights_len {
             for _ in 0..parsed_weights_len - parsed_items_len {
@@ -707,11 +608,7 @@ impl ContainerCapacity {
 
         return ContainerCapacity {
             slots,
-            weightless: parsed_object
-                .get("weightless")
-                .unwrap_or(&to_value(false).unwrap())
-                .as_bool()
-                .unwrap_or(false),
+            weightless: parsed_object.get("weightless").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
         };
     }
 }
@@ -741,44 +638,44 @@ impl StartingItem {
         let mut is_equipment_type = false;
         let mut is_money = false;
 
-		if item.as_object().is_some() {
-			let object = item.as_object().unwrap();
-			for (key, key_value) in object {
-				match key.as_str() {
-					"item" => {
-						name = key_value.as_str().unwrap_or(&name).to_string();
-					}
-					"special" => {
-						name = key_value.as_str().unwrap_or(&name).to_string();
-						is_special = true;
-					}
-					"worthValue" => {
-						value = key_value.as_u64().unwrap_or(value);
-					}
-					"containsValue" => {
-						is_pouch = true;
-						contains_value = key_value.as_u64().unwrap_or(contains_value);
-					}
-					"quantity" => {
-						quantity = key_value.as_u64().unwrap_or(quantity);
-					}
-					"equipmentType" => {
-						name = key_value.as_str().unwrap_or(&name).to_string();
-						is_equipment_type = true;
-					}
-					"displayName" => {
-						display_name = key_value.as_str().unwrap_or(&display_name).to_string();
-					}
-					"value" => {
-						value = key_value.as_u64().unwrap_or(value);
-						is_money = true;
-					}
-					_ => {
-						println!("key not accounted for: {:?} -> {:?}", key, value);
-					}
-				}
-			}
-		}
+        if item.as_object().is_some() {
+            let object = item.as_object().unwrap();
+            for (key, key_value) in object {
+                match key.as_str() {
+                    "item" => {
+                        name = key_value.as_str().unwrap_or(&name).to_string();
+                    }
+                    "special" => {
+                        name = key_value.as_str().unwrap_or(&name).to_string();
+                        is_special = true;
+                    }
+                    "worthValue" => {
+                        value = key_value.as_u64().unwrap_or(value);
+                    }
+                    "containsValue" => {
+                        is_pouch = true;
+                        contains_value = key_value.as_u64().unwrap_or(contains_value);
+                    }
+                    "quantity" => {
+                        quantity = key_value.as_u64().unwrap_or(quantity);
+                    }
+                    "equipmentType" => {
+                        name = key_value.as_str().unwrap_or(&name).to_string();
+                        is_equipment_type = true;
+                    }
+                    "displayName" => {
+                        display_name = key_value.as_str().unwrap_or(&display_name).to_string();
+                    }
+                    "value" => {
+                        value = key_value.as_u64().unwrap_or(value);
+                        is_money = true;
+                    }
+                    _ => {
+                        println!("key not accounted for: {:?} -> {:?}", key, value);
+                    }
+                }
+            }
+        }
 
         return StartingItem {
             name,
@@ -802,12 +699,7 @@ struct StartingEquipment {
 
 impl StartingEquipment {
     pub fn new(object: Option<&Value>) -> StartingEquipment {
-        let parsed_arr = object
-            .unwrap()
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(|f| f.as_object().unwrap()); // TODO: add defaults here
+        let parsed_arr = object.unwrap().as_array().unwrap().iter().map(|f| f.as_object().unwrap()); // TODO: add defaults here
 
         let mut items = vec![];
         let mut choose_between = vec![];
@@ -816,12 +708,7 @@ impl StartingEquipment {
                 for item in category.get("_").unwrap().as_array().unwrap() {
                     // TODO: add defaults here
                     if item.as_array().is_some() {
-                        items.extend(
-                            item.as_array()
-                                .unwrap()
-                                .iter()
-                                .map(|f| StartingItem::new(f)),
-                        );
+                        items.extend(item.as_array().unwrap().iter().map(|f| StartingItem::new(f)));
                         continue;
                     }
                     items.push(StartingItem::new(item));
@@ -840,10 +727,7 @@ impl StartingEquipment {
             }
         }
 
-        return StartingEquipment {
-            items,
-            choose_between,
-        };
+        return StartingEquipment { items, choose_between };
     }
 }
 
@@ -860,110 +744,95 @@ impl ClassPrerequisite {
         let class_object = parsed_object.get("class").unwrap().as_object().unwrap(); // TODO: add defaults here
 
         return ClassPrerequisite {
-            name: class_object
-                .get("name")
-                .unwrap_or(&to_value("N/A").unwrap())
-                .as_str()
-                .unwrap_or("N/A")
-                .to_string(),
-            level: parsed_object
-                .get("level")
-                .unwrap_or(&to_value(0).unwrap())
-                .as_u64()
-                .unwrap_or(0),
-            visible: class_object
-                .get("visible")
-                .unwrap_or(&to_value(false).unwrap())
-                .as_bool()
-                .unwrap_or(false),
+            name: class_object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+            level: parsed_object.get("level").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
+            visible: class_object.get("visible").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
         };
     }
 }
 
 #[derive(Debug)]
-struct Prerequisite { // TODO: add support for choice from, just level, ability, summaries?, feats, other
-	campaign_requirement: Vec<String>,
-	requires_campaign: bool,
-	class_requirement: Vec<ClassPrerequisite>,
-	requires_class: bool
+struct Prerequisite {
+    // TODO: add support for choice from, just level, ability, summaries?, feats, other
+    campaign_requirement: Vec<String>,
+    requires_campaign: bool,
+    class_requirement: Vec<ClassPrerequisite>,
+    requires_class: bool,
 }
 
 impl Prerequisite {
-	pub fn new(list: Option<&Value>) -> Prerequisite {
-		let mut campaign_requirement = vec![];
-		let mut requires_campaign = false;
-		let mut class_requirement = vec![];
-		let mut requires_class = false;
+    pub fn new(list: Option<&Value>) -> Prerequisite {
+        let mut campaign_requirement = vec![];
+        let mut requires_campaign = false;
+        let mut class_requirement = vec![];
+        let mut requires_class = false;
 
-		if list.is_some() && list.unwrap().as_array().is_some() {
-			for object in list.unwrap().as_array().unwrap() {
-				let parsed_object = object.as_object().unwrap(); // TODO: add defaults here
-				if parsed_object.get("campaign").is_some() {
-					campaign_requirement.push(object.get("campaign").unwrap().as_str().unwrap_or("N/A").to_string());
-					requires_campaign = true;
-				}
-				if parsed_object.get("level").is_some() {
-					class_requirement.push(ClassPrerequisite::new(object.get("level")));
-					requires_class = true;
-				}
-			}
-		}
+        if list.is_some() && list.unwrap().as_array().is_some() {
+            for object in list.unwrap().as_array().unwrap() {
+                let parsed_object = object.as_object().unwrap(); // TODO: add defaults here
+                if parsed_object.get("campaign").is_some() {
+                    campaign_requirement.push(object.get("campaign").unwrap().as_str().unwrap_or("N/A").to_string());
+                    requires_campaign = true;
+                }
+                if parsed_object.get("level").is_some() {
+                    class_requirement.push(ClassPrerequisite::new(object.get("level")));
+                    requires_class = true;
+                }
+            }
+        }
 
-		return Prerequisite {
-			campaign_requirement,
-			requires_campaign,
-			class_requirement,
-			requires_class
-		}
-	}
+        return Prerequisite {
+            campaign_requirement,
+            requires_campaign,
+            class_requirement,
+            requires_class,
+        };
+    }
 }
 
 #[derive(Debug)]
 struct SkillToolLanguageChoice {
-	language_amount: u64,
-	tool_amount: u64
-	// global_count: u64
+    language_amount: u64,
+    tool_amount: u64, // global_count: u64
 }
 
 impl SkillToolLanguageChoice {
-	pub fn new(object: &Value) -> SkillToolLanguageChoice {
-		let mut language_amount = 0;
-		let mut tool_amount = 0;
-		// let mut global_count = 0;
+    pub fn new(object: &Value) -> SkillToolLanguageChoice {
+        let mut language_amount = 0;
+        let mut tool_amount = 0;
+        // let mut global_count = 0;
 
-		if object.as_object().is_some() {
-			let parsed_object = object.as_object().unwrap();
-			language_amount = parsed_object.get("anyLanguage").unwrap_or(&to_value(language_amount).unwrap()).as_u64().unwrap_or(language_amount);
-			tool_amount = parsed_object.get("anyTool").unwrap_or(&to_value(tool_amount).unwrap()).as_u64().unwrap_or(tool_amount);
-		}
+        if object.as_object().is_some() {
+            let parsed_object = object.as_object().unwrap();
+            language_amount = parsed_object.get("anyLanguage").unwrap_or(&to_value(language_amount).unwrap()).as_u64().unwrap_or(language_amount);
+            tool_amount = parsed_object.get("anyTool").unwrap_or(&to_value(tool_amount).unwrap()).as_u64().unwrap_or(tool_amount);
+        }
 
-		return SkillToolLanguageChoice {
-			language_amount,
-			tool_amount,
-			// global_count
-		}
-	}
+        return SkillToolLanguageChoice {
+            language_amount,
+            tool_amount,
+            // global_count
+        };
+    }
 }
 
 #[derive(Debug)]
 struct SkillToolLanguageProficiencies {
-	options: Vec<SkillToolLanguageChoice>
+    options: Vec<SkillToolLanguageChoice>,
 }
 
 impl SkillToolLanguageProficiencies {
-	pub fn new(list: Option<&Value>) -> SkillToolLanguageProficiencies {
-		let mut options: Vec<SkillToolLanguageChoice> = vec![];
+    pub fn new(list: Option<&Value>) -> SkillToolLanguageProficiencies {
+        let mut options: Vec<SkillToolLanguageChoice> = vec![];
 
-		if list.is_some() && list.unwrap().as_array().is_some() {
-			for option in list.unwrap().as_array().unwrap() {
-				options.push(SkillToolLanguageChoice::new(option));
-			}
-		}
+        if list.is_some() && list.unwrap().as_array().is_some() {
+            for option in list.unwrap().as_array().unwrap() {
+                options.push(SkillToolLanguageChoice::new(option));
+            }
+        }
 
-		return SkillToolLanguageProficiencies {
-			options
-		}
-	}
+        return SkillToolLanguageProficiencies { options };
+    }
 }
 
 /**
@@ -973,37 +842,37 @@ impl SkillToolLanguageProficiencies {
  */
 #[derive(Debug)]
 struct OptionalFeatureProgression {
-	name: String,
-	freature_type: Vec<String>,
-	progression_type: String,
-	progression_amount: u64
+    name: String,
+    freature_type: Vec<String>,
+    progression_type: String,
+    progression_amount: u64,
 }
 
 impl OptionalFeatureProgression {
-	pub fn new(object: Option<&Value>) -> OptionalFeatureProgression {
-		let mut name = "N/A".to_string();
-		let mut freature_type = vec![];
-		let mut progression_type = "N/A".to_string();
-		let mut progression_amount = 0;
+    pub fn new(object: Option<&Value>) -> OptionalFeatureProgression {
+        let mut name = "N/A".to_string();
+        let mut freature_type = vec![];
+        let mut progression_type = "N/A".to_string();
+        let mut progression_amount = 0;
 
-		if object.is_some() && object.unwrap().as_object().is_some() {
-			let parsed_object = object.unwrap().as_object().unwrap();
-			name = parsed_object.get("name").unwrap_or(&to_value(&name).unwrap()).as_str().unwrap_or(name.as_str()).to_string();
-			freature_type = parsed_object.get("featureType").unwrap().as_array().unwrap().iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(); // TODO: add defaults here
-			if parsed_object.get("progression").is_some() && parsed_object.get("progression").unwrap().as_object().is_some() {
-				let parsed_progression = parsed_object.get("progression").unwrap().as_object().unwrap();
-				progression_type = parsed_progression.keys().into_iter().collect::<Vec<_>>()[0].to_owned();
-				progression_amount = parsed_progression.get(&progression_type).unwrap().as_u64().unwrap_or(0);
-			}
-		}
+        if object.is_some() && object.unwrap().as_object().is_some() {
+            let parsed_object = object.unwrap().as_object().unwrap();
+            name = parsed_object.get("name").unwrap_or(&to_value(&name).unwrap()).as_str().unwrap_or(name.as_str()).to_string();
+            freature_type = parsed_object.get("featureType").unwrap().as_array().unwrap().iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(); // TODO: add defaults here
+            if parsed_object.get("progression").is_some() && parsed_object.get("progression").unwrap().as_object().is_some() {
+                let parsed_progression = parsed_object.get("progression").unwrap().as_object().unwrap();
+                progression_type = parsed_progression.keys().into_iter().collect::<Vec<_>>()[0].to_owned();
+                progression_amount = parsed_progression.get(&progression_type).unwrap().as_u64().unwrap_or(0);
+            }
+        }
 
-		return OptionalFeatureProgression {
-			name,
-			freature_type,
-			progression_type,
-			progression_amount
-		}
-	}
+        return OptionalFeatureProgression {
+            name,
+            freature_type,
+            progression_type,
+            progression_amount,
+        };
+    }
 }
 
 /**
@@ -1012,26 +881,23 @@ impl OptionalFeatureProgression {
  */
 #[derive(Debug)]
 struct SavingThrowProficiencies {
-	options: Vec<String>,
-	amount: u64
+    options: Vec<String>,
+    amount: u64,
 }
 
 impl SavingThrowProficiencies {
-	pub fn new(object: Option<&Value>) -> SavingThrowProficiencies {
-		let mut options = vec![];
-		let mut amount = 0;
+    pub fn new(object: Option<&Value>) -> SavingThrowProficiencies {
+        let mut options = vec![];
+        let mut amount = 0;
 
-		if object.is_some() && object.unwrap().as_object().is_some() {
-			let parsed_object = object.unwrap().as_object().unwrap();
-			options = parsed_object.get("from").unwrap().as_array().unwrap().iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect();
-			amount = parsed_object.get("count").unwrap_or(&to_value(amount).unwrap()).as_u64().unwrap_or(amount);
-		}
+        if object.is_some() && object.unwrap().as_object().is_some() {
+            let parsed_object = object.unwrap().as_object().unwrap();
+            options = parsed_object.get("from").unwrap().as_array().unwrap().iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect();
+            amount = parsed_object.get("count").unwrap_or(&to_value(amount).unwrap()).as_u64().unwrap_or(amount);
+        }
 
-		return SavingThrowProficiencies {
-			options,
-			amount
-		}
-	}
+        return SavingThrowProficiencies { options, amount };
+    }
 }
 
 /**
@@ -1040,28 +906,24 @@ impl SavingThrowProficiencies {
  */
 #[derive(Debug)]
 struct Expertise {
-	skill: String,
-	can_choose: bool,
-	amount: u64
+    skill: String,
+    can_choose: bool,
+    amount: u64,
 }
 
 impl Expertise {
-	pub fn new(object: Option<&Value>) -> Expertise {
-		let mut skill = "N/A".to_string();
-		let mut can_choose = false;
-		let mut amount = 0;
+    pub fn new(object: Option<&Value>) -> Expertise {
+        let mut skill = "N/A".to_string();
+        let mut can_choose = false;
+        let mut amount = 0;
 
-		if object.is_some() && object.unwrap().as_object().is_some() {
-			let parsed_object = object.unwrap().as_object().unwrap();
-			skill = parsed_object.keys().into_iter().collect::<Vec<_>>()[0].to_owned();
-			can_choose = skill == "anyProficientSkill";
-			amount = parsed_object.get(&skill).unwrap_or(&to_value(amount).unwrap()).as_u64().unwrap_or(amount);
-		}
+        if object.is_some() && object.unwrap().as_object().is_some() {
+            let parsed_object = object.unwrap().as_object().unwrap();
+            skill = parsed_object.keys().into_iter().collect::<Vec<_>>()[0].to_owned();
+            can_choose = skill == "anyProficientSkill";
+            amount = parsed_object.get(&skill).unwrap_or(&to_value(amount).unwrap()).as_u64().unwrap_or(amount);
+        }
 
-		return Expertise {
-			skill,
-			can_choose,
-			amount
-		}
-	}
+        return Expertise { skill, can_choose, amount };
+    }
 }
