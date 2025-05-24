@@ -321,7 +321,7 @@ pub struct AdditionalSpells {
 }
 
 impl AdditionalSpells {
-    pub fn run(list: Option<&Value>) -> AdditionalSpells {
+    pub fn new(list: Option<&Value>) -> AdditionalSpells {
         return AdditionalSpells {
             spells: vec![],
             choose: vec![],
@@ -881,3 +881,91 @@ impl ClassPrerequisite {
         };
     }
 }
+
+#[derive(Debug)]
+struct Prerequisite { // TODO: add support for choice from, just level, ability, summaries?, feats, other
+	campaign_requirement: Vec<String>,
+	requires_campaign: bool,
+	class_requirement: Vec<ClassPrerequisite>,
+	requires_class: bool
+}
+
+impl Prerequisite {
+	pub fn new(list: Option<&Value>) -> Prerequisite {
+		let mut campaign_requirement = vec![];
+		let mut requires_campaign = false;
+		let mut class_requirement = vec![];
+		let mut requires_class = false;
+
+		if list.is_some() && list.unwrap().as_array().is_some() {
+			for object in list.unwrap().as_array().unwrap() {
+				let parsed_object = object.as_object().unwrap(); // TODO: add defaults here
+				if parsed_object.get("campaign").is_some() {
+					campaign_requirement.push(object.get("campaign").unwrap().as_str().unwrap_or("N/A").to_string());
+					requires_campaign = true;
+				}
+				if parsed_object.get("level").is_some() {
+					class_requirement.push(ClassPrerequisite::new(object.get("level")));
+					requires_class = true;
+				}
+			}
+		}
+
+		return Prerequisite {
+			campaign_requirement,
+			requires_campaign,
+			class_requirement,
+			requires_class
+		}
+	}
+}
+
+#[derive(Debug)]
+struct SkillToolLanguageChoice {
+	language_amount: u64,
+	tool_amount: u64
+	// global_count: u64
+}
+
+impl SkillToolLanguageChoice {
+	pub fn new(object: &Value) -> SkillToolLanguageChoice {
+		let mut language_amount = 0;
+		let mut tool_amount = 0;
+		// let mut global_count = 0;
+
+		if object.as_object().is_some() {
+			let parsed_object = object.as_object().unwrap();
+			language_amount = parsed_object.get("anyLanguage").unwrap_or(&to_value(language_amount).unwrap()).as_u64().unwrap_or(language_amount);
+			tool_amount = parsed_object.get("anyTool").unwrap_or(&to_value(tool_amount).unwrap()).as_u64().unwrap_or(tool_amount);
+		}
+
+		return SkillToolLanguageChoice {
+			language_amount,
+			tool_amount,
+			// global_count
+		}
+	}
+}
+
+#[derive(Debug)]
+struct SkillToolLanguageProficiencies {
+	options: Vec<SkillToolLanguageChoice>
+}
+
+impl SkillToolLanguageProficiencies {
+	pub fn new(list: Option<&Value>) -> SkillToolLanguageProficiencies {
+		let mut options: Vec<SkillToolLanguageChoice> = vec![];
+
+		if list.is_some() && list.unwrap().as_array().is_some() {
+			for option in list.unwrap().as_array().unwrap() {
+				options.push(SkillToolLanguageChoice::new(option));
+			}
+		}
+
+		return SkillToolLanguageProficiencies {
+			options
+		}
+	}
+}
+
+
