@@ -621,19 +621,19 @@ class StartingEquipment:
                     #     print(item)
 
                     if type(item) is list:
-                        self.items.extend([StartingItem(item) for item in item])
+                        self.items.extend([StartingItem(i) for i in item])
                         continue
 
                     self.items.append(StartingItem(item))
                 continue
 
             if "c" in category.keys():
-                items = zip(category["a"], category["b"], category["c"])
+                zipped_items = zip(category["a"], category["b"], category["c"])
             else:
-                items = zip(category["a"], category["b"])
+                zipped_items = zip(category["a"], category["b"])
 
-            for items_zipped in items:
-                classed_items = [StartingItem(item) for item in items_zipped]
+            for zipped_item in zipped_items:
+                classed_items = [StartingItem(item) for item in zipped_item]
                 self.choose_between.append(classed_items)
 
     def as_dict(self) -> dict[str, Any]:
