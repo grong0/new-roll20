@@ -24,7 +24,7 @@ fn main() {
     let races_file: Value = from_str(file.as_str()).unwrap();
     let races_object = races_dao::Races::new(races_file);
 
-    for race in races_object.races {
-        println!("{:?}", race);
-    }
+    println!("{:#?}", races_object.races);
+
+    println!("{:#?}", races_object.races.get("astral_elf|aag"));
 }

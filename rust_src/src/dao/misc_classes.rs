@@ -4,67 +4,137 @@ use serde_json::{to_value, Map, Value};
 
 #[derive(Debug)]
 pub struct Speed {
-	walk: u64,
-	fly: u64,
-	swim: u64,
-	climb: u64,
+    walk: u64,
+    fly: u64,
+    swim: u64,
+    climb: u64,
 }
 
 impl Speed {
-	pub fn new(object: Option<&Value>) -> Speed {
-		let mut walk = 30;
-		let mut fly = 0;
-		let mut swim = 0;
-		let mut climb = 0;
+    pub fn new(object: Option<&Value>) -> Speed {
+        let mut walk = 30;
+        let mut fly = 0;
+        let mut swim = 0;
+        let mut climb = 0;
 
-		if object.is_some() {
-			match object.unwrap().as_object() {
-				Some(new_object) => {
-					walk = new_object.get("walk").unwrap_or(&to_value(walk).unwrap()).as_u64().unwrap_or(walk);
-					let default_fly_val = to_value(fly).unwrap();
-					let fly_val = new_object.get("fly").unwrap_or(&default_fly_val);
-					match fly_val.as_u64() {
-						Some(fly_int) => {
-							fly = fly_int
-						}
-						None => {
-							fly = if fly_val.as_bool().unwrap_or(false) {walk} else {fly}
-						}
-					}
-					let default_swim_val = to_value(swim).unwrap();
-					let swim_val = new_object.get("swim").unwrap_or(&default_swim_val);
-					match swim_val.as_u64() {
-						Some(swim_int) => {
-							swim = swim_int
-						}
-						None => {
-							swim = if swim_val.as_bool().unwrap_or(false) {walk} else {swim}
-						}
-					}
-					let default_climb_val = to_value(climb).unwrap();
-					let climb_val = new_object.get("climb").unwrap_or(&default_climb_val);
-					match climb_val.as_u64() {
-						Some(climb_int) => {
-							climb = climb_int
-						}
-						None => {
-							climb = if climb_val.as_bool().unwrap_or(false) {walk} else {climb}
-						}
-					}
-				}
-				None => {
-					walk = object.unwrap().as_u64().unwrap_or(walk);
-				}
-			}
-		}
+        if object.is_some() {
+            match object.unwrap().as_object() {
+                Some(new_object) => {
+                    walk = new_object.get("walk").unwrap_or(&to_value(walk).unwrap()).as_u64().unwrap_or(walk);
+                    let default_fly_val = to_value(fly).unwrap();
+                    let fly_val = new_object.get("fly").unwrap_or(&default_fly_val);
+                    match fly_val.as_u64() {
+                        Some(fly_int) => fly = fly_int,
+                        None => fly = if fly_val.as_bool().unwrap_or(false) { walk } else { fly },
+                    }
+                    let default_swim_val = to_value(swim).unwrap();
+                    let swim_val = new_object.get("swim").unwrap_or(&default_swim_val);
+                    match swim_val.as_u64() {
+                        Some(swim_int) => swim = swim_int,
+                        None => swim = if swim_val.as_bool().unwrap_or(false) { walk } else { swim },
+                    }
+                    let default_climb_val = to_value(climb).unwrap();
+                    let climb_val = new_object.get("climb").unwrap_or(&default_climb_val);
+                    match climb_val.as_u64() {
+                        Some(climb_int) => climb = climb_int,
+                        None => climb = if climb_val.as_bool().unwrap_or(false) { walk } else { climb },
+                    }
+                }
+                None => {
+                    walk = object.unwrap().as_u64().unwrap_or(walk);
+                }
+            }
+        }
 
-		return Speed {
-			walk,
-			fly,
-			swim,
-			climb
-		}
-	}
+        return Speed { walk, fly, swim, climb };
+    }
+}
+
+#[derive(Debug)]
+pub struct Choose {
+    count: u64,
+    abilities: Vec<String>,
+}
+
+impl Choose {
+    pub fn new(object: Option<&Value>) -> Choose {
+        let mut count = 0;
+        let mut abilities = vec![];
+
+        if object.is_some() {
+            if object.unwrap().is_object() && object.unwrap().as_object().unwrap().get("from").is_some() && object.unwrap().as_object().unwrap().get("count").is_some() {
+                let parsed_object = object.unwrap().as_object().unwrap();
+                count = parsed_object.get("count").unwrap_or(&to_value(count).unwrap()).as_u64().unwrap_or(count);
+                abilities = parsed_object
+                    .get("from")
+                    .unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap())
+                    .as_array()
+                    .unwrap_or(&vec![])
+                    .iter()
+                    .map(|f| f.as_str().unwrap_or("N/A").to_string())
+                    .collect();
+            } else if object.unwrap().is_array() {
+                let parsed_array = object.unwrap().as_array().unwrap();
+                count = 1;
+                abilities = parsed_array.iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect();
+            }
+        }
+
+        return Choose { count, abilities };
+    }
+}
+
+#[derive(Debug)]
+pub struct Ability {
+    strength: i64,
+    dexterity: i64,
+    constitution: i64,
+    intelligence: i64,
+    wisdom: i64,
+    charisma: i64,
+    choose: Choose,
+}
+
+impl Ability {
+    pub fn new(object: Option<&Value>) -> Ability {
+        let mut strength = 0;
+        let mut dexterity = 0;
+        let mut constitution = 0;
+        let mut intelligence = 0;
+        let mut wisdom = 0;
+        let mut charisma = 0;
+        let mut choose = Choose { count: 0, abilities: vec![] };
+
+        if object.is_some() {
+            let parsed_object: Map<String, Value>;
+            if object.unwrap().is_object() {
+                parsed_object = object.unwrap().as_object().unwrap().to_owned();
+            } else if object.unwrap().is_array() {
+                parsed_object = object.unwrap().as_array().unwrap().get(0).unwrap_or(&to_value(Map::new()).unwrap()).as_object().unwrap_or(&Map::new()).to_owned();
+            } else {
+                println!("ability was something other than an object or an array: {:?}", object.unwrap().to_string());
+                parsed_object = Map::new();
+            }
+
+            strength = parsed_object.get("str").unwrap_or(&to_value(strength).unwrap()).as_i64().unwrap_or(strength);
+            dexterity = parsed_object.get("dex").unwrap_or(&to_value(dexterity).unwrap()).as_i64().unwrap_or(dexterity);
+            constitution = parsed_object.get("con").unwrap_or(&to_value(constitution).unwrap()).as_i64().unwrap_or(constitution);
+            intelligence = parsed_object.get("int").unwrap_or(&to_value(intelligence).unwrap()).as_i64().unwrap_or(intelligence);
+            wisdom = parsed_object.get("wis").unwrap_or(&to_value(wisdom).unwrap()).as_i64().unwrap_or(wisdom);
+            charisma = parsed_object.get("cha").unwrap_or(&to_value(charisma).unwrap()).as_i64().unwrap_or(charisma);
+            choose = Choose::new(parsed_object.get("choose"));
+        }
+
+        return Ability {
+            strength,
+            dexterity,
+            constitution,
+            intelligence,
+            wisdom,
+            charisma,
+            choose,
+        };
+    }
 }
 
 #[derive(Debug)]
@@ -91,12 +161,25 @@ pub struct HeightAndWeight {
 }
 
 impl HeightAndWeight {
-    pub fn new(base_height: Option<&Value>, height_mod: Option<&Value>, base_weight: Option<&Value>, weight_mod: Option<&Value>) -> HeightAndWeight {
+    pub fn new(object: Option<&Value>) -> HeightAndWeight {
+        let mut base_height = 0;
+        let mut height_mod = "N/A".to_string();
+        let mut base_weight = 0;
+        let mut weight_mod = "N/A".to_string();
+
+        if object.is_some() && object.unwrap().is_object() {
+            let parsed_object = object.unwrap().as_object().unwrap();
+            base_height = parsed_object.get("baseHeight").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0);
+            height_mod = parsed_object.get("heightMod").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
+            base_weight = parsed_object.get("baseWeight").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0);
+            weight_mod = parsed_object.get("weightMod").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
+        }
+
         return HeightAndWeight {
-            base_height: base_height.unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
-            height_mod: height_mod.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
-            base_weight: base_weight.unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
-            weight_mod: weight_mod.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+            base_height,
+            height_mod,
+            base_weight,
+            weight_mod,
         };
     }
 }
@@ -108,11 +191,17 @@ pub struct Age {
 }
 
 impl Age {
-    pub fn new(mature: Option<&Value>, max: Option<&Value>) -> Age {
-        return Age {
-            mature: mature.unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
-            max: max.unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
-        };
+    pub fn new(object: Option<&Value>) -> Age {
+        let mut mature = 0;
+        let mut max = 0;
+
+        if object.is_some() && object.unwrap().is_object() {
+            let parsed_object = object.unwrap().as_object().unwrap();
+            mature = parsed_object.get("mature").unwrap_or(&to_value(mature).unwrap()).as_u64().unwrap_or(mature);
+            max = parsed_object.get("max").unwrap_or(&to_value(max).unwrap()).as_u64().unwrap_or(max);
+        }
+
+        return Age { mature, max };
     }
 }
 
@@ -131,17 +220,25 @@ impl SkillProficiencies {
         let mut choose_skills: Vec<String> = vec![];
         let mut choose_count = 0;
 
-        let parsed_object = object.unwrap().as_object().unwrap(); // TODO: add defaults here
-
-        for (key, value) in parsed_object {
-            if key == "any" {
-                any = value.as_u64().unwrap();
-            } else if key == "choose" {
-                let choose = value.as_object().unwrap();
-                choose_skills = choose.get("from").unwrap().as_array().unwrap().iter().map(|skl| skl.to_string()).collect(); // TODO: add defaults here
-                choose_count = choose.get("count").unwrap_or(&to_value(1).unwrap()).as_u64().unwrap_or(1);
+        if object.is_some() {
+            let parsed_object: Map<String, Value>;
+            if object.unwrap().is_object() {
+                parsed_object = object.unwrap().as_object().unwrap().to_owned();
+            } else if object.unwrap().is_array() {
+                parsed_object = object.unwrap().as_array().unwrap().get(0).unwrap_or(&to_value(Map::new()).unwrap()).as_object().unwrap_or(&Map::new()).to_owned();
             } else {
-                skills.push(key.to_string());
+                parsed_object = Map::new();
+            }
+            for (key, value) in parsed_object {
+                if key == "any" {
+                    any = value.as_u64().unwrap();
+                } else if key == "choose" {
+                    let choose = value.as_object().unwrap();
+                    choose_skills = choose.get("from").unwrap().as_array().unwrap().iter().map(|skl| skl.as_str().unwrap_or("N/A").to_string()).collect(); // TODO: add defaults here
+                    choose_count = choose.get("count").unwrap_or(&to_value(1).unwrap()).as_u64().unwrap_or(1);
+                } else {
+                    skills.push(key.to_string());
+                }
             }
         }
 
@@ -165,17 +262,25 @@ impl LanguageProficiencies {
         let mut choose_languages: Vec<String> = vec![];
         let mut choose_count = 0;
 
-        let parsed_object = object.unwrap().as_object().unwrap(); // TODO: add defaults here
-
-        for (key, value) in parsed_object {
-            if key == "anyStandard" {
-                any_standard = value.as_u64().unwrap();
-            } else if key == "choose" {
-                let choose = value.as_object().unwrap();
-                choose_languages = choose.get("from").unwrap().as_array().unwrap().iter().map(|lan| lan.to_string()).collect();
-                choose_count = choose.get("count").unwrap_or(&to_value(1).unwrap()).as_u64().unwrap_or(1);
+        if object.is_some() {
+            let parsed_object: Map<String, Value>;
+            if object.unwrap().is_object() {
+                parsed_object = object.unwrap().as_object().unwrap().to_owned();
+            } else if object.unwrap().is_array() {
+                parsed_object = object.unwrap().as_array().unwrap().get(0).unwrap_or(&to_value(Map::new()).unwrap()).as_object().unwrap_or(&Map::new()).to_owned();
             } else {
-                languages.push(key.to_string());
+                parsed_object = Map::new();
+            }
+            for (key, value) in parsed_object {
+                if key == "anyStandard" {
+                    any_standard = value.as_u64().unwrap();
+                } else if key == "choose" {
+                    let choose = value.as_object().unwrap();
+                    choose_languages = choose.get("from").unwrap().as_array().unwrap().iter().map(|lan| lan.to_string()).collect();
+                    choose_count = choose.get("count").unwrap_or(&to_value(1).unwrap()).as_u64().unwrap_or(1);
+                } else {
+                    languages.push(key.to_string());
+                }
             }
         }
 
@@ -199,13 +304,21 @@ impl ToolProficiencies {
         let mut tools: Vec<String> = vec![];
         let mut choose_any_amount = 0;
 
-        let parsed_object = object.unwrap().as_object().unwrap(); // TODO: add defaults here
-
-        for (key, value) in parsed_object {
-            if key == "any" {
-                choose_any_amount = value.as_u64().unwrap()
+        if object.is_some() {
+            let parsed_object: Map<String, Value>;
+            if object.unwrap().is_object() {
+                parsed_object = object.unwrap().as_object().unwrap().to_owned();
+            } else if object.unwrap().is_array() {
+                parsed_object = object.unwrap().as_array().unwrap().get(0).unwrap_or(&to_value(Map::new()).unwrap()).as_object().unwrap_or(&Map::new()).to_owned();
             } else {
-                tools.push(key.to_string());
+                parsed_object = Map::new();
+            }
+            for (key, value) in parsed_object {
+                if key == "any" {
+                    choose_any_amount = value.as_u64().unwrap()
+                } else {
+                    tools.push(key.to_string());
+                }
             }
         }
 
@@ -223,18 +336,27 @@ pub struct WeaponProficiencies {
 impl WeaponProficiencies {
     pub fn new(object: Option<&Value>) -> WeaponProficiencies {
         let mut weapons: Vec<String> = vec![];
-        let mut choose_filter = "".to_string();
+        let mut choose_filter = "N/A".to_string();
         let mut choose_amount = 0;
 
-        let parsed_object = object.unwrap().as_object().unwrap(); // TODO: add defaults here
-
-        for (key, value) in parsed_object {
-            if key == "choose" {
-                let choose = value.as_object().unwrap();
-                choose_filter = choose.get("filter").unwrap().as_str().unwrap().to_string();
-                choose_amount = choose.get("count").unwrap().as_u64().unwrap()
+        if object.is_some() {
+            let parsed_object: Map<String, Value>;
+            if object.unwrap().is_object() {
+                parsed_object = object.unwrap().as_object().unwrap().to_owned();
+            } else if object.unwrap().is_array() {
+                parsed_object = object.unwrap().as_array().unwrap().get(0).unwrap_or(&to_value(Map::new()).unwrap()).as_object().unwrap_or(&Map::new()).to_owned();
             } else {
-                weapons.push(key.to_string());
+                parsed_object = Map::new();
+            }
+            for (key, value) in parsed_object {
+                if key == "choose" {
+                    let choose = value.as_object().unwrap();
+                    println!("weapon proficiency choose: {:#?}", choose);
+                    choose_filter = choose.get("fromFilter").unwrap_or(&to_value(&choose_filter).unwrap()).as_str().unwrap_or(&choose_filter).to_string();
+                    choose_amount = choose.get("count").unwrap_or(&to_value(choose_amount).unwrap()).as_u64().unwrap_or(choose_amount);
+                } else {
+                    weapons.push(key.to_string());
+                }
             }
         }
 
@@ -249,11 +371,21 @@ pub struct ArmorProficiencies {
 
 impl ArmorProficiencies {
     pub fn new(object: Option<&Value>) -> ArmorProficiencies {
-        let parsed_object = object.unwrap().as_object().unwrap(); // TODO: add defaults here
+        let mut armor: Vec<String> = vec![];
 
-        return ArmorProficiencies {
-            armor: parsed_object.keys().into_iter().map(|arm| arm.to_string()).collect(),
-        };
+        if object.is_some() {
+            let parsed_object: Map<String, Value>;
+            if object.unwrap().is_object() {
+                parsed_object = object.unwrap().as_object().unwrap().to_owned();
+            } else if object.unwrap().is_array() {
+                parsed_object = object.unwrap().as_array().unwrap().get(0).unwrap_or(&to_value(Map::new()).unwrap()).as_object().unwrap_or(&Map::new()).to_owned();
+            } else {
+                parsed_object = Map::new();
+            }
+            armor = parsed_object.keys().into_iter().map(|arm| arm.to_string()).collect();
+        }
+
+        return ArmorProficiencies { armor };
     }
 }
 
@@ -268,16 +400,72 @@ impl Resist {
         let mut resistances: Vec<String> = vec![];
         let mut choose_from: Vec<String> = vec![];
 
-        for item in list.unwrap().as_array().unwrap() {
-            // TODO: add defaults here
-            if item.is_object() {
-                choose_from = item.as_object().unwrap().get("from").unwrap().as_array().unwrap().iter().map(|res| res.to_string()).collect();
-            } else {
-                resistances.push(item.as_str().unwrap_or("").to_string());
+        if list.is_some() && list.unwrap().is_array() {
+            for item in list.unwrap().as_array().unwrap() {
+                if item.is_object() {
+                    choose_from = item.as_object().unwrap().get("from").unwrap_or(&to_value::<Vec<String>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|res| res.to_string()).collect();
+                } else {
+                    resistances.push(item.as_str().unwrap_or("").to_string());
+                }
             }
         }
 
         return Resist { resistances, choose_from };
+    }
+}
+
+// #[derive(Debug)]
+// pub struct SpellAbility {
+// 	ability: SpellAbilityTypes,
+// 	choose_between: Vec<String>,
+// 	choose_amount: u64
+// }
+
+// impl SpellAbility {
+// 	pub fn new(object: Option<&Value>) -> SpellAbility {
+// 		let mut ability = SpellAbilityTypes::INHERIT;
+// 		let mut choose_between: Vec<String> = vec![];
+// 		let mut choose_amount = 0;
+
+// 		if object.is_some() {
+// 			if object.unwrap().is_object() {
+
+// 			} else if object.unwrap().is_string() {
+// 				ability = SpellAbilityTypes::new(object.unwrap());
+// 			}
+// 		}
+
+// 		return SpellAbility {
+// 			ability,
+// 			choose_between,
+// 			choose_amount
+// 		}
+// 	}
+// }
+
+#[derive(Debug)]
+pub enum SpellAbility {
+    STR,
+    DEX,
+    CON,
+    INT,
+    WIS,
+    CHA,
+    INHERIT
+}
+
+impl SpellAbility {
+    pub fn new(ability: &Value) -> SpellAbility {
+        match ability.as_str().unwrap_or("inherit") {
+            "str" => {return SpellAbility::STR}
+            "dex" => {return SpellAbility::DEX}
+            "con" => {return SpellAbility::CON}
+            "int" => {return SpellAbility::INT}
+            "wis" => {return SpellAbility::WIS}
+            "cha" => {return SpellAbility::CHA}
+            "inherit" => {return SpellAbility::INHERIT}
+            _ => {return SpellAbility::INHERIT}
+        }
     }
 }
 
@@ -297,21 +485,76 @@ pub struct AdditionalSpell {
 }
 
 /**
- * There are 4 keys:
- * 1. known | these spells have no level requirement, but are tied with a resource
- * 2. innate | these are like known, but have a level requirement
- * 3. expanded | expands your spellbook?
- * 4. ability | the ability the other spells use
+ * There are 5 keys:
+ * 1. known | Spells which are always known
+ * 2. innate | Spells which can be innately cast, without expending normal spell resources
+ * 3. expanded | Expansions to a class' default spell list, from which spells can be chosen (e.g. Warlock Patron Spells)
+ * 4. ability | Optionally specify the ability score used for e.g. racial spellcasting
+ * 5. prepared | Spells which are always prepared
+ * 6. resourceName | Optional resource name for resource-cast spells in this group
+ * 7. name | Optional display name for the group
  */
 #[derive(Debug)]
 pub struct AdditionalSpells {
-    spells: Vec<AdditionalSpell>,
-    choose: Vec<AdditionalSpell>,
+    name: String,
+    ability_choices: Vec<SpellAbility>,
+    resource_name: String,
+    innate_spells: AdditionalSpell,
+    known_spells: AdditionalSpell,
+    prepared_spells: AdditionalSpell,
+    expended_list: AdditionalSpell
 }
 
 impl AdditionalSpells {
     pub fn new(list: Option<&Value>) -> AdditionalSpells {
-        return AdditionalSpells { spells: vec![], choose: vec![] };
+        let mut name = "N/A".to_string();
+        let mut ability_choices: Vec<SpellAbility> = vec![];
+        let mut resource_name = "N/A".to_string();
+        // let mut innate_spells = AdditionalSpell {
+        //     ability: "N/A".to_string(),
+        //     name: "N/A".to_string(),
+        //     reset_when: Reset::NEVER,
+        //     aquired_at: 0
+        // }
+
+        if list.is_some() && list.unwrap().is_array() {
+            for item in list.unwrap().as_array().unwrap() {
+                if !item.is_object() {
+                    println!("object in additionalSpells wasn't an object: {:#?}", item);
+                    continue;
+                }
+                let parsed_object = item.as_object().unwrap();
+
+                let name = parsed_object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
+                let ability_choices = SpellAbility::new(parsed_object.get("ability"));
+                let resouce_name = parsed_object.get("resourceName").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
+                let
+
+                // for (key, value) in item.as_object().unwrap() {
+                // 	match key.as_str() {
+                // 		"name" => {
+
+                // 		}
+                // 		"ability" => {}
+                // 		"resourceName" => {}
+                // 		"innate" => {}
+                // 		"known" => {}
+                // 		"prepared" => {}
+                // 		"expended" => {}
+                // 	}
+                // }
+            }
+        }
+
+        return AdditionalSpells {
+            names,
+            ability_choices,
+            resource_name,
+            innate_spells,
+            known_spells,
+            prepared_spells,
+            expended_list
+        };
     }
 }
 
@@ -408,13 +651,13 @@ impl Duration {
 }
 
 #[derive(Debug)]
-struct LevelDie {
+pub struct LevelDie {
     level: String,
     die: String,
 }
 
 #[derive(Debug)]
-struct ScalingLevelDice {
+pub struct ScalingLevelDice {
     label: String,
     scaling: Vec<LevelDie>,
 }
@@ -440,7 +683,7 @@ impl ScalingLevelDice {
 }
 
 #[derive(Debug)]
-struct PackItem {
+pub struct PackItem {
     name: String,
     quantity: u64,
     special: bool,
@@ -478,7 +721,7 @@ impl PackItem {
 }
 
 #[derive(Debug)]
-enum ItemType {
+pub enum ItemType {
     Firearm,
     Arrow,
     Axe,
@@ -525,7 +768,7 @@ impl ItemType {
 }
 
 #[derive(Debug)]
-struct ValidContainerSlotItem {
+pub struct ValidContainerSlotItem {
     name: String,
     quantity: u64,
 }
@@ -540,7 +783,7 @@ impl ValidContainerSlotItem {
 }
 
 #[derive(Debug)]
-struct ContainerSlot {
+pub struct ContainerSlot {
     weight_limit: u64,
     valid_items: Vec<ValidContainerSlotItem>,
 }
@@ -557,7 +800,7 @@ impl ContainerSlot {
 }
 
 #[derive(Debug)]
-struct ContainerCapacity {
+pub struct ContainerCapacity {
     slots: Vec<ContainerSlot>,
     weightless: bool,
 }
@@ -614,7 +857,7 @@ impl ContainerCapacity {
 }
 
 #[derive(Debug)]
-struct StartingItem {
+pub struct StartingItem {
     name: String,
     quantity: u64,
     value: u64,
@@ -692,7 +935,7 @@ impl StartingItem {
 }
 
 #[derive(Debug)]
-struct StartingEquipment {
+pub struct StartingEquipment {
     items: Vec<StartingItem>,
     choose_between: Vec<Vec<StartingItem>>,
 }
@@ -732,7 +975,7 @@ impl StartingEquipment {
 }
 
 #[derive(Debug)]
-struct ClassPrerequisite {
+pub struct ClassPrerequisite {
     name: String,
     level: u64,
     visible: bool,
@@ -752,7 +995,7 @@ impl ClassPrerequisite {
 }
 
 #[derive(Debug)]
-struct Prerequisite {
+pub struct Prerequisite {
     // TODO: add support for choice from, just level, ability, summaries?, feats, other
     campaign_requirement: Vec<String>,
     requires_campaign: bool,
@@ -791,7 +1034,7 @@ impl Prerequisite {
 }
 
 #[derive(Debug)]
-struct SkillToolLanguageChoice {
+pub struct SkillToolLanguageChoice {
     language_amount: u64,
     tool_amount: u64, // global_count: u64
 }
@@ -817,7 +1060,7 @@ impl SkillToolLanguageChoice {
 }
 
 #[derive(Debug)]
-struct SkillToolLanguageProficiencies {
+pub struct SkillToolLanguageProficiencies {
     options: Vec<SkillToolLanguageChoice>,
 }
 
@@ -841,7 +1084,7 @@ impl SkillToolLanguageProficiencies {
  * Martial Adept, Metamagic Adept)
  */
 #[derive(Debug)]
-struct OptionalFeatureProgression {
+pub struct OptionalFeatureProgression {
     name: String,
     freature_type: Vec<String>,
     progression_type: String,
@@ -880,7 +1123,7 @@ impl OptionalFeatureProgression {
  * so not a lot to go off of
  */
 #[derive(Debug)]
-struct SavingThrowProficiencies {
+pub struct SavingThrowProficiencies {
     options: Vec<String>,
     amount: u64,
 }
@@ -905,7 +1148,7 @@ impl SavingThrowProficiencies {
  * so not a lot to go off of
  */
 #[derive(Debug)]
-struct Expertise {
+pub struct Expertise {
     skill: String,
     can_choose: bool,
     amount: u64,
