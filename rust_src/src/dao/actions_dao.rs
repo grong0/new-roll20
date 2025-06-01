@@ -4,15 +4,15 @@ use super::common::{form_key, serde_as_array, serde_as_array_mapping, serde_as_b
 
 #[derive(Debug)]
 pub struct Action {
-	name: String,
-	source: Source,
-	key: String,
-	srd: bool,
-	basic_rules: bool,
-	time: Time,
-	entries: Vec<Entry>,
-	see_also_action: Vec<String>,
-	from_variant: String
+	pub name: String,
+	pub source: Source,
+	pub key: String,
+	pub srd: bool,
+	pub basic_rules: bool,
+	pub time: Time,
+	pub entries: Vec<Entry>,
+	pub see_also_action: Vec<String>,
+	pub from_variant: String
 }
 
 impl Action {
