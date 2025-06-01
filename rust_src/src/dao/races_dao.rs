@@ -96,8 +96,8 @@ pub struct Race {
 }
 
 impl Race {
-    pub fn new(object: Option<&Value>) -> Race {
-		let p_object = serde_as_object(object, Map::new());
+    pub fn new(object: Value) -> Race {
+		let p_object = serde_as_object(&object, Map::new());
 
         let mut other_sources: Vec<Source> = vec![];
         for other_source in p_object.get("otherSources").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).to_owned().iter() {
@@ -135,7 +135,7 @@ impl Race {
             additional_spells: AdditionalSpells::new(p_object.get("additionalSpells")),
 			immune: p_object.get("immune").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
 			condition_immune: p_object.get("conditionImmune").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
-			entries: serde_as_array(p_object.get("entries")).iter().map(|i| Entry::new(Some(i))).collect(),
+			entries: serde_as_array(p_object.get("entries")).iter().map(|i| Entry::new(i)).collect(),
 			has_fluff: p_object.get("hasFluff").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
 			has_fluff_images: p_object.get("hasFluffImages").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
         };

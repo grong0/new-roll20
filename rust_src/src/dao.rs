@@ -31,7 +31,7 @@ fn get_races(path: &str) -> HashMap<String, Race> {
 	let mut num_of_na = 0;
 	let mut races_map: HashMap<String, Race> = HashMap::new();
 	for value in value_list {
-		let new_race = Race::new(Some(&value));
+		let new_race = Race::new(value);
 		if !new_race.key.contains("n/a") {
 			races_map.insert(new_race.key.as_str().to_string(), new_race);
 		} else {

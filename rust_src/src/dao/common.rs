@@ -162,10 +162,10 @@ impl HeightAndWeight {
 
         if object.is_some() && object.unwrap().is_object() {
             let parsed_object = object.unwrap().as_object().unwrap();
-            base_height = parsed_object.get("baseHeight").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0);
-            height_mod = parsed_object.get("heightMod").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
-            base_weight = parsed_object.get("baseWeight").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0);
-            weight_mod = parsed_object.get("weightMod").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
+            base_height = serde_as_u64(parsed_object.get("baseHeight"), base_height);
+            height_mod = serde_as_string(parsed_object.get("heightMod"), height_mod);
+            base_weight = serde_as_u64(parsed_object.get("baseWeight"), base_weight);
+            weight_mod = serde_as_string(parsed_object.get("weightMod"), weight_mod);
         }
 
         return HeightAndWeight { base_height, height_mod, base_weight, weight_mod };
@@ -552,7 +552,7 @@ pub struct Time {
 
 impl Time {
     pub fn new(object: Option<&Value>) -> Time {
-        let p_object = serde_as_object(object, Map::new());
+        let p_object = serde_as_object_from_option(object, Map::new());
         return Time {
             quantity: serde_as_u64(p_object.get("number"), 0),
             unit: serde_as_string(p_object.get("unit"), "N/A".to_string()),
@@ -1166,7 +1166,7 @@ pub struct Entry {
 }
 
 impl Entry {
-    pub fn new(object: Option<&Value>) -> Entry {
+    pub fn new(object: &Value) -> Entry {
         let parsed_object = serde_as_object(object, Map::new());
 
         return Entry {
@@ -1205,7 +1205,11 @@ pub fn serde_as_bool(value: Option<&Value>, default: bool) -> bool {
     return value.unwrap_or(&to_value(default).unwrap()).as_bool().unwrap_or(default);
 }
 
-pub fn serde_as_object(value: Option<&Value>, default: Map<String, Value>) -> Map<String, Value> {
+pub fn serde_as_object(value: &Value, default: Map<String, Value>) -> Map<String, Value> {
+    return value.as_object().unwrap_or(&default.clone()).to_owned();
+}
+
+pub fn serde_as_object_from_option(value: Option<&Value>, default: Map<String, Value>) -> Map<String, Value> {
     return value.unwrap_or(&to_value::<Map<String, Value>>(default.clone()).unwrap()).as_object().unwrap_or(&default.clone()).to_owned();
 }
 
