@@ -1,5 +1,6 @@
 use std::iter::zip;
 
+use serde::Serialize;
 use serde_json::{to_value, Map, Value};
 
 #[derive(Debug)]
@@ -563,10 +564,11 @@ pub struct Time {
 }
 
 impl Time {
-    pub fn new(quantity: Option<&Value>, unit: Option<&Value>) -> Time {
+    pub fn new(object: Option<&Value>) -> Time {
+		let p_object = serde_as_object(object);
         return Time {
-            quantity: quantity.unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
-            unit: unit.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+            quantity: serde_as_u64(p_object.get("number"), 0),
+            unit: serde_as_string(p_object.get("unit"), "N/A".to_string()),
         };
     }
 }
@@ -1169,7 +1171,7 @@ impl Expertise {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Entry {
 	name: String,
 	entry_type: String,
@@ -1177,9 +1179,8 @@ pub struct Entry {
 }
 
 impl Entry {
-	pub fn new(object: &Value) -> Entry {
-		let new_map = Map::new();
-		let parsed_object = object.as_object().unwrap_or(&new_map);
+	pub fn new(object: Option<&Value>) -> Entry {
+		let parsed_object = serde_as_object(object);
 
 		return Entry {
 			name: parsed_object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
@@ -1187,8 +1188,40 @@ impl Entry {
 			content: parsed_object.get("entries").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| i.as_str().unwrap_or("N/A").to_string()).collect()
 		}
 	}
+
+	pub fn default() -> Entry {
+		return Entry {
+			name: "N/A".to_string(),
+			entry_type: "N/A".to_string(),
+			content: vec![]
+		}
+	}
 }
 
 pub fn form_key(name: &String, source: &String) -> String {
 	return name.to_ascii_lowercase().replace(" ", "_") + "|" + source.to_ascii_lowercase().as_str();
+}
+
+pub fn serde_as_string(value: Option<&Value>, default: String) -> String {
+	return value.unwrap_or(&to_value(&default).unwrap()).as_str().unwrap_or(&default.to_string()).to_string();
+}
+
+pub fn serde_as_u64(value: Option<&Value>, default: u64) -> u64 {
+	return value.unwrap_or(&to_value(default).unwrap()).as_u64().unwrap_or(default);
+}
+
+pub fn serde_as_i64(value: Option<&Value>, default: i64) -> i64 {
+	return value.unwrap_or(&to_value(default).unwrap()).as_i64().unwrap_or(default);
+}
+
+pub fn serde_as_bool(value: Option<&Value>, default: bool) -> bool {
+	return value.unwrap_or(&to_value(default).unwrap()).as_bool().unwrap_or(default);
+}
+
+pub fn serde_as_array<T:Clone>(value: Option<&Value>, mapping_func: fn(Option<&Value>, T) -> T, default: T) -> Vec<T> {
+	return value.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| mapping_func(Some(i), default.clone())).collect();
+}
+
+pub fn serde_as_object(value: Option<&Value>) -> Map<String, Value> {
+	return value.unwrap_or(&to_value::<Map<String, Value>>(Map::new()).unwrap()).as_object().unwrap_or(&Map::new()).to_owned();
 }

@@ -109,8 +109,8 @@ impl Race {
         let source = Source::new(race.get("source"), race.get("page"));
 
         return Race {
-            name: name.clone(),
             key: form_key(&name, &source.name),
+            name,
             source,
             srd: race.get("srd").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
             basic_rules: race.get("basicRules").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
