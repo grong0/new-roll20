@@ -6,7 +6,7 @@ mod dao;
 mod generate_types;
 mod update_data;
 
-use dao::races_dao;
+use dao::{races_dao, DAO};
 
 fn main() {
     // generate_types::build();
@@ -19,12 +19,9 @@ fn main() {
     // }
 
     // update_data::update_data();
+	let DAO = DAO::new();
 
-    let file = fs::read_to_string("../data/raw/races.json").unwrap();
-    let races_file: Value = from_str(file.as_str()).unwrap();
-    let races_object = races_dao::Races::new(races_file);
+    println!("{:#?}", DAO);
 
-    println!("{:#?}", races_object.races);
-
-    println!("{:#?}", races_object.races.get("astral_elf|aag"));
+    println!("{:#?}", DAO.races.get("astral_elf|aag"));
 }

@@ -1,10 +1,8 @@
-use std::collections::HashMap;
-
-use serde_json::{to_value, Value};
+use serde_json::{to_value, Map, Value};
 
 use crate::dao::common::{Source, Speed};
 
-use super::common::{form_key, Ability, AdditionalSpells, Age, ArmorProficiencies, Entry, HeightAndWeight, LanguageProficiencies, Resist, SkillProficiencies, ToolProficiencies, WeaponProficiencies};
+use super::common::{form_key, serde_as_array, serde_as_object, Ability, AdditionalSpells, Age, ArmorProficiencies, Entry, HeightAndWeight, LanguageProficiencies, Resist, SkillProficiencies, ToolProficiencies, WeaponProficiencies};
 
 #[derive(Debug)]
 pub struct ModifyRaceCopy {
@@ -98,72 +96,48 @@ pub struct Race {
 }
 
 impl Race {
-    pub fn new(race: Value) -> Race {
-        // Other Sources
+    pub fn new(object: Option<&Value>) -> Race {
+		let p_object = serde_as_object(object, Map::new());
+
         let mut other_sources: Vec<Source> = vec![];
-        for other_source in race.get("otherSources").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).to_owned().iter() {
+        for other_source in p_object.get("otherSources").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).to_owned().iter() {
             other_sources.push(Source::new(other_source.get("source"), other_source.get("page")));
         }
 
-        let name = race.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
-        let source = Source::new(race.get("source"), race.get("page"));
+        let name = p_object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
+        let source = Source::new(p_object.get("source"), p_object.get("page"));
 
         return Race {
             key: form_key(&name, &source.name),
             name,
             source,
-            srd: race.get("srd").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
-            basic_rules: race.get("basicRules").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
+            srd: p_object.get("srd").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
+            basic_rules: p_object.get("basicRules").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
             other_sources,
-            reprinted_as: race.get("reprintedAs").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
-            // copy: RaceCopy::new(race.get("_copy")),
-            lineage: race.get("lineage").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
-            creature_types: race.get("creatureTypes").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
-            creature_type_tags: race.get("creatureTypeTags").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
-            size: race.get("size").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
-            speed: Speed::new(race.get("speed")),
-            ability: Ability::new(race.get("ability")),
-            height_and_weight: HeightAndWeight::new(race.get("heightAndWeight")),
-            age: Age::new(race.get("age")),
-            darkvision: race.get("darkvision").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
-            trait_tags: race.get("traitTags").unwrap_or(&to_value::<Vec<String>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
-            skill_proficiencies: SkillProficiencies::new(race.get("skillProficiencies")),
-            language_proficiencies: LanguageProficiencies::new(race.get("languageProficiencies")),
-            tool_proficiencies: ToolProficiencies::new(race.get("toolProficiencies")),
-            weapon_proficiencies: WeaponProficiencies::new(race.get("weaponProficiencies")),
-            armor_proficiencies: ArmorProficiencies::new(race.get("armorProficiencies")),
-            resist: Resist::new(race.get("resist")),
-            additional_spells: AdditionalSpells::new(race.get("additionalSpells")),
-			immune: race.get("immune").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
-			condition_immune: race.get("conditionImmune").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
-			entries: race.get("entries").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| Entry::new(i)).collect(),
-			has_fluff: race.get("hasFluff").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
-			has_fluff_images: race.get("hasFluffImages").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
+            reprinted_as: p_object.get("reprintedAs").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
+            // copy: RaceCopy::new(p_object.get("_copy")),
+            lineage: p_object.get("lineage").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+            creature_types: p_object.get("creatureTypes").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
+            creature_type_tags: p_object.get("creatureTypeTags").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
+            size: p_object.get("size").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
+            speed: Speed::new(p_object.get("speed")),
+            ability: Ability::new(p_object.get("ability")),
+            height_and_weight: HeightAndWeight::new(p_object.get("heightAndWeight")),
+            age: Age::new(p_object.get("age")),
+            darkvision: p_object.get("darkvision").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
+            trait_tags: p_object.get("traitTags").unwrap_or(&to_value::<Vec<String>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
+            skill_proficiencies: SkillProficiencies::new(p_object.get("skillProficiencies")),
+            language_proficiencies: LanguageProficiencies::new(p_object.get("languageProficiencies")),
+            tool_proficiencies: ToolProficiencies::new(p_object.get("toolProficiencies")),
+            weapon_proficiencies: WeaponProficiencies::new(p_object.get("weaponProficiencies")),
+            armor_proficiencies: ArmorProficiencies::new(p_object.get("armorProficiencies")),
+            resist: Resist::new(p_object.get("resist")),
+            additional_spells: AdditionalSpells::new(p_object.get("additionalSpells")),
+			immune: p_object.get("immune").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
+			condition_immune: p_object.get("conditionImmune").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
+			entries: serde_as_array(p_object.get("entries")).iter().map(|i| Entry::new(Some(i))).collect(),
+			has_fluff: p_object.get("hasFluff").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
+			has_fluff_images: p_object.get("hasFluffImages").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
         };
-    }
-}
-
-#[derive(Debug)]
-pub struct Races {
-    pub races: HashMap<String, Race>,
-}
-
-impl Races {
-    pub fn new(races: Value) -> Races {
-        let value_list: Vec<Value> = races.get("race").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).to_owned();
-        println!("value_list length: {}", value_list.len());
-
-        let mut num_of_na = 0;
-        let mut races_map: HashMap<String, Race> = HashMap::new();
-        for value in value_list {
-            let new_race = Race::new(value);
-            if !new_race.key.contains("n/a") {
-                races_map.insert(new_race.key.as_str().to_string(), new_race);
-            } else {
-                num_of_na += 1;
-            }
-        }
-        println!("number of races with no name: {}", num_of_na);
-        return Races { races: races_map };
     }
 }

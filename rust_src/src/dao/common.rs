@@ -1,6 +1,5 @@
 use std::iter::zip;
 
-use serde::Serialize;
 use serde_json::{to_value, Map, Value};
 
 #[derive(Debug)]
@@ -66,14 +65,7 @@ impl Choose {
             if object.unwrap().is_object() && object.unwrap().as_object().unwrap().get("from").is_some() && object.unwrap().as_object().unwrap().get("count").is_some() {
                 let parsed_object = object.unwrap().as_object().unwrap();
                 count = parsed_object.get("count").unwrap_or(&to_value(count).unwrap()).as_u64().unwrap_or(count);
-                abilities = parsed_object
-                    .get("from")
-                    .unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap())
-                    .as_array()
-                    .unwrap_or(&vec![])
-                    .iter()
-                    .map(|f| f.as_str().unwrap_or("N/A").to_string())
-                    .collect();
+                abilities = parsed_object.get("from").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect();
             } else if object.unwrap().is_array() {
                 let parsed_array = object.unwrap().as_array().unwrap();
                 count = 1;
@@ -176,12 +168,7 @@ impl HeightAndWeight {
             weight_mod = parsed_object.get("weightMod").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
         }
 
-        return HeightAndWeight {
-            base_height,
-            height_mod,
-            base_weight,
-            weight_mod,
-        };
+        return HeightAndWeight { base_height, height_mod, base_weight, weight_mod };
     }
 }
 
@@ -452,20 +439,20 @@ pub enum SpellAbility {
     INT,
     WIS,
     CHA,
-    INHERIT
+    INHERIT,
 }
 
 impl SpellAbility {
     pub fn new(ability: &Value) -> SpellAbility {
         match ability.as_str().unwrap_or("inherit") {
-            "str" => {return SpellAbility::STR}
-            "dex" => {return SpellAbility::DEX}
-            "con" => {return SpellAbility::CON}
-            "int" => {return SpellAbility::INT}
-            "wis" => {return SpellAbility::WIS}
-            "cha" => {return SpellAbility::CHA}
-            "inherit" => {return SpellAbility::INHERIT}
-            _ => {return SpellAbility::INHERIT}
+            "str" => return SpellAbility::STR,
+            "dex" => return SpellAbility::DEX,
+            "con" => return SpellAbility::CON,
+            "int" => return SpellAbility::INT,
+            "wis" => return SpellAbility::WIS,
+            "cha" => return SpellAbility::CHA,
+            "inherit" => return SpellAbility::INHERIT,
+            _ => return SpellAbility::INHERIT,
         }
     }
 }
@@ -503,18 +490,18 @@ pub struct AdditionalSpells {
     innate_spells: Vec<AdditionalSpell>,
     known_spells: Vec<AdditionalSpell>,
     prepared_spells: Vec<AdditionalSpell>,
-    expanded_list: Vec<AdditionalSpell>
+    expanded_list: Vec<AdditionalSpell>,
 }
 
 impl AdditionalSpells {
     pub fn new(list: Option<&Value>) -> AdditionalSpells {
         let mut name = "N/A".to_string();
-        let mut ability_choices: Vec<SpellAbility> = vec![];
+        let ability_choices: Vec<SpellAbility> = vec![];
         let mut resource_name = "N/A".to_string();
-        let mut innate_spells = vec![];
-        let mut known_spells = vec![];
-        let mut prepared_spells = vec![];
-        let mut expanded_list = vec![];
+        let innate_spells = vec![];
+        let known_spells = vec![];
+        let prepared_spells = vec![];
+        let expanded_list = vec![];
 
         if list.is_some() && list.unwrap().is_array() {
             for item in list.unwrap().as_array().unwrap() {
@@ -524,9 +511,9 @@ impl AdditionalSpells {
                 }
                 let parsed_object = item.as_object().unwrap();
 
-                let name = parsed_object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
+                name = parsed_object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
                 // let ability_choices = SpellAbility::new(parsed_object.get("ability"));
-                let resouce_name = parsed_object.get("resourceName").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
+                resource_name = parsed_object.get("resourceName").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
                 // let
 
                 // for (key, value) in item.as_object().unwrap() {
@@ -552,7 +539,7 @@ impl AdditionalSpells {
             innate_spells,
             known_spells,
             prepared_spells,
-            expanded_list
+            expanded_list,
         };
     }
 }
@@ -565,7 +552,7 @@ pub struct Time {
 
 impl Time {
     pub fn new(object: Option<&Value>) -> Time {
-		let p_object = serde_as_object(object);
+        let p_object = serde_as_object(object, Map::new());
         return Time {
             quantity: serde_as_u64(p_object.get("number"), 0),
             unit: serde_as_string(p_object.get("unit"), "N/A".to_string()),
@@ -1173,55 +1160,59 @@ impl Expertise {
 
 #[derive(Debug, Clone)]
 pub struct Entry {
-	name: String,
-	entry_type: String,
-	content: Vec<String>
+    name: String,
+    entry_type: String,
+    content: Vec<String>,
 }
 
 impl Entry {
-	pub fn new(object: Option<&Value>) -> Entry {
-		let parsed_object = serde_as_object(object);
+    pub fn new(object: Option<&Value>) -> Entry {
+        let parsed_object = serde_as_object(object, Map::new());
 
-		return Entry {
-			name: parsed_object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
-			entry_type: parsed_object.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
-			content: parsed_object.get("entries").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| i.as_str().unwrap_or("N/A").to_string()).collect()
-		}
-	}
+        return Entry {
+            name: parsed_object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+            entry_type: parsed_object.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+            content: parsed_object.get("entries").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| i.as_str().unwrap_or("N/A").to_string()).collect(),
+        };
+    }
 
-	pub fn default() -> Entry {
-		return Entry {
-			name: "N/A".to_string(),
-			entry_type: "N/A".to_string(),
-			content: vec![]
-		}
-	}
+    pub fn default() -> Entry {
+        return Entry {
+            name: "N/A".to_string(),
+            entry_type: "N/A".to_string(),
+            content: vec![],
+        };
+    }
 }
 
 pub fn form_key(name: &String, source: &String) -> String {
-	return name.to_ascii_lowercase().replace(" ", "_") + "|" + source.to_ascii_lowercase().as_str();
+    return name.to_ascii_lowercase().replace(" ", "_") + "|" + source.to_ascii_lowercase().as_str();
 }
 
 pub fn serde_as_string(value: Option<&Value>, default: String) -> String {
-	return value.unwrap_or(&to_value(&default).unwrap()).as_str().unwrap_or(&default.to_string()).to_string();
+    return value.unwrap_or(&to_value(&default).unwrap()).as_str().unwrap_or(&default.to_string()).to_string();
 }
 
 pub fn serde_as_u64(value: Option<&Value>, default: u64) -> u64 {
-	return value.unwrap_or(&to_value(default).unwrap()).as_u64().unwrap_or(default);
+    return value.unwrap_or(&to_value(default).unwrap()).as_u64().unwrap_or(default);
 }
 
 pub fn serde_as_i64(value: Option<&Value>, default: i64) -> i64 {
-	return value.unwrap_or(&to_value(default).unwrap()).as_i64().unwrap_or(default);
+    return value.unwrap_or(&to_value(default).unwrap()).as_i64().unwrap_or(default);
 }
 
 pub fn serde_as_bool(value: Option<&Value>, default: bool) -> bool {
-	return value.unwrap_or(&to_value(default).unwrap()).as_bool().unwrap_or(default);
+    return value.unwrap_or(&to_value(default).unwrap()).as_bool().unwrap_or(default);
 }
 
-pub fn serde_as_array<T:Clone>(value: Option<&Value>, mapping_func: fn(Option<&Value>, T) -> T, default: T) -> Vec<T> {
-	return value.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| mapping_func(Some(i), default.clone())).collect();
+pub fn serde_as_object(value: Option<&Value>, default: Map<String, Value>) -> Map<String, Value> {
+    return value.unwrap_or(&to_value::<Map<String, Value>>(default.clone()).unwrap()).as_object().unwrap_or(&default.clone()).to_owned();
 }
 
-pub fn serde_as_object(value: Option<&Value>) -> Map<String, Value> {
-	return value.unwrap_or(&to_value::<Map<String, Value>>(Map::new()).unwrap()).as_object().unwrap_or(&Map::new()).to_owned();
+pub fn serde_as_array(value: Option<&Value>) -> Vec<Value> {
+    return value.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).to_owned();
+}
+
+pub fn serde_as_array_mapping<T: Clone>(value: Option<&Value>, mapping_func: fn(Option<&Value>, T) -> T, default: T) -> Vec<T> {
+    return value.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| mapping_func(Some(i), default.clone())).collect();
 }
