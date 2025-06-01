@@ -677,33 +677,24 @@ pub struct PackItem {
 }
 
 impl PackItem {
-    pub fn new(item: Option<&Value>) -> PackItem {
-        match item.unwrap().as_object() {
-            // TODO: add defaults here
-            Some(object) => {
-                let name: String;
-                match object.get("special") {
-                    Some(special) => {
-                        name = special.as_str().unwrap_or("NOT_STRING_SPECIAL").to_string();
-                    }
-                    None => {
-                        name = object.get("item").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
-                    }
-                }
-                return PackItem {
-                    name,
-                    quantity: object.get("quantity").unwrap_or(&to_value(1).unwrap()).as_u64().unwrap_or(1),
-                    special: false,
-                };
+    pub fn new(item: &Value) -> PackItem {
+        let object = serde_as_object(&item, Map::new());
+
+        let name: String;
+        match object.get("special") {
+            Some(special) => {
+                name = special.as_str().unwrap_or("NOT_STRING_SPECIAL").to_string();
             }
             None => {
-                return PackItem {
-                    name: item.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
-                    quantity: 1,
-                    special: false,
-                }
+				name = serde_as_string(object.get("item"), "N/A".to_string());
             }
         }
+
+        return PackItem {
+            name,
+            quantity: object.get("quantity").unwrap_or(&to_value(1).unwrap()).as_u64().unwrap_or(1),
+            special: false,
+        };
     }
 }
 
