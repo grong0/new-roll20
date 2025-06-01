@@ -3,7 +3,7 @@ pub mod backgrounds_dao;
 pub mod feats_dao;
 pub mod items_dao;
 pub mod languages_dao;
-pub mod misc_classes;
+pub mod common;
 pub mod races_dao;
 pub mod skills_dao;
 pub mod spells_dao;

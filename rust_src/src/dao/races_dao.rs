@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 use serde_json::{to_value, Value};
 
-use crate::dao::misc_classes::{Source, Speed};
+use crate::dao::common::{Source, Speed};
 
-use super::misc_classes::{Ability, AdditionalSpells, Age, ArmorProficiencies, HeightAndWeight, LanguageProficiencies, Resist, SkillProficiencies, ToolProficiencies, WeaponProficiencies};
+use super::common::{form_key, Ability, AdditionalSpells, Age, ArmorProficiencies, Entry, HeightAndWeight, LanguageProficiencies, Resist, SkillProficiencies, ToolProficiencies, WeaponProficiencies};
 
 #[derive(Debug)]
 pub struct ModifyRaceCopy {
@@ -65,8 +65,8 @@ impl RaceCopy {
 #[derive(Debug)]
 pub struct Race {
     pub name: String,
-    pub key: String,
     pub source: Source,
+    pub key: String,
     pub srd: bool,
     pub basic_rules: bool,
     pub other_sources: Vec<Source>,
@@ -89,11 +89,11 @@ pub struct Race {
     pub armor_proficiencies: ArmorProficiencies,
     pub resist: Resist,
     pub additional_spells: AdditionalSpells,
-    // pub immune: Vec<String>,
-    // pub condition_immune: Vec<String>,
-    // pub entries: HashMap<&str, Vec<String>>,
-    // pub has_fluff: bool,
-    // pub has_fluff_images: bool,
+    pub immune: Vec<String>,
+    pub condition_immune: Vec<String>,
+    pub entries: Vec<Entry>,
+    pub has_fluff: bool,
+    pub has_fluff_images: bool,
     // pub versions: Vec<RaceVersion>
 }
 
@@ -110,7 +110,7 @@ impl Race {
 
         return Race {
             name: name.clone(),
-            key: name.to_ascii_lowercase().replace(" ", "_") + "|" + source.name.clone().to_ascii_lowercase().as_str(),
+            key: form_key(&name, &source.name),
             source,
             srd: race.get("srd").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
             basic_rules: race.get("basicRules").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
@@ -134,6 +134,11 @@ impl Race {
             armor_proficiencies: ArmorProficiencies::new(race.get("armorProficiencies")),
             resist: Resist::new(race.get("resist")),
             additional_spells: AdditionalSpells::new(race.get("additionalSpells")),
+			immune: race.get("immune").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
+			condition_immune: race.get("conditionImmune").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
+			entries: race.get("entries").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| Entry::new(i)).collect(),
+			has_fluff: race.get("hasFluff").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
+			has_fluff_images: race.get("hasFluffImages").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
         };
     }
 }
@@ -146,21 +151,19 @@ pub struct Races {
 impl Races {
     pub fn new(races: Value) -> Races {
         let value_list: Vec<Value> = races.get("race").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).to_owned();
-        // let mut race_list: Vec<Race> = vec![];
         println!("value_list length: {}", value_list.len());
 
         let mut num_of_na = 0;
-        let mut race_map: HashMap<String, Race> = HashMap::new();
+        let mut races_map: HashMap<String, Race> = HashMap::new();
         for value in value_list {
             let new_race = Race::new(value);
-            // race_list.push(new_race);
             if !new_race.key.contains("n/a") {
-                race_map.insert(new_race.key.as_str().to_string(), new_race);
+                races_map.insert(new_race.key.as_str().to_string(), new_race);
             } else {
                 num_of_na += 1;
             }
         }
         println!("number of races with no name: {}", num_of_na);
-        return Races { races: race_map };
+        return Races { races: races_map };
     }
 }

@@ -499,10 +499,10 @@ pub struct AdditionalSpells {
     name: String,
     ability_choices: Vec<SpellAbility>,
     resource_name: String,
-    innate_spells: AdditionalSpell,
-    known_spells: AdditionalSpell,
-    prepared_spells: AdditionalSpell,
-    expended_list: AdditionalSpell
+    innate_spells: Vec<AdditionalSpell>,
+    known_spells: Vec<AdditionalSpell>,
+    prepared_spells: Vec<AdditionalSpell>,
+    expanded_list: Vec<AdditionalSpell>
 }
 
 impl AdditionalSpells {
@@ -510,12 +510,10 @@ impl AdditionalSpells {
         let mut name = "N/A".to_string();
         let mut ability_choices: Vec<SpellAbility> = vec![];
         let mut resource_name = "N/A".to_string();
-        // let mut innate_spells = AdditionalSpell {
-        //     ability: "N/A".to_string(),
-        //     name: "N/A".to_string(),
-        //     reset_when: Reset::NEVER,
-        //     aquired_at: 0
-        // }
+        let mut innate_spells = vec![];
+        let mut known_spells = vec![];
+        let mut prepared_spells = vec![];
+        let mut expanded_list = vec![];
 
         if list.is_some() && list.unwrap().is_array() {
             for item in list.unwrap().as_array().unwrap() {
@@ -526,9 +524,9 @@ impl AdditionalSpells {
                 let parsed_object = item.as_object().unwrap();
 
                 let name = parsed_object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
-                let ability_choices = SpellAbility::new(parsed_object.get("ability"));
+                // let ability_choices = SpellAbility::new(parsed_object.get("ability"));
                 let resouce_name = parsed_object.get("resourceName").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
-                let
+                // let
 
                 // for (key, value) in item.as_object().unwrap() {
                 // 	match key.as_str() {
@@ -547,13 +545,13 @@ impl AdditionalSpells {
         }
 
         return AdditionalSpells {
-            names,
+            name,
             ability_choices,
             resource_name,
             innate_spells,
             known_spells,
             prepared_spells,
-            expended_list
+            expanded_list
         };
     }
 }
@@ -1169,4 +1167,28 @@ impl Expertise {
 
         return Expertise { skill, can_choose, amount };
     }
+}
+
+#[derive(Debug)]
+pub struct Entry {
+	name: String,
+	entry_type: String,
+	content: Vec<String>
+}
+
+impl Entry {
+	pub fn new(object: &Value) -> Entry {
+		let new_map = Map::new();
+		let parsed_object = object.as_object().unwrap_or(&new_map);
+
+		return Entry {
+			name: parsed_object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+			entry_type: parsed_object.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+			content: parsed_object.get("entries").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| i.as_str().unwrap_or("N/A").to_string()).collect()
+		}
+	}
+}
+
+pub fn form_key(name: &String, source: &String) -> String {
+	return name.to_ascii_lowercase().replace(" ", "_") + "|" + source.to_ascii_lowercase().as_str();
 }
