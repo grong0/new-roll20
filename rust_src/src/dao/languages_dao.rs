@@ -1,28 +1,28 @@
 use serde_json::{Map, Value};
 
-use super::common::{form_key, serde_as_array_mapping, serde_as_bool, serde_as_object_from_option, serde_as_string, Source};
+use super::common::{form_key, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string, Source};
 
 #[derive(Debug)]
 pub struct Language {
-    name: String,
-    source: Source,
-    key: String,
-    typical_speakers: Vec<String>,
-    language_type: String,
-    script: String,
-    srd: bool,
-    basic_rules: bool,
-    entries: Vec<String>,
-    has_fluff_images: bool,
-    fonts: Vec<String>,
-    additional_sources: Vec<Source>,
-    dialects: Vec<String>,
-    other_sources: Vec<Source>,
+    pub name: String,
+    pub source: Source,
+    pub key: String,
+    pub typical_speakers: Vec<String>,
+    pub language_type: String,
+    pub script: String,
+    pub srd: bool,
+    pub basic_rules: bool,
+    pub entries: Vec<String>,
+    pub has_fluff_images: bool,
+    pub fonts: Vec<String>,
+    pub additional_sources: Vec<Source>,
+    pub dialects: Vec<String>,
+    pub other_sources: Vec<Source>,
 }
 
 impl Language {
-    pub fn new(value: Option<&Value>) -> Language {
-        let object = serde_as_object_from_option(value, Map::new());
+    pub fn new(value: Value) -> Language {
+        let object = serde_as_object(&value, Map::new());
 
         let name = serde_as_string(object.get("name"), "N/A".to_string());
         let source = Source::new(object.get("source"), object.get("page"));
