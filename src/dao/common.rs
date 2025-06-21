@@ -1202,6 +1202,7 @@ pub fn serde_as_array_mapping<T: Clone>(value: Option<&Value>, mapping_func: fn(
     return value.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| mapping_func(Some(i), default.clone())).collect();
 }
 
+#[derive(Debug)]
 pub struct Details {
     pub age: u64,
     pub eyes: String,
@@ -1217,6 +1218,7 @@ pub struct Details {
     pub physical: String,
 }
 
+#[derive(Debug)]
 pub struct CharacterItem {
     pub name: String,
     pub quantity: u64,
@@ -1225,6 +1227,7 @@ pub struct CharacterItem {
     pub item: Item,
 }
 
+#[derive(Debug)]
 pub struct CharacterTreasure {
 	pub platinum_piece: u64,
 	pub electrum_piece: u64,

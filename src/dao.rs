@@ -1,9 +1,10 @@
-use std::{collections::HashMap, fs::read_to_string};
+use std::{collections::HashMap, fs::{read_dir, read_to_string}};
 
 pub mod actions_dao;
 pub mod backgrounds_dao;
 pub mod character_dao;
 pub mod common;
+pub mod conditionsdiseases_dao;
 pub mod feats_dao;
 pub mod items_dao;
 pub mod languages_dao;
@@ -13,21 +14,23 @@ pub mod spells_dao;
 
 use actions_dao::Action;
 use backgrounds_dao::Background;
+use character_dao::Character;
 use common::serde_as_array;
+use conditionsdiseases_dao::{Condition, Disease, Status};
 use feats_dao::Feat;
 use items_dao::Item;
 use languages_dao::Language;
 use races_dao::Race;
-use serde_json::{from_str, Value};
+use serde_json::{from_str, to_value, Map, Value};
 use skills_dao::Skill;
 use spells_dao::Spell;
 
 fn get_actions(path: &str) -> HashMap<String, Action> {
     let file = read_to_string(path);
-    if !file.is_ok() {
+    if file.is_err() {
         return HashMap::new();
     }
-    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
+    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
     let value_list: Vec<Value> = serde_as_array(serde_file.get("action"));
     println!("num of actions: {}", value_list.len());
 
@@ -48,10 +51,10 @@ fn get_actions(path: &str) -> HashMap<String, Action> {
 
 fn get_backgrounds(path: &str) -> HashMap<String, Background> {
     let file = read_to_string(path);
-    if !file.is_ok() {
+    if file.is_err() {
         return HashMap::new();
     }
-    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
+    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
     let value_list: Vec<Value> = serde_as_array(serde_file.get("background"));
     println!("num of backgrounds: {}", value_list.len());
 
@@ -70,12 +73,84 @@ fn get_backgrounds(path: &str) -> HashMap<String, Background> {
     return map;
 }
 
+fn get_characters(dir_path: &str) -> HashMap<String, Character> {
+	let files = read_dir(dir_path);
+	if files.is_err() {
+		return HashMap::new();
+	}
+
+	let map = HashMap::new();
+	for entry in files.unwrap() {
+		let file = read_to_string(entry.unwrap().path());
+		if file.is_err() {
+			continue;
+		}
+		let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
+		// let new_struct = Character::new(serde_file);
+		// map.insert(new_struct.key, new_struct);
+	}
+
+    return map;
+}
+
+fn get_conditions_and_diseases(path: &str) -> (HashMap<String, Condition>, HashMap<String, Disease>, HashMap<String, Status>) {
+    let file = read_to_string(path);
+    if file.is_err() {
+        return (HashMap::new(), HashMap::new(), HashMap::new());
+    }
+    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
+    let condition_list: Vec<Value> = serde_as_array(serde_file.get("condition"));
+    println!("num of conditions: {}", condition_list.len());
+    let disease_list: Vec<Value> = serde_as_array(serde_file.get("disease"));
+    println!("num of diseases: {}", disease_list.len());
+    let status_list: Vec<Value> = serde_as_array(serde_file.get("status"));
+    println!("num of statuses: {}", status_list.len());
+
+    let mut num_of_na = 0;
+    let mut condition_map: HashMap<String, Condition> = HashMap::new();
+    for value in condition_list {
+        let new_struct = Condition::new(value);
+        if !new_struct.key.contains("n/a") {
+            condition_map.insert(new_struct.key.as_str().to_string(), new_struct);
+        } else {
+            num_of_na += 1;
+        }
+    }
+    println!("number of conditions with no name: {}", num_of_na);
+
+    let mut num_of_na = 0;
+    let mut disease_map: HashMap<String, Disease> = HashMap::new();
+    for value in disease_list {
+        let new_struct = Disease::new(value);
+        if !new_struct.key.contains("n/a") {
+            disease_map.insert(new_struct.key.as_str().to_string(), new_struct);
+        } else {
+            num_of_na += 1;
+        }
+    }
+    println!("number of diseases with no name: {}", num_of_na);
+
+    let mut num_of_na = 0;
+    let mut status_map: HashMap<String, Status> = HashMap::new();
+    for value in status_list {
+        let new_struct = Status::new(value);
+        if !new_struct.key.contains("n/a") {
+            status_map.insert(new_struct.key.as_str().to_string(), new_struct);
+        } else {
+            num_of_na += 1;
+        }
+    }
+    println!("number of statuses with no name: {}", num_of_na);
+
+    return (condition_map, disease_map, status_map);
+}
+
 fn get_feats(path: &str) -> HashMap<String, Feat> {
     let file = read_to_string(path);
-    if !file.is_ok() {
+    if file.is_err() {
         return HashMap::new();
     }
-    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
+    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
     let value_list: Vec<Value> = serde_as_array(serde_file.get("feat"));
     println!("num of feats: {}", value_list.len());
 
@@ -96,10 +171,10 @@ fn get_feats(path: &str) -> HashMap<String, Feat> {
 
 fn get_items(path: &str) -> HashMap<String, Item> {
     let file = read_to_string(path);
-    if !file.is_ok() {
+    if file.is_err() {
         return HashMap::new();
     }
-    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
+    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
     let value_list: Vec<Value> = serde_as_array(serde_file.get("item"));
     println!("num of items: {}", value_list.len());
 
@@ -120,10 +195,10 @@ fn get_items(path: &str) -> HashMap<String, Item> {
 
 fn get_languages(path: &str) -> HashMap<String, Language> {
     let file = read_to_string(path);
-    if !file.is_ok() {
+    if file.is_err() {
         return HashMap::new();
     }
-    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
+    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
     let value_list: Vec<Value> = serde_as_array(serde_file.get("language"));
     println!("num of languages: {}", value_list.len());
 
@@ -144,10 +219,10 @@ fn get_languages(path: &str) -> HashMap<String, Language> {
 
 fn get_races(path: &str) -> HashMap<String, Race> {
     let file = read_to_string(path);
-    if !file.is_ok() {
+    if file.is_err() {
         return HashMap::new();
     }
-    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
+    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
     let value_list: Vec<Value> = serde_as_array(serde_file.get("race"));
     println!("num of races: {}", value_list.len());
 
@@ -168,10 +243,10 @@ fn get_races(path: &str) -> HashMap<String, Race> {
 
 fn get_skills(path: &str) -> HashMap<String, Skill> {
     let file = read_to_string(path);
-    if !file.is_ok() {
+    if file.is_err() {
         return HashMap::new();
     }
-    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
+    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
     let value_list: Vec<Value> = serde_as_array(serde_file.get("skill"));
     println!("num of skills: {}", value_list.len());
 
@@ -194,10 +269,10 @@ fn get_spells(paths: Vec<&str>) -> HashMap<String, Spell> {
     let mut value_list: Vec<Value> = vec![];
     for path in paths {
         let file = read_to_string(path);
-        if !file.is_ok() {
+        if file.is_err() {
             continue;
         }
-        let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
+        let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
         let single_value_list: Vec<Value> = serde_as_array(serde_file.get("spell"));
         println!("num of spells in '{}': {}", path, single_value_list.len());
 
@@ -224,12 +299,16 @@ fn get_spells(paths: Vec<&str>) -> HashMap<String, Spell> {
 pub struct DAO {
     pub actions: HashMap<String, Action>,
     pub backgrounds: HashMap<String, Background>,
+    pub characters: HashMap<String, Character>,
+    pub conditions: HashMap<String, Condition>,
+    pub diseases: HashMap<String, Disease>,
     pub feats: HashMap<String, Feat>,
     pub items: HashMap<String, Item>,
     pub languages: HashMap<String, Language>,
     pub races: HashMap<String, Race>,
     pub skills: HashMap<String, Skill>,
     pub spells: HashMap<String, Spell>,
+    pub statuses: HashMap<String, Status>,
 }
 
 impl DAO {
@@ -254,15 +333,21 @@ impl DAO {
             "data/raw/spells/spells-xge.json",
         ];
 
+        let (conditions, diseases, statuses) = get_conditions_and_diseases("data/raw/conditionsdiseases.json");
+
         return DAO {
             actions: get_actions("data/raw/actions.json"),
             backgrounds: get_backgrounds("data/raw/backgrounds.jsons"),
+            characters: get_characters("data/characters"),
+            conditions,
+            diseases,
             feats: get_feats("data/raw/feats.json"),
             items: get_items("data/raw/items.json"),
             languages: get_languages("data/raw/languages.json"),
             races: get_races("data/raw/races.json"),
             skills: get_skills("data/raw/skills.json"),
             spells: get_spells(spell_path_list),
+            statuses,
         };
     }
 }
