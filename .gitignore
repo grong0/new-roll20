@@ -10,5 +10,7 @@ schema
 
 
 # Added by cargo
-
-/target
+build
+dist
+main.spec
+target
