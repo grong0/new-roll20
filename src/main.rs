@@ -1,20 +1,18 @@
 mod dao;
-mod update_data;
+mod version_checking;
 
 use dao::DAO;
+use version_checking::{is_newer_version, update_data};
+
+const UPDATE_DATA: bool = false;
 
 fn main() {
-    // generate_types::build();
-    // generate_types::testing_build();
-    // let file = fs::read_dir("data");
-    // if file.is_ok() {
-    // 	println!("{:?}", file);
-    // } else {
-    // 	println!("no such file or directory")
-    // }
+	if UPDATE_DATA && is_newer_version() {
+		let result = update_data();
+		if result.is_err() {
+			println!("{:?}", result.err());
+		};
+	}
 
-    // update_data::update_data();
 	let dao = DAO::new();
-
-    println!("{:#?}", dao);
 }

@@ -148,7 +148,7 @@ fn get_races(path: &str) -> HashMap<String, Race> {
         return HashMap::new();
     }
     let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
-    let value_list: Vec<Value> = serde_as_array(serde_file.get("races"));
+    let value_list: Vec<Value> = serde_as_array(serde_file.get("race"));
     println!("num of races: {}", value_list.len());
 
     let mut num_of_na = 0;
@@ -235,33 +235,33 @@ pub struct DAO {
 impl DAO {
     pub fn new() -> DAO {
         let spell_path_list: Vec<&str> = vec![
-            "../data/raw/spells/spells-aag.json",
-            "../data/raw/spells/spells-ai.json",
-            "../data/raw/spells/spells-aitfr-avt.json",
-            "../data/raw/spells/spells-bmt.json",
-            "../data/raw/spells/spells-dodk.json",
-            "../data/raw/spells/spells-egw.json",
-            "../data/raw/spells/spells-ftd.json",
-            "../data/raw/spells/spells-ggr.json",
-            "../data/raw/spells/spells-ghloe.json",
-            "../data/raw/spells/spells-idrotf.json",
-            "../data/raw/spells/spells-llk.json",
-            "../data/raw/spells/spells-phb.json",
-            "../data/raw/spells/spells-sato.json",
-            "../data/raw/spells/spells-scc.json",
-            "../data/raw/spells/spells-tce.json",
-            "../data/raw/spells/spells-tdcsr.json",
-            "../data/raw/spells/spells-xge.json",
+            "data/raw/spells/spells-aag.json",
+            "data/raw/spells/spells-ai.json",
+            "data/raw/spells/spells-aitfr-avt.json",
+            "data/raw/spells/spells-bmt.json",
+            "data/raw/spells/spells-dodk.json",
+            "data/raw/spells/spells-egw.json",
+            "data/raw/spells/spells-ftd.json",
+            "data/raw/spells/spells-ggr.json",
+            "data/raw/spells/spells-ghloe.json",
+            "data/raw/spells/spells-idrotf.json",
+            "data/raw/spells/spells-llk.json",
+            "data/raw/spells/spells-phb.json",
+            "data/raw/spells/spells-sato.json",
+            "data/raw/spells/spells-scc.json",
+            "data/raw/spells/spells-tce.json",
+            "data/raw/spells/spells-tdcsr.json",
+            "data/raw/spells/spells-xge.json",
         ];
 
         return DAO {
-            actions: get_actions("../data/raw/actions.json"),
-            backgrounds: get_backgrounds("../data/raw/backgrounds.jsons"),
-            feats: get_feats("../data/raw/feats.json"),
-            items: get_items("../data/raw/items.json"),
-            languages: get_languages("../data/raw/languages.json"),
-            races: get_races("../data/raw/races.json"),
-            skills: get_skills("../data/raw/skills.json"),
+            actions: get_actions("data/raw/actions.json"),
+            backgrounds: get_backgrounds("data/raw/backgrounds.jsons"),
+            feats: get_feats("data/raw/feats.json"),
+            items: get_items("data/raw/items.json"),
+            languages: get_languages("data/raw/languages.json"),
+            races: get_races("data/raw/races.json"),
+            skills: get_skills("data/raw/skills.json"),
             spells: get_spells(spell_path_list),
         };
     }

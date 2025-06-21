@@ -341,7 +341,6 @@ impl WeaponProficiencies {
             for (key, value) in parsed_object {
                 if key == "choose" {
                     let choose = value.as_object().unwrap();
-                    println!("weapon proficiency choose: {:#?}", choose);
                     choose_filter = choose.get("fromFilter").unwrap_or(&to_value(&choose_filter).unwrap()).as_str().unwrap_or(&choose_filter).to_string();
                     choose_amount = choose.get("count").unwrap_or(&to_value(choose_amount).unwrap()).as_u64().unwrap_or(choose_amount);
                 } else {
