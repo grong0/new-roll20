@@ -563,17 +563,19 @@ impl Time {
 #[derive(Debug)]
 pub struct Range {
     typer: String,
-    form: String,
+    unit: String,
     amount: u64,
 }
 
 impl Range {
-    pub fn new(typer: Option<&Value>, distance: Option<&Value>) -> Range {
-        let parsed_distance = distance.unwrap().as_object().unwrap(); // TODO: add defaults here
+    pub fn new(value: Option<&Value>) -> Range {
+		let object = serde_as_object_from_option(value, Map::new());
+        let distance = serde_as_object_from_option(object.get("distance"), Map::new());
+
         return Range {
-            typer: typer.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
-            form: parsed_distance.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
-            amount: parsed_distance.get("amount").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
+            typer: serde_as_string(object.get("type"), "N/A".to_string()),
+            unit: distance.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+            amount: distance.get("amount").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
         };
     }
 }
@@ -587,12 +589,14 @@ pub struct Components {
 }
 
 impl Components {
-    pub fn new(v: Option<&Value>, s: Option<&Value>, m: Option<&Value>, r: Option<&Value>) -> Components {
+    pub fn new(object: Option<&Value>) -> Components {
+		let parsed_object = serde_as_object_from_option(object, Map::new());
+
         return Components {
-            v: v.unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
-            s: s.unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
-            m: m.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
-            r: r.unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+            v: serde_as_bool(parsed_object.get("v"), false),
+            s: serde_as_bool(parsed_object.get("s"), false),
+            m: serde_as_string(parsed_object.get("m"), "N/A".to_string()),
+            r: serde_as_string(parsed_object.get("r"), "N/A".to_string()),
         };
     }
 }
