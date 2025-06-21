@@ -1,6 +1,6 @@
 use serde_json::{Map, Value};
 
-use super::common::{form_key, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_string, Source};
+use super::common::{form_key, serde_as_array, serde_as_bool, serde_as_object, serde_as_string, Entry, Source};
 
 #[derive(Debug)]
 pub struct Skill {
@@ -9,7 +9,7 @@ pub struct Skill {
 	pub key: String,
 	pub srd: bool,
 	pub basic_rules: bool,
-	pub entries: Vec<String>
+	pub entries: Vec<Entry>
 }
 
 impl Skill {
@@ -25,7 +25,7 @@ impl Skill {
 			source,
 			srd: serde_as_bool(object.get("srd"), false),
 			basic_rules: serde_as_bool(object.get("basicRules"), false),
-			entries: serde_as_array_mapping(object.get("entries"), serde_as_string, "N/A".to_string())
+			entries: serde_as_array(object.get("entries")).iter().map(|i| Entry::new(i)).collect()
 		}
 	}
 }

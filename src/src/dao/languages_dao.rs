@@ -1,6 +1,6 @@
 use serde_json::{Map, Value};
 
-use super::common::{form_key, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string, Source};
+use super::common::{form_key, serde_as_array, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string, Entry, Source};
 
 #[derive(Debug)]
 pub struct Language {
@@ -12,7 +12,7 @@ pub struct Language {
     pub script: String,
     pub srd: bool,
     pub basic_rules: bool,
-    pub entries: Vec<String>,
+    pub entries: Vec<Entry>,
     pub has_fluff_images: bool,
     pub fonts: Vec<String>,
     pub additional_sources: Vec<Source>,
@@ -36,7 +36,7 @@ impl Language {
             script: serde_as_string(object.get("script"), "N/A".to_string()),
             srd: serde_as_bool(object.get("srd"), false),
             basic_rules: serde_as_bool(object.get("basicRules"), false),
-            entries: serde_as_array_mapping(object.get("entries"), serde_as_string, "N/A".to_string()),
+            entries: serde_as_array(object.get("entries")).iter().map(|i| Entry::new(i)).collect(),
             has_fluff_images: serde_as_bool(object.get("hasFluffImages"), false),
             fonts: serde_as_array_mapping(object.get("fonts"), serde_as_string, "N/A".to_string()),
             additional_sources: serde_as_array_mapping(object.get("additionalSources"), serde_as_object_from_option, Map::new()).iter().map(|i| Source::new(i.get("source"), i.get("page"))).collect(),

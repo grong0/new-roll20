@@ -2,6 +2,7 @@ use std::{collections::HashMap, fs::read_to_string};
 
 pub mod actions_dao;
 pub mod backgrounds_dao;
+pub mod character_dao;
 pub mod common;
 pub mod feats_dao;
 pub mod items_dao;
@@ -23,9 +24,9 @@ use spells_dao::Spell;
 
 fn get_actions(path: &str) -> HashMap<String, Action> {
     let file = read_to_string(path);
-	if !file.is_ok() {
-		return HashMap::new();
-	}
+    if !file.is_ok() {
+        return HashMap::new();
+    }
     let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
     let value_list: Vec<Value> = serde_as_array(serde_file.get("action"));
     println!("num of actions: {}", value_list.len());
@@ -47,9 +48,9 @@ fn get_actions(path: &str) -> HashMap<String, Action> {
 
 fn get_backgrounds(path: &str) -> HashMap<String, Background> {
     let file = read_to_string(path);
-	if !file.is_ok() {
-		return HashMap::new();
-	}
+    if !file.is_ok() {
+        return HashMap::new();
+    }
     let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
     let value_list: Vec<Value> = serde_as_array(serde_file.get("background"));
     println!("num of backgrounds: {}", value_list.len());
@@ -71,9 +72,9 @@ fn get_backgrounds(path: &str) -> HashMap<String, Background> {
 
 fn get_feats(path: &str) -> HashMap<String, Feat> {
     let file = read_to_string(path);
-	if !file.is_ok() {
-		return HashMap::new();
-	}
+    if !file.is_ok() {
+        return HashMap::new();
+    }
     let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
     let value_list: Vec<Value> = serde_as_array(serde_file.get("feat"));
     println!("num of feats: {}", value_list.len());
@@ -95,9 +96,9 @@ fn get_feats(path: &str) -> HashMap<String, Feat> {
 
 fn get_items(path: &str) -> HashMap<String, Item> {
     let file = read_to_string(path);
-	if !file.is_ok() {
-		return HashMap::new();
-	}
+    if !file.is_ok() {
+        return HashMap::new();
+    }
     let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
     let value_list: Vec<Value> = serde_as_array(serde_file.get("item"));
     println!("num of items: {}", value_list.len());
@@ -119,9 +120,9 @@ fn get_items(path: &str) -> HashMap<String, Item> {
 
 fn get_languages(path: &str) -> HashMap<String, Language> {
     let file = read_to_string(path);
-	if !file.is_ok() {
-		return HashMap::new();
-	}
+    if !file.is_ok() {
+        return HashMap::new();
+    }
     let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
     let value_list: Vec<Value> = serde_as_array(serde_file.get("language"));
     println!("num of languages: {}", value_list.len());
@@ -143,9 +144,9 @@ fn get_languages(path: &str) -> HashMap<String, Language> {
 
 fn get_races(path: &str) -> HashMap<String, Race> {
     let file = read_to_string(path);
-	if !file.is_ok() {
-		return HashMap::new();
-	}
+    if !file.is_ok() {
+        return HashMap::new();
+    }
     let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
     let value_list: Vec<Value> = serde_as_array(serde_file.get("races"));
     println!("num of races: {}", value_list.len());
@@ -167,9 +168,9 @@ fn get_races(path: &str) -> HashMap<String, Race> {
 
 fn get_skills(path: &str) -> HashMap<String, Skill> {
     let file = read_to_string(path);
-	if !file.is_ok() {
-		return HashMap::new();
-	}
+    if !file.is_ok() {
+        return HashMap::new();
+    }
     let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
     let value_list: Vec<Value> = serde_as_array(serde_file.get("skill"));
     println!("num of skills: {}", value_list.len());
@@ -193,9 +194,9 @@ fn get_spells(paths: Vec<&str>) -> HashMap<String, Spell> {
     let mut value_list: Vec<Value> = vec![];
     for path in paths {
         let file = read_to_string(path);
-		if !file.is_ok() {
-			continue;
-		}
+        if !file.is_ok() {
+            continue;
+        }
         let serde_file: Value = from_str(file.unwrap().as_str()).unwrap();
         let single_value_list: Vec<Value> = serde_as_array(serde_file.get("spell"));
         println!("num of spells in '{}': {}", path, single_value_list.len());

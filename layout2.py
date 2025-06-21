@@ -128,8 +128,6 @@ async def title_card():
 
 
 @app.get("/assets/")
-
-
 @app.get("/player/name", response_class=HTMLResponse)
 async def player_name():
     return "George"
@@ -215,12 +213,12 @@ async def player_classes():
 
 
 @app.get("/player/abilities/{ability}/score", response_class=HTMLResponse)
-def player_attribute(ability: str):
+def player_attribute_score(ability: str):
     return str(20)
 
 
 @app.get("/player/abilities/{ability}/modifier", response_class=HTMLResponse)
-def player_attribute(ability: str):
+def player_attribute_modifier(ability: str):
     return str(ability_score_to_modifier(20))
 
 
@@ -240,12 +238,12 @@ def player_senses_perception():
 
 
 @app.get("/player/senses/investigation", response_class=HTMLResponse)
-def player_senses_perception():
+def player_senses_investigation():
     return "18"
 
 
 @app.get("/player/senses/insight", response_class=HTMLResponse)
-def player_senses_perception():
+def player_senses_insight():
     return "18"
 
 
@@ -425,10 +423,12 @@ def player_actions_limiteduse():
     return content
 
 
-if __name__ == "__main__":
+def main():
     app.mount("/static", StaticFiles(directory="static"), name="static")
     app.mount("/assets", StaticFiles(directory="assets"), name="assets")
-    os.system(
-        "uvicorn layout2:app --reload --reload-dir static --reload-include output.css"
-    )  # dev
+    os.system("uvicorn layout2:app --reload --reload-dir static --reload-include output.css")  # dev
     # uvicorn.run(app, host="127.0.0.1", port=8000) #production
+
+
+if __name__ == "__main__":
+    main()

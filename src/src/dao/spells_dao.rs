@@ -1,6 +1,6 @@
 use serde_json::{Map, Value};
 
-use super::common::{form_key, serde_as_array, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string, serde_as_u64, Components, Duration, Range, ScalingLevelDice, Source, Time};
+use super::common::{form_key, serde_as_array, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string, serde_as_u64, Components, Duration, Entry, Range, ScalingLevelDice, Source, Time};
 
 #[derive(Debug)]
 pub struct Spell {
@@ -14,7 +14,7 @@ pub struct Spell {
     pub range: Range,
     pub components: Components,
     pub duration: Duration,
-    pub entries: Vec<String>,
+    pub entries: Vec<Entry>,
     pub scaling_level_dice: Vec<ScalingLevelDice>,
     pub damage_inflict: Vec<String>,
     pub saving_throw: String,
@@ -65,7 +65,7 @@ impl Spell {
 			range: Range::new(object.get("range")),
 			components: Components::new(object.get("components")),
 			duration: Duration::new(object.get("duration")),
-			entries: serde_as_array_mapping(object.get("entries"), serde_as_string, "N/A".to_string()),
+			entries: serde_as_array(object.get("entries")).iter().map(|i| Entry::new(i)).collect(),
 			scaling_level_dice,
 			damage_inflict: serde_as_array_mapping(object.get("damageInflict"), serde_as_string, "N/A".to_string()),
 			saving_throw: serde_as_string(object.get("savingThrow"), "N/A".to_string()),

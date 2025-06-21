@@ -2,6 +2,8 @@ use std::iter::zip;
 
 use serde_json::{to_value, Map, Value};
 
+use super::items_dao::Item;
+
 #[derive(Debug)]
 pub struct Speed {
     walk: u64,
@@ -222,8 +224,8 @@ impl SkillProficiencies {
                     any = value.as_u64().unwrap();
                 } else if key == "choose" {
                     let choose = value.as_object().unwrap();
-					choose_skills = serde_as_array_mapping(choose.get("from"), serde_as_string, "N/A".to_string());
-					choose_count = serde_as_u64(choose.get("count"), 1);
+                    choose_skills = serde_as_array_mapping(choose.get("from"), serde_as_string, "N/A".to_string());
+                    choose_count = serde_as_u64(choose.get("count"), 1);
                 } else {
                     skills.push(key.to_string());
                 }
@@ -569,7 +571,7 @@ pub struct Range {
 
 impl Range {
     pub fn new(value: Option<&Value>) -> Range {
-		let object = serde_as_object_from_option(value, Map::new());
+        let object = serde_as_object_from_option(value, Map::new());
         let distance = serde_as_object_from_option(object.get("distance"), Map::new());
 
         return Range {
@@ -590,7 +592,7 @@ pub struct Components {
 
 impl Components {
     pub fn new(object: Option<&Value>) -> Components {
-		let parsed_object = serde_as_object_from_option(object, Map::new());
+        let parsed_object = serde_as_object_from_option(object, Map::new());
 
         return Components {
             v: serde_as_bool(parsed_object.get("v"), false),
@@ -689,7 +691,7 @@ impl PackItem {
                 name = special.as_str().unwrap_or("NOT_STRING_SPECIAL").to_string();
             }
             None => {
-				name = serde_as_string(object.get("item"), "N/A".to_string());
+                name = serde_as_string(object.get("item"), "N/A".to_string());
             }
         }
 
@@ -792,13 +794,13 @@ impl ContainerCapacity {
 
         // Parses weight and item specifications
         let mut parsed_weights: Vec<u64> = vec![];
-		for weight in serde_as_array(parsed_object.get("weight")) {
-			parsed_weights.push(weight.as_u64().unwrap_or(0));
-		}
+        for weight in serde_as_array(parsed_object.get("weight")) {
+            parsed_weights.push(weight.as_u64().unwrap_or(0));
+        }
         let mut parsed_items: Vec<Map<String, Value>> = vec![];
-		for item in serde_as_array(parsed_object.get("item")) {
-			parsed_items.push(serde_as_object(&item, Map::new()));
-		}
+        for item in serde_as_array(parsed_object.get("item")) {
+            parsed_items.push(serde_as_object(&item, Map::new()));
+        }
 
         // Extends the smallest list to be the same size as the other
         let parsed_weights_len = parsed_weights.len();
@@ -911,7 +913,7 @@ pub struct StartingEquipment {
 
 impl StartingEquipment {
     pub fn new(object: Option<&Value>) -> StartingEquipment {
-		let parsed_arr = serde_as_array_mapping(object, serde_as_object_from_option, Map::new());
+        let parsed_arr = serde_as_array_mapping(object, serde_as_object_from_option, Map::new());
 
         let mut items = vec![];
         let mut choose_between = vec![];
@@ -950,7 +952,7 @@ pub struct ClassPrerequisite {
 
 impl ClassPrerequisite {
     pub fn new(object: Option<&Value>) -> ClassPrerequisite {
-		let parsed_object = serde_as_object_from_option(object, Map::new());
+        let parsed_object = serde_as_object_from_option(object, Map::new());
         let class_object = serde_as_object_from_option(parsed_object.get("class"), Map::new());
 
         return ClassPrerequisite {
@@ -979,7 +981,7 @@ impl Prerequisite {
 
         if list.is_some() && list.unwrap().as_array().is_some() {
             for object in list.unwrap().as_array().unwrap() {
-				let parsed_object = serde_as_object(object, Map::new());
+                let parsed_object = serde_as_object(object, Map::new());
                 if parsed_object.get("campaign").is_some() {
                     campaign_requirement.push(object.get("campaign").unwrap().as_str().unwrap_or("N/A").to_string());
                     requires_campaign = true;
@@ -1199,4 +1201,35 @@ pub fn serde_as_array(value: Option<&Value>) -> Vec<Value> {
 
 pub fn serde_as_array_mapping<T: Clone>(value: Option<&Value>, mapping_func: fn(Option<&Value>, T) -> T, default: T) -> Vec<T> {
     return value.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| mapping_func(Some(i), default.clone())).collect();
+}
+
+pub struct Details {
+    pub age: u64,
+    pub eyes: String,
+    pub hair: String,
+    pub skin: String,
+    pub weight: u64,
+    pub height: String,
+    pub personality: String,
+    pub ideal: String,
+    pub bond: String,
+    pub flaw: String,
+    pub backstory: String,
+    pub physical: String,
+}
+
+pub struct CharacterItem {
+    pub name: String,
+    pub quantity: u64,
+    pub description: String,
+    pub equipped: bool,
+    pub item: Item,
+}
+
+pub struct CharacterTreasure {
+	pub platinum_piece: u64,
+	pub electrum_piece: u64,
+	pub gold_piece: u64,
+	pub silver_piece: u64,
+	pub copper_piece: u64,
 }
