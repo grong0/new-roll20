@@ -211,9 +211,9 @@ impl SkillProficiencies {
         if object.is_some() {
             let parsed_object: Map<String, Value>;
             if object.unwrap().is_object() {
-                parsed_object = object.unwrap().as_object().unwrap().to_owned();
+                parsed_object = serde_as_object_from_option(object, Map::new()).to_owned();
             } else if object.unwrap().is_array() {
-                parsed_object = object.unwrap().as_array().unwrap().get(0).unwrap_or(&to_value(Map::new()).unwrap()).as_object().unwrap_or(&Map::new()).to_owned();
+                parsed_object = serde_as_array_mapping(object, serde_as_object_from_option, Map::new()).get(0).unwrap_or(&Map::new()).to_owned();
             } else {
                 parsed_object = Map::new();
             }
@@ -222,8 +222,8 @@ impl SkillProficiencies {
                     any = value.as_u64().unwrap();
                 } else if key == "choose" {
                     let choose = value.as_object().unwrap();
-                    choose_skills = choose.get("from").unwrap().as_array().unwrap().iter().map(|skl| skl.as_str().unwrap_or("N/A").to_string()).collect(); // TODO: add defaults here
-                    choose_count = choose.get("count").unwrap_or(&to_value(1).unwrap()).as_u64().unwrap_or(1);
+					choose_skills = serde_as_array_mapping(choose.get("from"), serde_as_string, "N/A".to_string());
+					choose_count = serde_as_u64(choose.get("count"), 1);
                 } else {
                     skills.push(key.to_string());
                 }
@@ -242,7 +242,7 @@ pub struct LanguageProficiencies {
     choose_count: u64,
 }
 
-// TODO: add support for getting the 'other' langage from entries
+// TODO: add support for getting the 'other' language from entries
 impl LanguageProficiencies {
     pub fn new(object: Option<&Value>) -> LanguageProficiencies {
         let mut languages: Vec<String> = vec![];
@@ -612,11 +612,10 @@ pub struct Duration {
 
 impl Duration {
     pub fn new(object: Option<&Value>) -> Duration {
-        let parsed_object = object.unwrap().as_object().unwrap(); // TODO: add defaults here
+        let parsed_object = serde_as_object_from_option(object, Map::new());
         let mut ends = vec![];
 
-        for end in parsed_object.get("ends").unwrap().as_array().unwrap() {
-            // TODO: add defaults here
+        for end in serde_as_array(parsed_object.get("ends")) {
             ends.push(end.as_str().unwrap_or("N/A").to_string());
         }
 
@@ -655,10 +654,10 @@ pub struct ScalingLevelDice {
 
 impl ScalingLevelDice {
     pub fn new(object: Option<&Value>) -> ScalingLevelDice {
-        let parsed_object = object.unwrap().as_object().unwrap(); // TODO: add defaults here
+        let parsed_object = serde_as_object_from_option(object, Map::new());
 
         let mut scaling = vec![];
-        let scaling_object = parsed_object.get("scaling").unwrap().as_object().unwrap(); // TODO: add defaults here
+        let scaling_object = serde_as_object_from_option(parsed_object.get("scaling"), Map::new());
         for level in scaling_object.keys() {
             scaling.push(LevelDie {
                 level: level.to_string(),
@@ -789,29 +788,17 @@ pub struct ContainerCapacity {
 
 impl ContainerCapacity {
     pub fn new(object: Option<&Value>) -> ContainerCapacity {
-        let parsed_object = object.unwrap().as_object().unwrap(); // TODO: add defaults here
+        let parsed_object = serde_as_object_from_option(object, Map::new());
 
         // Parses weight and item specifications
         let mut parsed_weights: Vec<u64> = vec![];
-        match parsed_object.get("weight") {
-            Some(weights) => {
-                for weight in weights.as_array().unwrap() {
-                    // TODO: add defaults here
-                    parsed_weights.push(weight.as_u64().unwrap_or(0));
-                }
-            }
-            None => {}
-        }
+		for weight in serde_as_array(parsed_object.get("weight")) {
+			parsed_weights.push(weight.as_u64().unwrap_or(0));
+		}
         let mut parsed_items: Vec<Map<String, Value>> = vec![];
-        match parsed_object.get("item") {
-            Some(items) => {
-                for item in items.as_array().unwrap() {
-                    // TODO: add defaults here
-                    parsed_items.push(item.as_object().unwrap().to_owned()); // TODO: add defaults here
-                }
-            }
-            None => {}
-        }
+		for item in serde_as_array(parsed_object.get("item")) {
+			parsed_items.push(serde_as_object(&item, Map::new()));
+		}
 
         // Extends the smallest list to be the same size as the other
         let parsed_weights_len = parsed_weights.len();
@@ -852,7 +839,7 @@ pub struct StartingItem {
 }
 
 impl StartingItem {
-    pub fn new(item: &Value) -> StartingItem {
+    pub fn new(item: Value) -> StartingItem {
         let mut name = "N/A".to_string();
         let mut quantity = 1;
         let mut value = 0;
@@ -924,16 +911,15 @@ pub struct StartingEquipment {
 
 impl StartingEquipment {
     pub fn new(object: Option<&Value>) -> StartingEquipment {
-        let parsed_arr = object.unwrap().as_array().unwrap().iter().map(|f| f.as_object().unwrap()); // TODO: add defaults here
+		let parsed_arr = serde_as_array_mapping(object, serde_as_object_from_option, Map::new());
 
         let mut items = vec![];
         let mut choose_between = vec![];
         for category in parsed_arr {
             if category.get("_").is_some() {
-                for item in category.get("_").unwrap().as_array().unwrap() {
-                    // TODO: add defaults here
+                for item in serde_as_array(category.get("_")) {
                     if item.as_array().is_some() {
-                        items.extend(item.as_array().unwrap().iter().map(|f| StartingItem::new(f)));
+                        items.extend(item.as_array().unwrap().iter().map(|i| StartingItem::new(i.to_owned())));
                         continue;
                     }
                     items.push(StartingItem::new(item));
@@ -944,8 +930,7 @@ impl StartingEquipment {
             let size = if category.get("c").is_some() { 3 } else { 2 };
             for i in 0..size {
                 let mut option = vec![];
-                for item in category.get(selections[i]).unwrap().as_array().unwrap() {
-                    // TODO: add defaults here
+                for item in serde_as_array(category.get(selections[i])) {
                     option.push(StartingItem::new(item));
                 }
                 choose_between.push(option);
@@ -965,8 +950,8 @@ pub struct ClassPrerequisite {
 
 impl ClassPrerequisite {
     pub fn new(object: Option<&Value>) -> ClassPrerequisite {
-        let parsed_object = object.unwrap().as_object().unwrap(); // TODO: add defaults here
-        let class_object = parsed_object.get("class").unwrap().as_object().unwrap(); // TODO: add defaults here
+		let parsed_object = serde_as_object_from_option(object, Map::new());
+        let class_object = serde_as_object_from_option(parsed_object.get("class"), Map::new());
 
         return ClassPrerequisite {
             name: class_object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
@@ -994,7 +979,7 @@ impl Prerequisite {
 
         if list.is_some() && list.unwrap().as_array().is_some() {
             for object in list.unwrap().as_array().unwrap() {
-                let parsed_object = object.as_object().unwrap(); // TODO: add defaults here
+				let parsed_object = serde_as_object(object, Map::new());
                 if parsed_object.get("campaign").is_some() {
                     campaign_requirement.push(object.get("campaign").unwrap().as_str().unwrap_or("N/A").to_string());
                     requires_campaign = true;
@@ -1083,7 +1068,7 @@ impl OptionalFeatureProgression {
         if object.is_some() && object.unwrap().as_object().is_some() {
             let parsed_object = object.unwrap().as_object().unwrap();
             name = parsed_object.get("name").unwrap_or(&to_value(&name).unwrap()).as_str().unwrap_or(name.as_str()).to_string();
-            freature_type = parsed_object.get("featureType").unwrap().as_array().unwrap().iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(); // TODO: add defaults here
+            freature_type = serde_as_array_mapping(parsed_object.get("featureType"), serde_as_string, "N/A".to_string());
             if parsed_object.get("progression").is_some() && parsed_object.get("progression").unwrap().as_object().is_some() {
                 let parsed_progression = parsed_object.get("progression").unwrap().as_object().unwrap();
                 progression_type = parsed_progression.keys().into_iter().collect::<Vec<_>>()[0].to_owned();
