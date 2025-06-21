@@ -17,6 +17,4 @@ fn main() {
 	let dao = DAO::new();
 
     println!("{:#?}", dao);
-
-    println!("{:#?}", dao.races.get("astral_elf|aag"));
 }
