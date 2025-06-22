@@ -324,30 +324,51 @@ pub struct WeaponProficiencies {
 }
 
 impl WeaponProficiencies {
-    pub fn new(object: Option<&Value>) -> WeaponProficiencies {
+    pub fn new(value: Option<&Value>) -> WeaponProficiencies {
         let mut weapons: Vec<String> = vec![];
         let mut choose_filter = "N/A".to_string();
         let mut choose_amount = 0;
 
-        if object.is_some() {
-            let parsed_object: Map<String, Value>;
-            if object.unwrap().is_object() {
-                parsed_object = object.unwrap().as_object().unwrap().to_owned();
-            } else if object.unwrap().is_array() {
-                parsed_object = object.unwrap().as_array().unwrap().get(0).unwrap_or(&to_value(Map::new()).unwrap()).as_object().unwrap_or(&Map::new()).to_owned();
-            } else {
-                parsed_object = Map::new();
-            }
-            for (key, value) in parsed_object {
-                if key == "choose" {
-                    let choose = value.as_object().unwrap();
-                    choose_filter = choose.get("fromFilter").unwrap_or(&to_value(&choose_filter).unwrap()).as_str().unwrap_or(&choose_filter).to_string();
-                    choose_amount = choose.get("count").unwrap_or(&to_value(choose_amount).unwrap()).as_u64().unwrap_or(choose_amount);
-                } else {
-                    weapons.push(key.to_string());
+        let array = serde_as_array(value);
+
+        for item in array {
+            if item.is_object() {
+                for (key, value) in item.as_object().unwrap() {
+                    if key == "choose" {
+                        let choose = value.as_object().unwrap();
+                        choose_filter = choose.get("fromFilter").unwrap_or(&to_value(&choose_filter).unwrap()).as_str().unwrap_or(&choose_filter).to_string();
+                        choose_amount = choose.get("count").unwrap_or(&to_value(choose_amount).unwrap()).as_u64().unwrap_or(choose_amount);
+                    } else {
+                        weapons.push(key.to_string());
+                    }
                 }
+            } else if item.is_string() {
+                weapons.push(item.as_str().unwrap().to_string());
+            } else {
+                println!("item in weapon proficiencies was something other than a string or an object");
             }
         }
+
+        // if value.is_some() {
+        // 	let value_unwrapped = value.unwrap();
+        //     let object: Map<String, Value>;
+        //     if value_unwrapped.is_object() {
+        //         object = serde_as_object(value_unwrapped, Map::new());
+        //     } else if value_unwrapped.is_array() {
+        // 		object = serde_as_array_mapping(value, serde_as_object_from_option, Map::new()).get(0).unwrap_or(&Map::new()).to_owned();
+        //     } else {
+        // 		object = Map::new();
+        //     }
+        //     for (key, value) in object {
+        //         if key == "choose" {
+        //             let choose = value.as_object().unwrap();
+        //             choose_filter = choose.get("fromFilter").unwrap_or(&to_value(&choose_filter).unwrap()).as_str().unwrap_or(&choose_filter).to_string();
+        //             choose_amount = choose.get("count").unwrap_or(&to_value(choose_amount).unwrap()).as_u64().unwrap_or(choose_amount);
+        //         } else {
+        //             weapons.push(key.to_string());
+        //         }
+        //     }
+        // }
 
         return WeaponProficiencies { weapons, choose_filter, choose_amount };
     }
@@ -1060,28 +1081,16 @@ pub struct OptionalFeatureProgression {
 }
 
 impl OptionalFeatureProgression {
-    pub fn new(object: Option<&Value>) -> OptionalFeatureProgression {
-        let mut name = "N/A".to_string();
-        let mut freature_type = vec![];
-        let mut progression_type = "N/A".to_string();
-        let mut progression_amount = 0;
-
-        if object.is_some() && object.unwrap().as_object().is_some() {
-            let parsed_object = object.unwrap().as_object().unwrap();
-            name = parsed_object.get("name").unwrap_or(&to_value(&name).unwrap()).as_str().unwrap_or(name.as_str()).to_string();
-            freature_type = serde_as_array_mapping(parsed_object.get("featureType"), serde_as_string, "N/A".to_string());
-            if parsed_object.get("progression").is_some() && parsed_object.get("progression").unwrap().as_object().is_some() {
-                let parsed_progression = parsed_object.get("progression").unwrap().as_object().unwrap();
-                progression_type = parsed_progression.keys().into_iter().collect::<Vec<_>>()[0].to_owned();
-                progression_amount = parsed_progression.get(&progression_type).unwrap().as_u64().unwrap_or(0);
-            }
-        }
+    pub fn new(value: Option<&Value>) -> OptionalFeatureProgression {
+        let object = serde_as_object_from_option(value, Map::new());
+        let progression = serde_as_object_from_option(object.get("progression"), Map::new());
+        let progression_type = progression.keys().into_iter().collect::<Vec<_>>()[0].to_owned();
 
         return OptionalFeatureProgression {
-            name,
-            freature_type,
+            name: serde_as_string(object.get("name"), "N/A".to_string()),
+            freature_type: serde_as_array_mapping(object.get("featureType"), serde_as_string, "N/A".to_string()),
+            progression_amount: serde_as_u64(progression.get(&progression_type), 0),
             progression_type,
-            progression_amount,
         };
     }
 }
@@ -1166,6 +1175,129 @@ impl Entry {
     }
 }
 
+#[derive(Debug)]
+pub struct Details {
+    pub age: u64,
+    pub eyes: String,
+    pub hair: String,
+    pub skin: String,
+    pub weight: u64,
+    pub height: String,
+    pub personality: String,
+    pub ideal: String,
+    pub bond: String,
+    pub flaw: String,
+    pub backstory: String,
+    pub physical: String,
+}
+
+#[derive(Debug)]
+pub struct CharacterItem {
+    pub name: String,
+    pub quantity: u64,
+    pub description: String,
+    pub equipped: bool,
+    pub item: Item,
+}
+
+#[derive(Debug)]
+pub struct CharacterTreasure {
+    pub platinum_piece: u64,
+    pub electrum_piece: u64,
+    pub gold_piece: u64,
+    pub silver_piece: u64,
+    pub copper_piece: u64,
+}
+
+#[derive(Debug)]
+pub struct HitDie {
+    pub number: u64,
+    pub faces: u64,
+}
+
+impl HitDie {
+    pub fn new(value: Option<&Value>) -> HitDie {
+        let object = serde_as_object_from_option(value, Map::new());
+
+        return HitDie {
+            number: serde_as_u64(object.get("number"), 0),
+            faces: serde_as_u64(object.get("faces"), 0),
+        };
+    }
+}
+#[derive(Debug)]
+pub struct OptionalClassFeatureProgression {
+    pub name: String,
+    pub feature_type: String,
+    pub progression: Vec<u64>,
+}
+
+impl OptionalClassFeatureProgression {
+    pub fn new(value: Option<&Value>) -> OptionalClassFeatureProgression {
+        let object = serde_as_object_from_option(value, Map::new());
+
+        return OptionalClassFeatureProgression {
+            name: serde_as_string(object.get("name"), "N/A".to_string()),
+            feature_type: serde_as_string(object.get("featureType"), "N/A".to_string()),
+            progression: serde_as_array_mapping(object.get("progression"), serde_as_u64, 0),
+        };
+    }
+}
+
+#[derive(Debug)]
+pub struct ClassWeaponProficiencies {
+    pub weapons: Vec<String>,
+    pub optional_weapons: Vec<String>,
+}
+
+impl ClassWeaponProficiencies {
+    pub fn new(value: Option<&Value>) -> ClassWeaponProficiencies {
+        let array = serde_as_array(value);
+
+        let mut weapons: Vec<String> = vec![];
+        let mut optional_weapons: Vec<String> = vec![];
+
+        for item in array {
+            if item.is_string() {
+                weapons.push(item.as_str().unwrap().to_string());
+            } else if item.is_object() {
+                let object = item.as_object().unwrap();
+                if object.contains_key("optional") {
+                    optional_weapons.push(serde_as_string(object.get("proficiency"), "N/A".to_string()));
+                }
+            } else {
+                println!("item in weapon proficiencies was something other than a string or an object");
+            }
+        }
+
+        return ClassWeaponProficiencies { weapons, optional_weapons };
+    }
+}
+
+pub struct MulticlassingRequirements {
+	pub con: u64,
+	pub dex: u64,
+	pub str: u64,
+	pub int: u64,
+	pub wis: u64,
+	pub cha: u64,
+}
+
+impl MulticlassingRequirements {
+	pub fn new(value: Option<&Value>) -> MulticlassingRequirements {
+		let object = serde_as_object_from_option(value, Map::new());
+
+		return MulticlassingRequirements {
+			con: serde_as_u64(object.get("con"), 0),
+			dex: serde_as_u64(object.get("dex"), 0),
+			str: serde_as_u64(object.get("str"), 0),
+			int: serde_as_u64(object.get("int"), 0),
+			wis: serde_as_u64(object.get("wis"), 0),
+			cha: serde_as_u64(object.get("cha"), 0)
+		}
+	}
+}
+
 pub fn form_key(name: &String, source: &String) -> String {
     return name.to_ascii_lowercase().replace(" ", "_") + "|" + source.to_ascii_lowercase().as_str();
 }
@@ -1200,38 +1332,4 @@ pub fn serde_as_array(value: Option<&Value>) -> Vec<Value> {
 
 pub fn serde_as_array_mapping<T: Clone>(value: Option<&Value>, mapping_func: fn(Option<&Value>, T) -> T, default: T) -> Vec<T> {
     return value.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| mapping_func(Some(i), default.clone())).collect();
-}
-
-#[derive(Debug)]
-pub struct Details {
-    pub age: u64,
-    pub eyes: String,
-    pub hair: String,
-    pub skin: String,
-    pub weight: u64,
-    pub height: String,
-    pub personality: String,
-    pub ideal: String,
-    pub bond: String,
-    pub flaw: String,
-    pub backstory: String,
-    pub physical: String,
-}
-
-#[derive(Debug)]
-pub struct CharacterItem {
-    pub name: String,
-    pub quantity: u64,
-    pub description: String,
-    pub equipped: bool,
-    pub item: Item,
-}
-
-#[derive(Debug)]
-pub struct CharacterTreasure {
-	pub platinum_piece: u64,
-	pub electrum_piece: u64,
-	pub gold_piece: u64,
-	pub silver_piece: u64,
-	pub copper_piece: u64,
 }

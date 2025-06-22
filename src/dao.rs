@@ -1,8 +1,12 @@
-use std::{collections::HashMap, fs::{read_dir, read_to_string}};
+use std::{
+    collections::HashMap,
+    fs::{read_dir, read_to_string},
+};
 
 pub mod actions_dao;
 pub mod backgrounds_dao;
 pub mod character_dao;
+pub mod classes_dao;
 pub mod common;
 pub mod conditionsdiseases_dao;
 pub mod feats_dao;
@@ -74,21 +78,21 @@ fn get_backgrounds(path: &str) -> HashMap<String, Background> {
 }
 
 fn get_characters(dir_path: &str) -> HashMap<String, Character> {
-	let files = read_dir(dir_path);
-	if files.is_err() {
-		return HashMap::new();
-	}
+    let files = read_dir(dir_path);
+    if files.is_err() {
+        return HashMap::new();
+    }
 
-	let map = HashMap::new();
-	for entry in files.unwrap() {
-		let file = read_to_string(entry.unwrap().path());
-		if file.is_err() {
-			continue;
-		}
-		let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
-		// let new_struct = Character::new(serde_file);
-		// map.insert(new_struct.key, new_struct);
-	}
+    let map = HashMap::new();
+    for entry in files.unwrap() {
+        let file = read_to_string(entry.unwrap().path());
+        if file.is_err() {
+            continue;
+        }
+        let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
+        // let new_struct = Character::new(serde_file);
+        // map.insert(new_struct.key, new_struct);
+    }
 
     return map;
 }
