@@ -19,6 +19,7 @@ pub mod spells_dao;
 use actions_dao::Action;
 use backgrounds_dao::Background;
 use character_dao::Character;
+use classes_dao::{Class, ClassFeature, Subclass, SubclassFeature};
 use common::serde_as_array;
 use conditionsdiseases_dao::{Condition, Disease, Status};
 use feats_dao::Feat;
@@ -95,6 +96,83 @@ fn get_characters(dir_path: &str) -> HashMap<String, Character> {
     }
 
     return map;
+}
+
+fn get_classes_and_subclasses(paths: Vec<&str>) -> (HashMap<String, Class>, HashMap<String, Subclass>, HashMap<String, ClassFeature>, HashMap<String, SubclassFeature>) {
+    let mut class_value_list: Vec<Value> = vec![];
+    let mut subclass_value_list: Vec<Value> = vec![];
+    let mut class_feature_value_list: Vec<Value> = vec![];
+    let mut subclass_feature_value_list: Vec<Value> = vec![];
+    for path in paths {
+        let file = read_to_string(path);
+        if file.is_err() {
+            continue;
+        }
+        let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
+        let single_class_value_list: Vec<Value> = serde_as_array(serde_file.get("class"));
+        let single_subclass_value_list: Vec<Value> = serde_as_array(serde_file.get("subclass"));
+        let single_class_feature_value_list: Vec<Value> = serde_as_array(serde_file.get("classFeature"));
+        let single_subclass_feature_value_list: Vec<Value> = serde_as_array(serde_file.get("subclassFeature"));
+
+        class_value_list.extend(single_class_value_list);
+        subclass_value_list.extend(single_subclass_value_list);
+        class_feature_value_list.extend(single_class_feature_value_list);
+        subclass_feature_value_list.extend(single_subclass_feature_value_list);
+    }
+    println!("total num of classes: {}", class_value_list.len());
+    println!("total num of subclasses: {}", subclass_value_list.len());
+    println!("total num of class features: {}", class_feature_value_list.len());
+    println!("total num of subclass features: {}", subclass_feature_value_list.len());
+
+    let mut num_of_na = 0;
+    let mut class_map: HashMap<String, Class> = HashMap::new();
+    for value in class_value_list {
+        let new_struct = Class::new(value);
+        if !new_struct.key.contains("n/a") {
+            class_map.insert(new_struct.key.as_str().to_string(), new_struct);
+        } else {
+            num_of_na += 1;
+        }
+    }
+    println!("number of classes with no name: {}", num_of_na);
+
+    let mut num_of_na = 0;
+    let mut subclass_map: HashMap<String, Subclass> = HashMap::new();
+    for value in subclass_value_list {
+        let new_struct = Subclass::new(value);
+        if !new_struct.key.contains("n/a") {
+            subclass_map.insert(new_struct.key.as_str().to_string(), new_struct);
+        } else {
+            num_of_na += 1;
+        }
+    }
+    println!("number of subclasses with no name: {}", num_of_na);
+
+    let mut num_of_na = 0;
+    let mut class_feature_map: HashMap<String, ClassFeature> = HashMap::new();
+    for value in class_feature_value_list {
+        let new_struct = ClassFeature::new(value);
+        if !new_struct.key.contains("n/a") {
+            class_feature_map.insert(new_struct.key.as_str().to_string(), new_struct);
+        } else {
+            num_of_na += 1;
+        }
+    }
+    println!("number of class features with no name: {}", num_of_na);
+
+    let mut num_of_na = 0;
+    let mut subclass_feature_map: HashMap<String, SubclassFeature> = HashMap::new();
+    for value in subclass_feature_value_list {
+        let new_struct = SubclassFeature::new(value);
+        if !new_struct.key.contains("n/a") {
+            subclass_feature_map.insert(new_struct.key.as_str().to_string(), new_struct);
+        } else {
+            num_of_na += 1;
+        }
+    }
+    println!("number of subclass features with no name: {}", num_of_na);
+
+    return (class_map, subclass_map, class_feature_map, subclass_feature_map);
 }
 
 fn get_conditions_and_diseases(path: &str) -> (HashMap<String, Condition>, HashMap<String, Disease>, HashMap<String, Status>) {
@@ -304,6 +382,8 @@ pub struct DAO {
     pub actions: HashMap<String, Action>,
     pub backgrounds: HashMap<String, Background>,
     pub characters: HashMap<String, Character>,
+    pub classes: HashMap<String, Class>,
+    pub class_features: HashMap<String, ClassFeature>,
     pub conditions: HashMap<String, Condition>,
     pub diseases: HashMap<String, Disease>,
     pub feats: HashMap<String, Feat>,
@@ -313,10 +393,32 @@ pub struct DAO {
     pub skills: HashMap<String, Skill>,
     pub spells: HashMap<String, Spell>,
     pub statuses: HashMap<String, Status>,
+    pub subclasses: HashMap<String, Subclass>,
+    pub subclass_features: HashMap<String, SubclassFeature>,
 }
 
 impl DAO {
     pub fn new() -> DAO {
+        let class_path_list: Vec<&str> = vec![
+            "data/raw/class/class-artificer.json",
+            "data/raw/class/class-barbarian.json",
+            "data/raw/class/class-bard.json",
+            "data/raw/class/class-cleric.json",
+            "data/raw/class/class-druid.json",
+            "data/raw/class/class-fighter.json",
+            "data/raw/class/class-monk.json",
+            "data/raw/class/class-mystic.json",
+            "data/raw/class/class-paladin.json",
+            "data/raw/class/class-ranger.json",
+            "data/raw/class/class-rogue.json",
+            "data/raw/class/class-sidekick.json",
+            "data/raw/class/class-sorcerer.json",
+            "data/raw/class/class-warlock.json",
+            "data/raw/class/class-wizard.json",
+        ];
+
+        let (classes, subclasses, class_features, subclass_features) = get_classes_and_subclasses(class_path_list);
+
         let spell_path_list: Vec<&str> = vec![
             "data/raw/spells/spells-aag.json",
             "data/raw/spells/spells-ai.json",
@@ -343,6 +445,8 @@ impl DAO {
             actions: get_actions("data/raw/actions.json"),
             backgrounds: get_backgrounds("data/raw/backgrounds.jsons"),
             characters: get_characters("data/characters"),
+            classes,
+            class_features,
             conditions,
             diseases,
             feats: get_feats("data/raw/feats.json"),
@@ -352,6 +456,8 @@ impl DAO {
             skills: get_skills("data/raw/skills.json"),
             spells: get_spells(spell_path_list),
             statuses,
+            subclasses,
+            subclass_features,
         };
     }
 }

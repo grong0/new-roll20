@@ -91,43 +91,32 @@ pub struct Ability {
 }
 
 impl Ability {
-    pub fn new(object: Option<&Value>) -> Ability {
-        let mut strength = 0;
-        let mut dexterity = 0;
-        let mut constitution = 0;
-        let mut intelligence = 0;
-        let mut wisdom = 0;
-        let mut charisma = 0;
-        let mut choose = Choose { count: 0, abilities: vec![] };
+    pub fn new(value: Option<&Value>) -> Ability {
+		let object: Map<String, Value>;
 
-        if object.is_some() {
-            let parsed_object: Map<String, Value>;
-            if object.unwrap().is_object() {
-                parsed_object = object.unwrap().as_object().unwrap().to_owned();
-            } else if object.unwrap().is_array() {
-                parsed_object = object.unwrap().as_array().unwrap().get(0).unwrap_or(&to_value(Map::new()).unwrap()).as_object().unwrap_or(&Map::new()).to_owned();
-            } else {
-                println!("ability was something other than an object or an array: {:?}", object.unwrap().to_string());
-                parsed_object = Map::new();
-            }
+		if value.is_some() {
+			let value_unwrapped = value.unwrap();
 
-            strength = parsed_object.get("str").unwrap_or(&to_value(strength).unwrap()).as_i64().unwrap_or(strength);
-            dexterity = parsed_object.get("dex").unwrap_or(&to_value(dexterity).unwrap()).as_i64().unwrap_or(dexterity);
-            constitution = parsed_object.get("con").unwrap_or(&to_value(constitution).unwrap()).as_i64().unwrap_or(constitution);
-            intelligence = parsed_object.get("int").unwrap_or(&to_value(intelligence).unwrap()).as_i64().unwrap_or(intelligence);
-            wisdom = parsed_object.get("wis").unwrap_or(&to_value(wisdom).unwrap()).as_i64().unwrap_or(wisdom);
-            charisma = parsed_object.get("cha").unwrap_or(&to_value(charisma).unwrap()).as_i64().unwrap_or(charisma);
-            choose = Choose::new(parsed_object.get("choose"));
-        }
+			if value_unwrapped.is_object() {
+				object = value_unwrapped.as_object().unwrap().to_owned();
+			} else if value_unwrapped.is_array() {
+				object = serde_as_object_from_option(value_unwrapped.as_array().unwrap().get(0), Map::new());
+			} else {
+				println!("ability value was something other than an object or an array: {:?}", value.unwrap().to_string());
+				object = Map::new();
+			}
+		} else {
+			object = Map::new();
+		}
 
         return Ability {
-            strength,
-            dexterity,
-            constitution,
-            intelligence,
-            wisdom,
-            charisma,
-            choose,
+            strength: serde_as_i64(object.get("str"), 0),
+            dexterity: serde_as_i64(object.get("dex"), 0),
+            constitution: serde_as_i64(object.get("con"), 0),
+            intelligence: serde_as_i64(object.get("int"), 0),
+            wisdom: serde_as_i64(object.get("wis"), 0),
+            charisma: serde_as_i64(object.get("cha"), 0),
+            choose: Choose::new(object.get("choose")),
         };
     }
 }
@@ -494,16 +483,18 @@ pub struct AdditionalSpell {
     aquired_at: u64,
 }
 
-/**
- * There are 5 keys:
- * 1. known | Spells which are always known
- * 2. innate | Spells which can be innately cast, without expending normal spell resources
- * 3. expanded | Expansions to a class' default spell list, from which spells can be chosen (e.g. Warlock Patron Spells)
- * 4. ability | Optionally specify the ability score used for e.g. racial spellcasting
- * 5. prepared | Spells which are always prepared
- * 6. resourceName | Optional resource name for resource-cast spells in this group
- * 7. name | Optional display name for the group
- */
+///
+/// There are 5 keys:
+/// 1. known | Spells which are always known
+/// 2. innate | Spells which can be innately cast, without expending normal spell resources
+/// 3. expanded | Expansions to a class' default spell list, from which spells can be chosen (e.g. Warlock Patron Spells)
+/// 4. ability | Optionally specify the ability score used for e.g. racial spellcasting
+/// 5. prepared | Spells which are always prepared
+/// 6. resourceName | Optional resource name for resource-cast spells in this group
+/// 7. name | Optional display name for the group
+///
+/// TODO: Finish this
+///
 #[derive(Debug)]
 pub struct AdditionalSpells {
     name: String,
@@ -1274,28 +1265,111 @@ impl ClassWeaponProficiencies {
     }
 }
 
+#[derive(Debug)]
+pub struct Proficiencies {
+    pub armor: ArmorProficiencies, // TODO: check to see if this is valid for the data
+    pub weapons: ClassWeaponProficiencies,
+    pub tools: Vec<String>,
+    pub tools_proficiencies: ToolProficiencies, // TODO: check to see if this is valid for the data
+    pub skills: SkillProficiencies,             // TODO: check to see if this is valid for the data
+}
+
+impl Proficiencies {
+    pub fn new(value: Option<&Value>) -> Proficiencies {
+        let object = serde_as_object_from_option(value, Map::new());
+
+        return Proficiencies {
+            armor: ArmorProficiencies::new(object.get("armor")),
+            weapons: ClassWeaponProficiencies::new(object.get("weapons")),
+            tools: serde_as_array_mapping(object.get("tools"), serde_as_string, "N/A".to_string()),
+            tools_proficiencies: ToolProficiencies::new(object.get("toolsProficiencies")),
+            skills: SkillProficiencies::new(object.get("skills")),
+        };
+    }
+}
+
+#[derive(Debug)]
+pub struct ClassStartingEquipment {
+	pub additional_from_background: bool,
+	pub default: Vec<String>,
+	pub gold_alternative: String,
+	pub default_data: StartingEquipment
+}
+
+impl ClassStartingEquipment {
+	pub fn new(value: Option<&Value>) -> ClassStartingEquipment {
+		let object = serde_as_object_from_option(value, Map::new());
+
+		return ClassStartingEquipment {
+			additional_from_background: serde_as_bool(object.get("additionalFromBackground"), false),
+			default: serde_as_array_mapping(object.get("default"), serde_as_string, "N/A".to_string()),
+			gold_alternative: serde_as_string(object.get("goldAlternative"), "N/A".to_string()),
+			default_data: StartingEquipment::new(object.get("defaultData"))
+		}
+	}
+}
+
+#[derive(Debug)]
 pub struct MulticlassingRequirements {
-	pub con: u64,
-	pub dex: u64,
-	pub str: u64,
-	pub int: u64,
-	pub wis: u64,
-	pub cha: u64,
+    pub con: u64,
+    pub dex: u64,
+    pub str: u64,
+    pub int: u64,
+    pub wis: u64,
+    pub cha: u64,
 }
 
 impl MulticlassingRequirements {
-	pub fn new(value: Option<&Value>) -> MulticlassingRequirements {
+    pub fn new(value: Option<&Value>) -> MulticlassingRequirements {
+        let object = serde_as_object_from_option(value, Map::new());
+
+        return MulticlassingRequirements {
+            con: serde_as_u64(object.get("con"), 0),
+            dex: serde_as_u64(object.get("dex"), 0),
+            str: serde_as_u64(object.get("str"), 0),
+            int: serde_as_u64(object.get("int"), 0),
+            wis: serde_as_u64(object.get("wis"), 0),
+            cha: serde_as_u64(object.get("cha"), 0),
+        };
+    }
+}
+
+#[derive(Debug)]
+pub struct Multiclassing {
+	pub requirements: MulticlassingRequirements,
+	pub proficiencies_gained: Proficiencies
+}
+
+impl Multiclassing {
+	pub fn new(value: Option<&Value>) -> Multiclassing {
 		let object = serde_as_object_from_option(value, Map::new());
 
-		return MulticlassingRequirements {
-			con: serde_as_u64(object.get("con"), 0),
-			dex: serde_as_u64(object.get("dex"), 0),
-			str: serde_as_u64(object.get("str"), 0),
-			int: serde_as_u64(object.get("int"), 0),
-			wis: serde_as_u64(object.get("wis"), 0),
-			cha: serde_as_u64(object.get("cha"), 0)
+		return Multiclassing {
+			requirements: MulticlassingRequirements::new(object.get("requirements")),
+			proficiencies_gained: Proficiencies::new(object.get("proficienciesGained"))
 		}
 	}
+}
+
+#[derive(Debug)]
+pub struct ClassTableGroup {
+    pub title: String,
+    pub column_labels: Vec<String>,
+    pub rows: Vec<Vec<u64>>,
+    pub rows_spell_progress: Vec<Vec<u64>>,
+}
+
+impl ClassTableGroup {
+    pub fn new(value: &Value) -> ClassTableGroup {
+        let object = serde_as_object(value, Map::new());
+
+        return ClassTableGroup {
+            title: serde_as_string(object.get("title"), "N/A".to_string()),
+            column_labels: serde_as_array_mapping(object.get("colLabels"), serde_as_string, "N/A".to_string()),
+            rows: serde_as_array(object.get("rows")).iter().map(|i| serde_as_array_mapping(Some(i), serde_as_u64, 0)).collect(),
+            rows_spell_progress: serde_as_array(object.get("rowsSpellProgression")).iter().map(|i| serde_as_array_mapping(Some(i), serde_as_u64, 0)).collect(),
+        };
+    }
 }
 
 pub fn form_key(name: &String, source: &String) -> String {
