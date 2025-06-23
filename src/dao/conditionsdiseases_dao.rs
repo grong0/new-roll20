@@ -36,54 +36,54 @@ impl Condition {
 
 #[derive(Debug)]
 pub struct Disease {
-	pub name: String,
-	pub source: Source,
-	pub key: String,
-	pub entries: Vec<Entry>,
-	pub srd: bool
+    pub name: String,
+    pub source: Source,
+    pub key: String,
+    pub entries: Vec<Entry>,
+    pub srd: bool,
 }
 
 impl Disease {
-	pub fn new(value: Value) -> Disease {
-		let object = serde_as_object(&value, Map::new());
+    pub fn new(value: Value) -> Disease {
+        let object = serde_as_object(&value, Map::new());
 
         let name = serde_as_string(object.get("name"), "N/A".to_string());
         let source = Source::new(object.get("source"), object.get("pageg"));
 
-		return Disease {
-			key: form_key(&name, &source.name),
+        return Disease {
+            key: form_key(&name, &source.name),
             name,
             source,
             entries: serde_as_array(object.get("entries")).iter().map(|i| Entry::new(i)).collect(),
             srd: serde_as_bool(object.get("srd"), false),
-		}
-	}
+        };
+    }
 }
 
 #[derive(Debug)]
 pub struct Status {
-	pub name: String,
-	pub source: Source,
-	pub key: String,
-	pub srd: bool,
-	pub basic_rules: bool,
-	pub entries: Vec<Entry>
+    pub name: String,
+    pub source: Source,
+    pub key: String,
+    pub srd: bool,
+    pub basic_rules: bool,
+    pub entries: Vec<Entry>,
 }
 
 impl Status {
-	pub fn new(value: Value) -> Status {
-		let object = serde_as_object(&value, Map::new());
+    pub fn new(value: Value) -> Status {
+        let object = serde_as_object(&value, Map::new());
 
         let name = serde_as_string(object.get("name"), "N/A".to_string());
         let source = Source::new(object.get("source"), object.get("pageg"));
 
-		return Status {
-			key: form_key(&name, &source.name),
+        return Status {
+            key: form_key(&name, &source.name),
             name,
             source,
             srd: serde_as_bool(object.get("srd"), false),
             basic_rules: serde_as_bool(object.get("basicRules"), false),
             entries: serde_as_array(object.get("entries")).iter().map(|i| Entry::new(i)).collect(),
-		}
-	}
+        };
+    }
 }
