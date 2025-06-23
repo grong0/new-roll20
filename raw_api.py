@@ -9,11 +9,11 @@ class API:
     books: list[dict]
 
     def __init__(self) -> None:
-        with open("./data/races.json") as f:
+        with open("./data/raw/races.json") as f:
             object = json.load(f)
             self.races = object["race"]
             self.subraces = object["subrace"]
-        with open("./data/books.json") as f:
+        with open("./data/raw/books.json") as f:
             object = json.load(f)
             self.books = object["book"]
 
