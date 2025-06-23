@@ -42,7 +42,7 @@ impl Feat {
             srd: serde_as_bool(object.get("srd"), false),
             prerequisite: Prerequisite::new(object.get("prerequisite")),
             ability: Ability::new(object.get("ability")),
-            additional_spells: serde_as_array(p_object.get("additionalSpells")).iter().map(|i| AdditionalSpells::new(Some(i))).collect(),
+            additional_spells: serde_as_array(object.get("additionalSpells")).iter().map(|i| AdditionalSpells::new(Some(i))).collect(),
             entries: serde_as_array(object.get("entries")).iter().map(|i| Entry::new(i)).collect(),
             has_fluff_images: serde_as_bool(object.get("hasFluffImages"), false),
             tool_proficiencies: ToolProficiencies::new(object.get("toolProficiencies")),
