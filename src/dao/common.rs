@@ -1,8 +1,47 @@
-use std::iter::zip;
+use std::{
+    collections::HashMap,
+    iter::{zip, Enumerate},
+};
 
 use serde_json::{to_value, Map, Value};
 
 use super::items_dao::Item;
+
+pub fn form_key(name: &String, source: &String) -> String {
+    return name.to_ascii_lowercase().replace(" ", "_") + "|" + source.to_ascii_lowercase().as_str();
+}
+
+pub fn serde_as_string(value: Option<&Value>, default: String) -> String {
+    return value.unwrap_or(&to_value(&default).unwrap()).as_str().unwrap_or(&default.to_string()).to_string();
+}
+
+pub fn serde_as_u64(value: Option<&Value>, default: u64) -> u64 {
+    return value.unwrap_or(&to_value(default).unwrap()).as_u64().unwrap_or(default);
+}
+
+pub fn serde_as_i64(value: Option<&Value>, default: i64) -> i64 {
+    return value.unwrap_or(&to_value(default).unwrap()).as_i64().unwrap_or(default);
+}
+
+pub fn serde_as_bool(value: Option<&Value>, default: bool) -> bool {
+    return value.unwrap_or(&to_value(default).unwrap()).as_bool().unwrap_or(default);
+}
+
+pub fn serde_as_object(value: &Value, default: Map<String, Value>) -> Map<String, Value> {
+    return value.as_object().unwrap_or(&default.clone()).to_owned();
+}
+
+pub fn serde_as_object_from_option(value: Option<&Value>, default: Map<String, Value>) -> Map<String, Value> {
+    return value.unwrap_or(&to_value::<Map<String, Value>>(default.clone()).unwrap()).as_object().unwrap_or(&default.clone()).to_owned();
+}
+
+pub fn serde_as_array(value: Option<&Value>) -> Vec<Value> {
+    return value.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).to_owned();
+}
+
+pub fn serde_as_array_mapping<T: Clone>(value: Option<&Value>, mapping_func: fn(Option<&Value>, T) -> T, default: T) -> Vec<T> {
+    return value.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| mapping_func(Some(i), default.clone())).collect();
+}
 
 #[derive(Debug)]
 pub struct Speed {
@@ -53,13 +92,13 @@ impl Speed {
 }
 
 #[derive(Debug)]
-pub struct Choose {
+pub struct ChooseAbility {
     count: u64,
     abilities: Vec<String>,
 }
 
-impl Choose {
-    pub fn new(object: Option<&Value>) -> Choose {
+impl ChooseAbility {
+    pub fn new(object: Option<&Value>) -> ChooseAbility {
         let mut count = 0;
         let mut abilities = vec![];
 
@@ -75,7 +114,7 @@ impl Choose {
             }
         }
 
-        return Choose { count, abilities };
+        return ChooseAbility { count, abilities };
     }
 }
 
@@ -87,27 +126,27 @@ pub struct Ability {
     intelligence: i64,
     wisdom: i64,
     charisma: i64,
-    choose: Choose,
+    choose: ChooseAbility,
 }
 
 impl Ability {
     pub fn new(value: Option<&Value>) -> Ability {
-		let object: Map<String, Value>;
+        let object: Map<String, Value>;
 
-		if value.is_some() {
-			let value_unwrapped = value.unwrap();
+        if value.is_some() {
+            let value_unwrapped = value.unwrap();
 
-			if value_unwrapped.is_object() {
-				object = value_unwrapped.as_object().unwrap().to_owned();
-			} else if value_unwrapped.is_array() {
-				object = serde_as_object_from_option(value_unwrapped.as_array().unwrap().get(0), Map::new());
-			} else {
-				println!("ability value was something other than an object or an array: {:?}", value.unwrap().to_string());
-				object = Map::new();
-			}
-		} else {
-			object = Map::new();
-		}
+            if value_unwrapped.is_object() {
+                object = value_unwrapped.as_object().unwrap().to_owned();
+            } else if value_unwrapped.is_array() {
+                object = serde_as_object_from_option(value_unwrapped.as_array().unwrap().get(0), Map::new());
+            } else {
+                println!("ability value was something other than an object or an array: {:?}", value.unwrap().to_string());
+                object = Map::new();
+            }
+        } else {
+            object = Map::new();
+        }
 
         return Ability {
             strength: serde_as_i64(object.get("str"), 0),
@@ -116,7 +155,7 @@ impl Ability {
             intelligence: serde_as_i64(object.get("int"), 0),
             wisdom: serde_as_i64(object.get("wis"), 0),
             charisma: serde_as_i64(object.get("cha"), 0),
-            choose: Choose::new(object.get("choose")),
+            choose: ChooseAbility::new(object.get("choose")),
         };
     }
 }
@@ -413,77 +452,111 @@ impl Resist {
     }
 }
 
-// #[derive(Debug)]
-// pub struct SpellAbility {
-// 	ability: SpellAbilityTypes,
-// 	choose_between: Vec<String>,
-// 	choose_amount: u64
-// }
-
-// impl SpellAbility {
-// 	pub fn new(object: Option<&Value>) -> SpellAbility {
-// 		let mut ability = SpellAbilityTypes::INHERIT;
-// 		let mut choose_between: Vec<String> = vec![];
-// 		let mut choose_amount = 0;
-
-// 		if object.is_some() {
-// 			if object.unwrap().is_object() {
-
-// 			} else if object.unwrap().is_string() {
-// 				ability = SpellAbilityTypes::new(object.unwrap());
-// 			}
-// 		}
-
-// 		return SpellAbility {
-// 			ability,
-// 			choose_between,
-// 			choose_amount
-// 		}
-// 	}
-// }
-
-#[derive(Debug)]
-pub enum SpellAbility {
-    STR,
-    DEX,
-    CON,
-    INT,
-    WIS,
-    CHA,
-    INHERIT,
+#[derive(Clone, Debug)]
+pub enum Recharge {
+    REST,     // Spells which recharge on short or long rest
+    DAILY,    // Spells which recharge on long rest
+    RESOURCE, // Spells which cost a specific resource to use (such as Ki), but otherwise have no restrictions
+    LIMITED,  // Spells which do not recharge, and have a limited number of uses
+    NEITHER,
 }
 
-impl SpellAbility {
-    pub fn new(ability: &Value) -> SpellAbility {
-        match ability.as_str().unwrap_or("inherit") {
-            "str" => return SpellAbility::STR,
-            "dex" => return SpellAbility::DEX,
-            "con" => return SpellAbility::CON,
-            "int" => return SpellAbility::INT,
-            "wis" => return SpellAbility::WIS,
-            "cha" => return SpellAbility::CHA,
-            "inherit" => return SpellAbility::INHERIT,
-            _ => return SpellAbility::INHERIT,
-        }
+impl Recharge {
+    pub fn new(value: &String) -> Recharge {
+        return match value.as_str() {
+            "rest" => Recharge::REST,
+            "daily" => Recharge::DAILY,
+            "resource" => Recharge::RESOURCE,
+            "limited" => Recharge::LIMITED,
+            _ => Recharge::NEITHER,
+        };
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum AdditionalSpellCategory {
+    WILL,
+    RITUAL,
+    NEITHER,
+}
+
+impl AdditionalSpellCategory {
+    pub fn new(value: &String) -> AdditionalSpellCategory {
+        return match value.as_str() {
+            "will" => AdditionalSpellCategory::WILL,
+            "ritual" => AdditionalSpellCategory::RITUAL,
+            _ => AdditionalSpellCategory::NEITHER,
+        };
     }
 }
 
 #[derive(Debug)]
-enum Reset {
-    NEVER,
-    REST,
-    DAILY,
-}
-
-#[derive(Debug)]
 pub struct AdditionalSpell {
-    name: String,
-    ability: String,
-    reset_when: Reset,
-    aquired_at: u64,
+    filter: String,
+    count: u64,
+    aquired_at: String,
+    recharge: Recharge,
+    category: AdditionalSpellCategory,
 }
 
-///
+impl AdditionalSpell {
+    fn parse_array_of_string_or_filter_object(value: &Value, aquired_at: &String, recharge: Recharge, category: AdditionalSpellCategory) -> Vec<AdditionalSpell> {
+        let mut array: Vec<AdditionalSpell> = vec![];
+        for item in serde_as_array(Some(&value)) {
+            let mut filter = "N/A".to_string();
+            let mut count = 1;
+            if item.is_string() {
+                filter = item.as_str().unwrap().to_string();
+            } else if item.is_object() {
+                let object = item.as_object().unwrap();
+                if object.contains_key("all") {
+                    filter = serde_as_string(object.get("all"), "N/A".to_string());
+                } else if object.contains_key("choose") {
+                    filter = serde_as_string(object.get("choose"), "N/A".to_string());
+                    count = serde_as_u64(object.get("count"), 1);
+                } else {
+                    println!("no expected keys present in string_or_filter_object under additional spells");
+                }
+            }
+            array.push(AdditionalSpell {
+                filter,
+                count,
+                aquired_at: aquired_at.clone(),
+                recharge: recharge.clone(),
+                category: category.clone(),
+            });
+        }
+
+        return array;
+    }
+
+    pub fn find_additional_spells(value: Option<&Value>) -> Vec<AdditionalSpell> {
+        let object = serde_as_object_from_option(value, Map::new());
+
+        let mut additional_spells = vec![];
+        for (key, value) in object {
+            let aquired_at = key.as_str().to_string();
+            let object = serde_as_object(&value, Map::new());
+            if value.is_object() && (!object.contains_key("choose") || object.contains_key("all")) {
+                for (key, value) in object {
+                    if vec!["rest", "daily", "resource", "limited"].contains(&key.as_str()) {
+                        let recharge = Recharge::new(&key);
+                        for (_, value) in serde_as_object(&value, Map::new()) {
+                            additional_spells.extend(AdditionalSpell::parse_array_of_string_or_filter_object(&value, &aquired_at, recharge.clone(), AdditionalSpellCategory::NEITHER));
+                        }
+                    } else {
+                        additional_spells.extend(AdditionalSpell::parse_array_of_string_or_filter_object(&value, &aquired_at, Recharge::NEITHER, AdditionalSpellCategory::new(&key)));
+                    }
+                }
+            } else {
+                additional_spells.extend(AdditionalSpell::parse_array_of_string_or_filter_object(&value, &aquired_at, Recharge::NEITHER, AdditionalSpellCategory::NEITHER));
+            }
+        }
+
+        return additional_spells;
+    }
+}
+
 /// There are 5 keys:
 /// 1. known | Spells which are always known
 /// 2. innate | Spells which can be innately cast, without expending normal spell resources
@@ -493,66 +566,47 @@ pub struct AdditionalSpell {
 /// 6. resourceName | Optional resource name for resource-cast spells in this group
 /// 7. name | Optional display name for the group
 ///
-/// TODO: Finish this
+/// _additionalSpellArrayOfStringOrFilterObject or _additionalSpellLevelObject
 ///
+/// TODO: Finish this
 #[derive(Debug)]
 pub struct AdditionalSpells {
     name: String,
-    ability_choices: Vec<SpellAbility>,
+    ability_choices: Vec<String>,
     resource_name: String,
-    innate_spells: Vec<AdditionalSpell>,
-    known_spells: Vec<AdditionalSpell>,
-    prepared_spells: Vec<AdditionalSpell>,
-    expanded_list: Vec<AdditionalSpell>,
+    innate: Vec<AdditionalSpell>,
+    known: Vec<AdditionalSpell>,
+    prepared: Vec<AdditionalSpell>,
+    expanded: Vec<AdditionalSpell>,
 }
 
 impl AdditionalSpells {
-    pub fn new(list: Option<&Value>) -> AdditionalSpells {
-        let mut name = "N/A".to_string();
-        let ability_choices: Vec<SpellAbility> = vec![];
-        let mut resource_name = "N/A".to_string();
-        let innate_spells = vec![];
-        let known_spells = vec![];
-        let prepared_spells = vec![];
-        let expanded_list = vec![];
+    pub fn new(value: Option<&Value>) -> AdditionalSpells {
+        let object = serde_as_object_from_option(value, Map::new());
 
-        if list.is_some() && list.unwrap().is_array() {
-            for item in list.unwrap().as_array().unwrap() {
-                if !item.is_object() {
-                    println!("object in additionalSpells wasn't an object: {:#?}", item);
-                    continue;
-                }
-                let parsed_object = item.as_object().unwrap();
-
-                name = parsed_object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
-                // let ability_choices = SpellAbility::new(parsed_object.get("ability"));
-                resource_name = parsed_object.get("resourceName").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
-                // let
-
-                // for (key, value) in item.as_object().unwrap() {
-                // 	match key.as_str() {
-                // 		"name" => {
-
-                // 		}
-                // 		"ability" => {}
-                // 		"resourceName" => {}
-                // 		"innate" => {}
-                // 		"known" => {}
-                // 		"prepared" => {}
-                // 		"expended" => {}
-                // 	}
-                // }
+        let ability_choices: Vec<String>;
+        if object.contains_key("ability") {
+            let ability = object.get("ability").unwrap();
+            if ability.is_string() {
+                ability_choices = vec![ability.as_str().unwrap().to_string()];
+            } else if ability.is_object() {
+                ability_choices = serde_as_array_mapping(ability.as_object().unwrap().get("choose"), serde_as_string, "N/A".to_string());
+            } else {
+                ability_choices = vec![];
+                println!("unexpected value type in additional spells ability");
             }
+        } else {
+            ability_choices = vec![];
         }
 
         return AdditionalSpells {
-            name,
+            name: serde_as_string(object.get("name"), "N/A".to_string()),
             ability_choices,
-            resource_name,
-            innate_spells,
-            known_spells,
-            prepared_spells,
-            expanded_list,
+            resource_name: serde_as_string(object.get("resourceName"), "N/A".to_string()),
+            innate: AdditionalSpell::find_additional_spells(object.get("innate")),
+            known: AdditionalSpell::find_additional_spells(object.get("known")),
+            prepared: AdditionalSpell::find_additional_spells(object.get("prepared")),
+            expanded: AdditionalSpell::find_additional_spells(object.get("expanded")),
         };
     }
 }
@@ -1058,30 +1112,46 @@ impl SkillToolLanguageProficiencies {
     }
 }
 
-/**
- * Only found in four features
- * (Eldritch Adept, Fighting Style,
- * Martial Adept, Metamagic Adept)
- */
+/// '*' as a key in progression is represented as 0 in the HashMap
 #[derive(Debug)]
 pub struct OptionalFeatureProgression {
     name: String,
     freature_type: Vec<String>,
-    progression_type: String,
-    progression_amount: u64,
+    progression: HashMap<u64, u64>,
 }
 
 impl OptionalFeatureProgression {
+    fn form_progression_map() -> HashMap<u64, u64> {
+        let mut progression_map = HashMap::new();
+        for i in 0..21 {
+            progression_map.insert(i, 0);
+        }
+        return progression_map;
+    }
+
     pub fn new(value: Option<&Value>) -> OptionalFeatureProgression {
         let object = serde_as_object_from_option(value, Map::new());
-        let progression = serde_as_object_from_option(object.get("progression"), Map::new());
-        let progression_type = progression.keys().into_iter().collect::<Vec<_>>()[0].to_owned();
+
+        let mut progression = OptionalFeatureProgression::form_progression_map();
+        if object.contains_key("progression") {
+            let progression_value = object.get("progression").unwrap();
+            if progression_value.is_array() {
+                for (index, item) in serde_as_array_mapping(Some(progression_value), serde_as_u64, 0).iter().enumerate() {
+                    progression.insert(u64::try_from(index + 1).unwrap_or(0), item.to_owned());
+                }
+            } else if progression_value.is_object() {
+                for (key, value) in progression_value.as_object().unwrap() {
+                    progression.insert(key.parse::<u64>().unwrap_or(0), value.as_u64().unwrap_or(0));
+                }
+            } else {
+                println!("unexpected value type for optionalFeatureProgression progression key");
+            }
+        }
 
         return OptionalFeatureProgression {
             name: serde_as_string(object.get("name"), "N/A".to_string()),
             freature_type: serde_as_array_mapping(object.get("featureType"), serde_as_string, "N/A".to_string()),
-            progression_amount: serde_as_u64(progression.get(&progression_type), 0),
-            progression_type,
+            progression: HashMap::new(),
         };
     }
 }
@@ -1216,24 +1286,6 @@ impl HitDie {
         };
     }
 }
-#[derive(Debug)]
-pub struct OptionalClassFeatureProgression {
-    pub name: String,
-    pub feature_type: String,
-    pub progression: Vec<u64>,
-}
-
-impl OptionalClassFeatureProgression {
-    pub fn new(value: Option<&Value>) -> OptionalClassFeatureProgression {
-        let object = serde_as_object_from_option(value, Map::new());
-
-        return OptionalClassFeatureProgression {
-            name: serde_as_string(object.get("name"), "N/A".to_string()),
-            feature_type: serde_as_string(object.get("featureType"), "N/A".to_string()),
-            progression: serde_as_array_mapping(object.get("progression"), serde_as_u64, 0),
-        };
-    }
-}
 
 #[derive(Debug)]
 pub struct ClassWeaponProficiencies {
@@ -1290,23 +1342,23 @@ impl Proficiencies {
 
 #[derive(Debug)]
 pub struct ClassStartingEquipment {
-	pub additional_from_background: bool,
-	pub default: Vec<String>,
-	pub gold_alternative: String,
-	pub default_data: StartingEquipment
+    pub additional_from_background: bool,
+    pub default: Vec<String>,
+    pub gold_alternative: String,
+    pub default_data: StartingEquipment,
 }
 
 impl ClassStartingEquipment {
-	pub fn new(value: Option<&Value>) -> ClassStartingEquipment {
-		let object = serde_as_object_from_option(value, Map::new());
+    pub fn new(value: Option<&Value>) -> ClassStartingEquipment {
+        let object = serde_as_object_from_option(value, Map::new());
 
-		return ClassStartingEquipment {
-			additional_from_background: serde_as_bool(object.get("additionalFromBackground"), false),
-			default: serde_as_array_mapping(object.get("default"), serde_as_string, "N/A".to_string()),
-			gold_alternative: serde_as_string(object.get("goldAlternative"), "N/A".to_string()),
-			default_data: StartingEquipment::new(object.get("defaultData"))
-		}
-	}
+        return ClassStartingEquipment {
+            additional_from_background: serde_as_bool(object.get("additionalFromBackground"), false),
+            default: serde_as_array_mapping(object.get("default"), serde_as_string, "N/A".to_string()),
+            gold_alternative: serde_as_string(object.get("goldAlternative"), "N/A".to_string()),
+            default_data: StartingEquipment::new(object.get("defaultData")),
+        };
+    }
 }
 
 #[derive(Debug)]
@@ -1336,19 +1388,19 @@ impl MulticlassingRequirements {
 
 #[derive(Debug)]
 pub struct Multiclassing {
-	pub requirements: MulticlassingRequirements,
-	pub proficiencies_gained: Proficiencies
+    pub requirements: MulticlassingRequirements,
+    pub proficiencies_gained: Proficiencies,
 }
 
 impl Multiclassing {
-	pub fn new(value: Option<&Value>) -> Multiclassing {
-		let object = serde_as_object_from_option(value, Map::new());
+    pub fn new(value: Option<&Value>) -> Multiclassing {
+        let object = serde_as_object_from_option(value, Map::new());
 
-		return Multiclassing {
-			requirements: MulticlassingRequirements::new(object.get("requirements")),
-			proficiencies_gained: Proficiencies::new(object.get("proficienciesGained"))
-		}
-	}
+        return Multiclassing {
+            requirements: MulticlassingRequirements::new(object.get("requirements")),
+            proficiencies_gained: Proficiencies::new(object.get("proficienciesGained")),
+        };
+    }
 }
 
 #[derive(Debug)]
@@ -1370,40 +1422,4 @@ impl ClassTableGroup {
             rows_spell_progress: serde_as_array(object.get("rowsSpellProgression")).iter().map(|i| serde_as_array_mapping(Some(i), serde_as_u64, 0)).collect(),
         };
     }
-}
-
-pub fn form_key(name: &String, source: &String) -> String {
-    return name.to_ascii_lowercase().replace(" ", "_") + "|" + source.to_ascii_lowercase().as_str();
-}
-
-pub fn serde_as_string(value: Option<&Value>, default: String) -> String {
-    return value.unwrap_or(&to_value(&default).unwrap()).as_str().unwrap_or(&default.to_string()).to_string();
-}
-
-pub fn serde_as_u64(value: Option<&Value>, default: u64) -> u64 {
-    return value.unwrap_or(&to_value(default).unwrap()).as_u64().unwrap_or(default);
-}
-
-pub fn serde_as_i64(value: Option<&Value>, default: i64) -> i64 {
-    return value.unwrap_or(&to_value(default).unwrap()).as_i64().unwrap_or(default);
-}
-
-pub fn serde_as_bool(value: Option<&Value>, default: bool) -> bool {
-    return value.unwrap_or(&to_value(default).unwrap()).as_bool().unwrap_or(default);
-}
-
-pub fn serde_as_object(value: &Value, default: Map<String, Value>) -> Map<String, Value> {
-    return value.as_object().unwrap_or(&default.clone()).to_owned();
-}
-
-pub fn serde_as_object_from_option(value: Option<&Value>, default: Map<String, Value>) -> Map<String, Value> {
-    return value.unwrap_or(&to_value::<Map<String, Value>>(default.clone()).unwrap()).as_object().unwrap_or(&default.clone()).to_owned();
-}
-
-pub fn serde_as_array(value: Option<&Value>) -> Vec<Value> {
-    return value.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).to_owned();
-}
-
-pub fn serde_as_array_mapping<T: Clone>(value: Option<&Value>, mapping_func: fn(Option<&Value>, T) -> T, default: T) -> Vec<T> {
-    return value.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| mapping_func(Some(i), default.clone())).collect();
 }

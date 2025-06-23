@@ -86,7 +86,7 @@ pub struct Race {
     pub weapon_proficiencies: WeaponProficiencies,
     pub armor_proficiencies: ArmorProficiencies,
     pub resist: Resist,
-    pub additional_spells: AdditionalSpells,
+    pub additional_spells: Vec<AdditionalSpells>,
     pub immune: Vec<String>,
     pub condition_immune: Vec<String>,
     pub entries: Vec<Entry>,
@@ -97,7 +97,7 @@ pub struct Race {
 
 impl Race {
     pub fn new(object: Value) -> Race {
-		let p_object = serde_as_object(&object, Map::new());
+        let p_object = serde_as_object(&object, Map::new());
 
         let mut other_sources: Vec<Source> = vec![];
         for other_source in p_object.get("otherSources").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).to_owned().iter() {
@@ -115,7 +115,6 @@ impl Race {
             basic_rules: p_object.get("basicRules").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
             other_sources,
             reprinted_as: p_object.get("reprintedAs").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
-            // copy: RaceCopy::new(p_object.get("_copy")),
             lineage: p_object.get("lineage").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
             creature_types: p_object.get("creatureTypes").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
             creature_type_tags: p_object.get("creatureTypeTags").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
@@ -132,12 +131,12 @@ impl Race {
             weapon_proficiencies: WeaponProficiencies::new(p_object.get("weaponProficiencies")),
             armor_proficiencies: ArmorProficiencies::new(p_object.get("armorProficiencies")),
             resist: Resist::new(p_object.get("resist")),
-            additional_spells: AdditionalSpells::new(p_object.get("additionalSpells")),
-			immune: p_object.get("immune").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
-			condition_immune: p_object.get("conditionImmune").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
-			entries: serde_as_array(p_object.get("entries")).iter().map(|i| Entry::new(i)).collect(),
-			has_fluff: p_object.get("hasFluff").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
-			has_fluff_images: p_object.get("hasFluffImages").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
+            additional_spells: serde_as_array(p_object.get("additionalSpells")).iter().map(|i| AdditionalSpells::new(Some(i))).collect(),
+            immune: p_object.get("immune").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
+            condition_immune: p_object.get("conditionImmune").unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|f| f.as_str().unwrap_or("N/A").to_string()).collect(),
+            entries: serde_as_array(p_object.get("entries")).iter().map(|i| Entry::new(i)).collect(),
+            has_fluff: p_object.get("hasFluff").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
+            has_fluff_images: p_object.get("hasFluffImages").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
         };
     }
 }

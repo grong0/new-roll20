@@ -114,6 +114,11 @@ fn get_classes_and_subclasses(paths: Vec<&str>) -> (HashMap<String, Class>, Hash
         let single_class_feature_value_list: Vec<Value> = serde_as_array(serde_file.get("classFeature"));
         let single_subclass_feature_value_list: Vec<Value> = serde_as_array(serde_file.get("subclassFeature"));
 
+        // println!("num of classes in '{}': {}", path, single_class_value_list.len());
+        // println!("num of subclasses in '{}': {}", path, single_subclass_value_list.len());
+        // println!("num of class features in '{}': {}", path, single_class_feature_value_list.len());
+        // println!("num of subclass features in '{}': {}", path, single_subclass_feature_value_list.len());
+
         class_value_list.extend(single_class_value_list);
         subclass_value_list.extend(single_subclass_value_list);
         class_feature_value_list.extend(single_class_feature_value_list);
@@ -356,7 +361,7 @@ fn get_spells(paths: Vec<&str>) -> HashMap<String, Spell> {
         }
         let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
         let single_value_list: Vec<Value> = serde_as_array(serde_file.get("spell"));
-        println!("num of spells in '{}': {}", path, single_value_list.len());
+        // println!("num of spells in '{}': {}", path, single_value_list.len());
 
         value_list.extend(single_value_list);
     }
@@ -443,7 +448,7 @@ impl DAO {
 
         return DAO {
             actions: get_actions("data/raw/actions.json"),
-            backgrounds: get_backgrounds("data/raw/backgrounds.jsons"),
+            backgrounds: get_backgrounds("data/raw/backgrounds.json"),
             characters: get_characters("data/characters"),
             classes,
             class_features,

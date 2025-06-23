@@ -71,7 +71,7 @@ pub fn is_newer_version() -> bool {
 
 pub fn update_data() -> Result<(), String> {
     if remove_dir_all("data/raw").is_err() {
-        return Err("Failed to delete current raw folder at data/raw".to_string());
+        println!("Failed to delete current raw folder at data/raw");
     }
 
     if create_dir("data/raw").is_err() {
