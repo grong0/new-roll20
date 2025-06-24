@@ -12,7 +12,9 @@
 			href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
 			rel="stylesheet"
 		/> -->
-		<script type="module" src="/main.js" defer></script>
+		<script type="module" src="/tauri-ext.js"></script>
+		<script type="module" src="/tauri-plugin-htmx.js"></script>
+		<script src="/htmx.min.js"></script>
 		<meta name="htmx-config" content='{"selfRequestsOnly":false}' />
 	</head>
 	<body class="w-screen h-screen bg-base-300" hx-ext="tauri">
@@ -31,25 +33,25 @@
 					<div>
 						<h1
 							class="text-4xl font-bold"
-							tauri-invoke="command:player_name"
+							tauri-invoke="player_name"
 							hx-trigger="load once"
 						></h1>
 						<div>
 							<span
 								class="text-lg italic text-base-500"
-								tauri-invoke="command:player_race"
+								tauri-invoke="player_race"
 								hx-trigger="load once"
 							></span>
 							Lv.
 							<span
 								id="title-card-info-block-level"
-								tauri-invoke="command:player_level"
+								tauri-invoke="player_level"
 								hx-trigger="load once"
 							></span>
 						</div>
 						<div
 							class="overflow-x-scroll h-"
-							tauri-invoke="command:player_classes"
+							tauri-invoke="player_classes"
 							hx-trigger="load once"
 						></div>
 					</div>
@@ -66,11 +68,11 @@
 					<div class="stat-title">Hit Points</div>
 					<div
 						class="stat-value"
-						tauri-invoke="command:player_hitpoints_current"
+						tauri-invoke="player_hitpoints_current"
 						hx-trigger="load once"
 					></div>
 					<div class="stat-desc">
-						/ <span tauri-invoke="command:player_hitpoints_max" hx-trigger="load once"></span>
+						/ <span tauri-invoke="player_hitpoints_max" hx-trigger="load once"></span>
 					</div>
 					<div class="stat-figure text-primary">
 						<img src="assets/hitpoints.svg" />
@@ -80,7 +82,7 @@
 					<div class="stat-title">Armor Class</div>
 					<div
 						class="stat-value"
-						tauri-invoke="command:player_armorclass"
+						tauri-invoke="player_armorclass"
 						hx-trigger="load once"
 					></div>
 					<div class="stat-figure text-primary">
@@ -91,7 +93,7 @@
 					<div class="stat-title">Initiative</div>
 					<div
 						class="stat-value"
-						tauri-invoke="command:player_initiative"
+						tauri-invoke="player_initiative"
 						hx-trigger="load once"
 					></div>
 					<div class="stat-figure text-primary">
@@ -102,7 +104,7 @@
 					<div class="stat-title">Speed</div>
 					<div
 						class="stat-value"
-						tauri-invoke="command:player_speed/walking"
+						tauri-invoke="player_speed/walking"
 						hx-trigger="load once"
 					></div>
 					<div class="stat-figure text-primary">
@@ -116,7 +118,7 @@
 				>
 					<div class="radial-progress progress-primary [--value:80]" role="progressbar">
 						<div class="radial-prograss [--value:100]" role="progressbar">
-							<span tauri-invoke="command:player_hitpoints/percent" hx-trigger="load once"></span>
+							<span tauri-invoke="player_hitpoints/percent" hx-trigger="load once"></span>
 						</div>
 					</div>
 				</div>
@@ -143,7 +145,7 @@
 				>
 					<h2
 						class="text-3xl font-bold"
-						tauri-invoke="command:player_armorclass"
+						tauri-invoke="player_armorclass"
 						hx-trigger="load once"
 					></h2>
 					<p>Armor Class</p>
@@ -153,7 +155,7 @@
 				>
 					<h2
 						class="text-3xl font-bold"
-						tauri-invoke="command:player_initiative"
+						tauri-invoke="player_initiative"
 						hx-trigger="load once"
 					></h2>
 					<p>Initiative</p>
@@ -163,7 +165,7 @@
 				>
 					<h2
 						class="text-3xl font-bold"
-						tauri-invoke="command:player_speed"
+						tauri-invoke="player_speed"
 						hx-trigger="load once"
 					></h2>
 					<p>Speed</p>
@@ -185,13 +187,13 @@
 				<div
 					id="main-number"
 					class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
-					tauri-invoke="command:player_abilities_str_modifier"
+					tauri-invoke="player_abilities_str_modifier"
 					hx-trigger="load once"
 				></div>
 				<div
 					id="sub-number"
 					class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
-					tauri-invoke="command:player_abilities_wis_score"
+					tauri-invoke="player_abilities_wis_score"
 					hx-trigger="load once"
 				></div>
 			</div>
@@ -208,13 +210,13 @@
 				<div
 					id="main-number"
 					class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
-					tauri-invoke="command:player_abilities_str_modifier"
+					tauri-invoke="player_abilities_str_modifier"
 					hx-trigger="load once"
 				></div>
 				<div
 					id="sub-number"
 					class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
-					tauri-invoke="command:player_abilities_wis_score"
+					tauri-invoke="player_abilities_wis_score"
 					hx-trigger="load once"
 				></div>
 			</div>
@@ -231,13 +233,13 @@
 				<div
 					id="main-number"
 					class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
-					tauri-invoke="command:player_abilities_str_modifier"
+					tauri-invoke="player_abilities_str_modifier"
 					hx-trigger="load once"
 				></div>
 				<div
 					id="sub-number"
 					class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
-					tauri-invoke="command:player_abilities_wis_score"
+					tauri-invoke="player_abilities_wis_score"
 					hx-trigger="load once"
 				></div>
 			</div>
@@ -254,13 +256,13 @@
 				<div
 					id="main-number"
 					class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
-					tauri-invoke="command:player_abilities_str_modifier"
+					tauri-invoke="player_abilities_str_modifier"
 					hx-trigger="load once"
 				></div>
 				<div
 					id="sub-number"
 					class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
-					tauri-invoke="command:player_abilities_wis_score"
+					tauri-invoke="player_abilities_wis_score"
 					hx-trigger="load once"
 				></div>
 			</div>
@@ -277,13 +279,13 @@
 				<div
 					id="main-number"
 					class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
-					tauri-invoke="command:player_abilities_str_modifier"
+					tauri-invoke="player_abilities_str_modifier"
 					hx-trigger="load once"
 				></div>
 				<div
 					id="sub-number"
 					class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
-					tauri-invoke="command:player_abilities_wis_score"
+					tauri-invoke="player_abilities_wis_score"
 					hx-trigger="load once"
 				></div>
 			</div>
@@ -300,13 +302,13 @@
 				<div
 					id="main-number"
 					class="w-full h-full flex justify-center items-center rounded-box bg-base-100 shadow-lg text-4xl font-bold"
-					tauri-invoke="command:player_abilities_str_modifier"
+					tauri-invoke="player_abilities_str_modifier"
 					hx-trigger="load once"
 				></div>
 				<div
 					id="sub-number"
 					class="absolute bottom-2 right-2 badge badge-lg badge-ghost shadow-md"
-					tauri-invoke="command:player_abilities_wis_score"
+					tauri-invoke="player_abilities_wis_score"
 					hx-trigger="load once"
 				></div>
 			</div>
@@ -324,10 +326,10 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_acrobatics_status"
+						tauri-invoke="player_skills_acrobatics_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_acrobatics_bonus" hx-trigger="load once">
+					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
 						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
 					</div>
 					<div class="ml-2">Strength</div>
@@ -335,10 +337,10 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_acrobatics_status"
+						tauri-invoke="player_skills_acrobatics_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_acrobatics_bonus" hx-trigger="load once">
+					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
 						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
 					</div>
 					<div class="ml-2">Dexterity</div>
@@ -346,10 +348,10 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_acrobatics_status"
+						tauri-invoke="player_skills_acrobatics_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_acrobatics_bonus" hx-trigger="load once">
+					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
 						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
 					</div>
 					<div class="ml-2">Constitution</div>
@@ -357,10 +359,10 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_acrobatics_status"
+						tauri-invoke="player_skills_acrobatics_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_acrobatics_bonus" hx-trigger="load once">
+					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
 						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
 					</div>
 					<div class="ml-2">Intelligence</div>
@@ -368,10 +370,10 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_acrobatics_status"
+						tauri-invoke="player_skills_acrobatics_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_acrobatics_bonus" hx-trigger="load once">
+					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
 						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
 					</div>
 					<div class="ml-2">Wisdom</div>
@@ -379,10 +381,10 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_acrobatics_status"
+						tauri-invoke="player_skills_acrobatics_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_acrobatics_bonus" hx-trigger="load once">
+					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
 						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
 					</div>
 					<div class="ml-2">Charisma</div>
@@ -398,10 +400,10 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_acrobatics_status"
+						tauri-invoke="player_skills_acrobatics_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_acrobatics_bonus" hx-trigger="load once">
+					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
 						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
 					</div>
 					<span class="ml-2">Acrobatics</span>
@@ -409,11 +411,11 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_animalhandling_status"
+						tauri-invoke="player_skills_animalhandling_status"
 						hx-trigger="load once"
 					></div>
 					<div
-						tauri-invoke="command:player_skills_animalhandling_bonus"
+						tauri-invoke="player_skills_animalhandling_bonus"
 						hx-trigger="load once"
 					></div>
 					<span class="ml-2">Animal Handling</span>
@@ -421,20 +423,20 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_arcana_status"
+						tauri-invoke="player_skills_arcana_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_arcana_bonus" hx-trigger="load once"></div>
+					<div tauri-invoke="player_skills_arcana_bonus" hx-trigger="load once"></div>
 					<span class="ml-2">Arcana</span>
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_athletics_status"
+						tauri-invoke="player_skills_athletics_status"
 						hx-trigger="load once"
 					></div>
 					<div
-						tauri-invoke="command:player_skills_athletics_bonus"
+						tauri-invoke="player_skills_athletics_bonus"
 						hx-trigger="load once"
 					></div>
 					<span class="ml-2">Athletics</span>
@@ -442,11 +444,11 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_deception_status"
+						tauri-invoke="player_skills_deception_status"
 						hx-trigger="load once"
 					></div>
 					<div
-						tauri-invoke="command:player_skills_deception_bonus"
+						tauri-invoke="player_skills_deception_bonus"
 						hx-trigger="load once"
 					></div>
 					<span class="ml-2">Deception</span>
@@ -454,29 +456,29 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_history_status"
+						tauri-invoke="player_skills_history_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_history_bonus" hx-trigger="load once"></div>
+					<div tauri-invoke="player_skills_history_bonus" hx-trigger="load once"></div>
 					<span class="ml-2">History</span>
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_insight_status"
+						tauri-invoke="player_skills_insight_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_insight_bonus" hx-trigger="load once"></div>
+					<div tauri-invoke="player_skills_insight_bonus" hx-trigger="load once"></div>
 					<span class="ml-2">Insight</span>
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_intimidation_status"
+						tauri-invoke="player_skills_intimidation_status"
 						hx-trigger="load once"
 					></div>
 					<div
-						tauri-invoke="command:player_skills_intimidation_bonus"
+						tauri-invoke="player_skills_intimidation_bonus"
 						hx-trigger="load once"
 					></div>
 					<span class="ml-2">Intimidation</span>
@@ -484,11 +486,11 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_investigation_status"
+						tauri-invoke="player_skills_investigation_status"
 						hx-trigger="load once"
 					></div>
 					<div
-						tauri-invoke="command:player_skills_investigation_bonus"
+						tauri-invoke="player_skills_investigation_bonus"
 						hx-trigger="load once"
 					></div>
 					<span class="ml-2">Investigation</span>
@@ -496,29 +498,29 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_medicine_status"
+						tauri-invoke="player_skills_medicine_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_medicine_bonus" hx-trigger="load once"></div>
+					<div tauri-invoke="player_skills_medicine_bonus" hx-trigger="load once"></div>
 					<span class="ml-2">Medicine</span>
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_nature_status"
+						tauri-invoke="player_skills_nature_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_nature_bonus" hx-trigger="load once"></div>
+					<div tauri-invoke="player_skills_nature_bonus" hx-trigger="load once"></div>
 					<span class="ml-2">Nature</span>
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_perception_status"
+						tauri-invoke="player_skills_perception_status"
 						hx-trigger="load once"
 					></div>
 					<div
-						tauri-invoke="command:player_skills_perception_bonus"
+						tauri-invoke="player_skills_perception_bonus"
 						hx-trigger="load once"
 					></div>
 					<span class="ml-2">Perception</span>
@@ -526,11 +528,11 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_performance_status"
+						tauri-invoke="player_skills_performance_status"
 						hx-trigger="load once"
 					></div>
 					<div
-						tauri-invoke="command:player_skills_performance_bonus"
+						tauri-invoke="player_skills_performance_bonus"
 						hx-trigger="load once"
 					></div>
 					<span class="ml-2">Performance</span>
@@ -538,11 +540,11 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_persuasion_status"
+						tauri-invoke="player_skills_persuasion_status"
 						hx-trigger="load once"
 					></div>
 					<div
-						tauri-invoke="command:player_skills_persuasion_bonus"
+						tauri-invoke="player_skills_persuasion_bonus"
 						hx-trigger="load once"
 					></div>
 					<span class="ml-2">Persuasion</span>
@@ -550,20 +552,20 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_religion_status"
+						tauri-invoke="player_skills_religion_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_religion_bonus" hx-trigger="load once"></div>
+					<div tauri-invoke="player_skills_religion_bonus" hx-trigger="load once"></div>
 					<span class="ml-2">Religion</span>
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_slightofhand_status"
+						tauri-invoke="player_skills_slightofhand_status"
 						hx-trigger="load once"
 					></div>
 					<div
-						tauri-invoke="command:player_skills_slightofhand_bonus"
+						tauri-invoke="player_skills_slightofhand_bonus"
 						hx-trigger="load once"
 					></div>
 					<span class="ml-2">Slight of Hand</span>
@@ -571,19 +573,19 @@
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_stealth_status"
+						tauri-invoke="player_skills_stealth_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_stealth_bonus" hx-trigger="load once"></div>
+					<div tauri-invoke="player_skills_stealth_bonus" hx-trigger="load once"></div>
 					<span class="ml-2">Stealth</span>
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
 						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="command:player_skills_survival_status"
+						tauri-invoke="player_skills_survival_status"
 						hx-trigger="load once"
 					></div>
-					<div tauri-invoke="command:player_skills_survival_bonus" hx-trigger="load once"></div>
+					<div tauri-invoke="player_skills_survival_bonus" hx-trigger="load once"></div>
 					<span class="ml-2">Survival</span>
 				</div>
 			</div>
@@ -604,7 +606,7 @@
 					>
 						<p
 							class="absolute"
-							tauri-invoke="command:player_senses_perception"
+							tauri-invoke="player_senses_perception"
 							hx-trigger="load once"
 						></p>
 					</div>
@@ -618,7 +620,7 @@
 					>
 						<p
 							class="absolute"
-							tauri-invoke="command:player_senses_investigation"
+							tauri-invoke="player_senses_investigation"
 							hx-trigger="load once"
 						></p>
 					</div>
@@ -632,7 +634,7 @@
 					>
 						<p
 							class="absolute"
-							tauri-invoke="command:player_senses_insight"
+							tauri-invoke="player_senses_insight"
 							hx-trigger="load once"
 						></p>
 					</div>
@@ -654,7 +656,7 @@
 					</div>
 					<article
 						class="prose text-base"
-						tauri-invoke="command:player_proficiencies_armor"
+						tauri-invoke="player_proficiencies_armor"
 						hx-trigger="load once"
 					></article>
 				</div>
@@ -664,7 +666,7 @@
 					</div>
 					<article
 						class="prose text-base"
-						tauri-invoke="command:player_proficiencies_weapons"
+						tauri-invoke="player_proficiencies_weapons"
 						hx-trigger="load once"
 					></article>
 				</div>
@@ -674,7 +676,7 @@
 					</div>
 					<article
 						class="prose text-base"
-						tauri-invoke="command:player_proficiencies_tools"
+						tauri-invoke="player_proficiencies_tools"
 						hx-trigger="load once"
 					></article>
 				</div>
@@ -684,7 +686,7 @@
 					</div>
 					<article
 						class="prose text-base"
-						tauri-invoke="command:player_proficiencies_languages"
+						tauri-invoke="player_proficiencies_languages"
 						hx-trigger="load once"
 					></article>
 				</div>
@@ -786,13 +788,13 @@
 									</tr>
 								</thead>
 								<tbody
-									tauri-invoke="command:player_actions_action"
+									tauri-invoke="player_actions_action"
 									hx-trigger="load once"
 								></tbody>
 							</table>
 							<article class="prose">
 								<h3>Actions in Combat</h3>
-								<blockquote tauri-invoke="command:player_actionsincombat_action">
+								<blockquote tauri-invoke="player_actionsincombat_action">
 									Attack, Cast a Spell, Dash, Disengage, Dodge, Grapple, Help,
 									Hide, Improvise, Ready, Search, Shove, Use an Object
 								</blockquote>
@@ -810,14 +812,14 @@
 									</tr>
 								</thead>
 								<tbody
-									tauri-invoke="command:player_actions_bonusaction"
+									tauri-invoke="player_actions_bonusaction"
 									hx-trigger="load once"
 								></tbody>
 							</table>
 							<article class="prose">
 								<h3>Actions in Combat</h3>
 								<blockquote
-									tauri-invoke="command:player_actionsincombat_bonusaction"
+									tauri-invoke="player_actionsincombat_bonusaction"
 								></blockquote>
 							</article>
 
@@ -833,14 +835,14 @@
 									</tr>
 								</thead>
 								<tbody
-									tauri-invoke="command:player_actions_reaction"
+									tauri-invoke="player_actions_reaction"
 									hx-trigger="load once"
 								></tbody>
 							</table>
 							<article class="prose">
 								<h3>Actions in Combat</h3>
 								<blockquote
-									tauri-invoke="command:player_actionsincombat_reaction"
+									tauri-invoke="player_actionsincombat_reaction"
 								></blockquote>
 							</article>
 
@@ -856,14 +858,14 @@
 									</tr>
 								</thead>
 								<tbody
-									tauri-invoke="command:player_actions_other"
+									tauri-invoke="player_actions_other"
 									hx-trigger="load once"
 								></tbody>
 							</table>
 							<article class="prose">
 								<h3>Actions in Combat</h3>
 								<blockquote
-									tauri-invoke="command:player_actionsincombat_other"
+									tauri-invoke="player_actionsincombat_other"
 								></blockquote>
 							</article>
 
@@ -879,7 +881,7 @@
 									</tr>
 								</thead>
 								<tbody
-									tauri-invoke="command:player_actions_limiteduse"
+									tauri-invoke="player_actions_limiteduse"
 									hx-trigger="load once"
 								></tbody>
 							</table>
