@@ -6,6 +6,11 @@ mod serde_utils;
 
 use crate::layout2::*;
 
+#[tauri::command]
+fn gamer() -> String {
+	return "we be gaming!!".to_string();
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -31,7 +36,8 @@ pub fn run() {
             player_proficiencies_armor,
             player_proficiencies_weapons,
             player_proficiencies_tools,
-            player_proficiencies_languages
+            player_proficiencies_languages,
+			gamer
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
