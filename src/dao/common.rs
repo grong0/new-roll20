@@ -119,6 +119,18 @@ impl ChooseAbility {
 }
 
 #[derive(Debug)]
+pub enum Abilities {
+	STRENGTH,
+	DEXTERITY,
+	CONSTITUTION,
+	INTELLIGENCE,
+	WISDOM,
+	CHARISMA,
+	SPELL,
+	NONE,
+}
+
+#[derive(Debug)]
 pub struct Ability {
     strength: i64,
     dexterity: i64,
@@ -1244,12 +1256,17 @@ pub struct Details {
     pub skin: String,
     pub weight: u64,
     pub height: String,
+	pub appearance: String,
     pub personality: String,
     pub ideal: String,
     pub bond: String,
     pub flaw: String,
     pub backstory: String,
     pub physical: String,
+    pub alignment: String,
+	pub allies_and_organizations: String,
+	pub additional_features_and_traits: String,
+	pub treasure: String,
 }
 
 #[derive(Debug)]
@@ -1262,7 +1279,7 @@ pub struct CharacterItem {
 }
 
 #[derive(Debug)]
-pub struct CharacterTreasure {
+pub struct Currency {
     pub platinum_piece: u64,
     pub electrum_piece: u64,
     pub gold_piece: u64,
@@ -1271,16 +1288,16 @@ pub struct CharacterTreasure {
 }
 
 #[derive(Debug)]
-pub struct HitDie {
+pub struct Die {
     pub number: u64,
     pub faces: u64,
 }
 
-impl HitDie {
-    pub fn new(value: Option<&Value>) -> HitDie {
+impl Die {
+    pub fn new_from_hit_die(value: Option<&Value>) -> Die {
         let object = serde_as_object_from_option(value, Map::new());
 
-        return HitDie {
+        return Die {
             number: serde_as_u64(object.get("number"), 0),
             faces: serde_as_u64(object.get("faces"), 0),
         };

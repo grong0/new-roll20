@@ -1,7 +1,7 @@
 use serde_json::{Map, Value};
 
 use super::common::{
-    form_key, serde_as_array, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string, serde_as_u64, AdditionalSpells, ClassStartingEquipment, ClassTableGroup, Entry, HitDie, Multiclassing, OptionalFeatureProgression, Proficiencies, Source,
+    form_key, serde_as_array, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string, serde_as_u64, AdditionalSpells, ClassStartingEquipment, ClassTableGroup, Die, Entry, Multiclassing, OptionalFeatureProgression, Proficiencies, Source,
 };
 
 // TODO: make sure it works with other classes besides artificer
@@ -11,7 +11,7 @@ pub struct Class {
     pub source: Source,
     pub key: String,
     pub other_sources: Vec<Source>,
-    pub hd: HitDie,
+    pub hit_die: Die,
     pub proficiency: Vec<String>,
     pub spell_casing_ability: u64,
     pub caster_progression: String,
@@ -41,7 +41,7 @@ impl Class {
             name,
             source,
             other_sources: serde_as_array_mapping(object.get("otherSource"), serde_as_object_from_option, Map::new()).iter().map(|i| Source::new(i.get("source"), i.get("page"))).collect(),
-            hd: HitDie::new(object.get("hd")),
+            hit_die: Die::new_from_hit_die(object.get("hd")),
             proficiency: serde_as_array_mapping(object.get("proficiency"), serde_as_string, "N/A".to_string()),
             spell_casing_ability: serde_as_u64(object.get("spellCastingAbility"), 0),
             caster_progression: serde_as_string(object.get("casterProgression"), "N/A".to_string()),
