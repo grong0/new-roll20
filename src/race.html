@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<script src="./htmx.min.js"></script>
+		<link
+			href="https://cdn.jsdelivr.net/npm/daisyui@4.4.24/dist/full.min.css"
+			rel="stylesheet"
+			type="text/css"
+		/>
+		<script src="https://cdn.tailwindcss.com"></script>
+	</head>
+	<body>
+		<h1 class="text-2xl font-bold">Race</h1>
+		<div class="flex flex-row w-full">
+			<div class="w-full">
+				<form id="raceForm" class="form-control gap-2" onchange="updateRace()">
+					<div class="collapse collapse-arrow bg-base-200">
+						<input type="radio" name="dropdown" />
+						<div class="collapse-title text-xl font-medium">Dragonborn</div>
+						<div class="collapse-content flex flex-col gap-2">
+							<div id="dragonborn" class="collapse bg-base-300">
+								<input type="radio" name="race" value="dragonborn" />
+								<div class="collapse-title text-xl font-medium">
+									Dragonborn
+									<div class="text-lg font-normal">Player's Handbook</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="collapse collapse-arrow bg-base-200">
+						<input type="radio" name="dropdown" />
+						<div class="collapse-title text-xl font-medium">Dwarf</div>
+						<div class="collapse-content flex flex-col gap-2">
+							<div id="hill-dwarf" class="collapse bg-base-300">
+								<input type="radio" name="race" value="hill-dwarf" />
+								<div class="collapse-title text-xl font-medium">
+									Hill Dwarf
+									<div class="text-lg font-normal">Player's Handbook</div>
+								</div>
+							</div>
+							<div id="mountain-dwarf" class="collapse bg-base-300">
+								<input type="radio" name="race" value="mountain-dwarf" />
+								<div class="collapse-title text-xl font-medium">
+									Mountain Dwarf
+									<div class="text-lg font-normal">Player's Handbook</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="collapse collapse-arrow bg-base-200">
+						<input type="radio" name="dropdown" />
+						<div class="collapse-title text-xl font-medium">Elf</div>
+						<div class="collapse-content flex flex-col gap-2">
+							<div id="high-elf" class="collapse bg-base-300">
+								<input type="radio" name="race" value="high-elf" />
+								<div class="collapse-title text-xl font-medium">
+									High Elf
+									<div class="text-lg font-normal">Player's Handbook</div>
+								</div>
+							</div>
+							<div id="wood-elf" class="collapse bg-base-300">
+								<input type="radio" name="race" value="wood-elf" />
+								<div class="collapse-title text-xl font-medium">
+									Wood Elf
+									<div class="text-lg font-normal">Player's Handbook</div>
+								</div>
+							</div>
+							<div id="eladrin-elf" class="collapse bg-base-300">
+								<input type="radio" name="race" value="eladrin-elf" />
+								<div class="collapse-title text-xl font-medium">
+									Eladrin Elf
+									<div class="text-lg font-normal">Dungeon Master's Guide</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="w-full">
+				
+			</div>
+		</div>
+		<div class="stats shadow">
+			<div class="stat">
+				<div class="stat-title">Race</div>
+				<div id="raceStatValue" class="stat-value"></div>
+			</div>
+		</div>
+		<script>
+			function resetStyles() {
+				let races = document.getElementsByName("race");
+				races.forEach((race) => {
+					let container = document.getElementById(race.value);
+					container.classList.remove("border");
+				});
+			}
+			function updateRace() {
+				let raceStatValue = document.getElementById("raceStatValue");
+				let selectedRace = document.querySelector("input[name='race']:checked");
+
+				if (selectedRace != undefined) {
+					let selectedRaceContainer = document.getElementById(selectedRace.value);
+					resetStyles();
+					selectedRaceContainer.classList.add("border");
+					selectedRaceContainer.classList.add("border-base-400");
+					raceStatValue.innerHTML = selectedRace.value;
+				} else {
+					raceStatValue.innerHTML = "none-selected";
+				}
+			}
+			updateRace();
+		</script>
+	</body>
+</html>

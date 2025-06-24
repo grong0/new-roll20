@@ -1,0 +1,12 @@
+<div class="collapse collapse-arrow bg-base-200">
+	<input type="radio" name="opened-race-category" />
+	<div class="collapse-title text-xl font-medium">{name}</div>
+	<div
+		class="collapse-content flex flex-col justify-center items-center gap-5"
+		hx-get="/race_category_content/{name}"
+		hx-trigger="load"
+	>
+		<!-- Collapsed Cotent Goes Here -->
+		<span class="loading loading-spinner loading-lg"></span>
+	</div>
+</div>
