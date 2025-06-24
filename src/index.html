@@ -5,11 +5,14 @@
 		<link rel="stylesheet" href="styles.css" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Tauri App</title>
-		<script type="module" src="/main.js" defer></script>
+		<!-- <script type="module" src="/main.js" defer></script> -->
+		<script type="module" src="/tauri-ext.js" defer></script>
+		<script type="module" src="/tauri-plugin-htmx.js" defer></script>
+		<script src="/htmx.min.js" defer></script>
 		<meta name="htmx-config" content='{"selfRequestsOnly":false}' />
 	</head>
 
-	<body>
+	<body hx-ext="tauri">
 		<main class="container">
 			<h1>Welcome to Tauri</h1>
 
@@ -26,9 +29,9 @@
 			<div class="row">
 				<input id="greet-input" name="name" placeholder="Enter a name..." />
 				<button
-					hx-post="command:greet"
+					type="submit"
+					tauri-invoke="gamer"
 					hx-include="[name='name']"
-					hx-trigger="click"
 					hx-target="#greet-msg"
 					hx-swap="innerHTML"
 				>
@@ -37,16 +40,13 @@
 			</div>
 			<p id="greet-msg"></p>
 
-			<button
-				hx-get="command:gamer"
-				hx-trigger="click"
-				hx-target="#target-gaming"
-			>
+			<button tauri-invoke="gamer" hx-target="#target-gaming">click me</button>
+			<button hx-get="command:fortnite" hx-target="#target-gaming" hx-trigger="click">
 				click me
 			</button>
 			<p id="target-gaming">what will i be???</p>
 
-			<div hx-get="command:gamer" hx-trigger="load"></br>
+			<div tauri-invoke="gamer" hx-trigger="load once"></div>
 		</main>
 	</body>
 </html>

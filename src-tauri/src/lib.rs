@@ -11,6 +11,11 @@ fn gamer() -> String {
 	return "we be gaming!!".to_string();
 }
 
+#[tauri::command]
+fn fortnite() -> String {
+	return "fortnite!!!".to_string();
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -37,7 +42,8 @@ pub fn run() {
             player_proficiencies_weapons,
             player_proficiencies_tools,
             player_proficiencies_languages,
-			gamer
+			gamer,
+			fortnite
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
