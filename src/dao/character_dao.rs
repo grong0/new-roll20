@@ -2,12 +2,10 @@ use std::collections::HashMap;
 
 use super::{
     backgrounds_dao::Background,
-    common::{Abilities, Ability, CharacterItem, Currency, Details, Die},
+    common::{Abilities, CharacterItem, Currency, Details, Die},
     conditionsdiseases_dao::{Condition, Disease, Status},
-    feats_dao::Feat,
     races_dao::Race,
     skills_dao::Skill,
-    spells_dao::Spell,
     DAO,
 };
 
@@ -131,6 +129,7 @@ pub struct Character {
     details: Details,
     inspiration: bool,
     ability_scores: AbilityScores,
+    proficiency_bonus: i64,
     armor_class: u64,
     initiative: i64,
     speed: u64,
