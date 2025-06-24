@@ -1,46 +1,13 @@
-use std::{
-    collections::HashMap,
-    iter::{zip, Enumerate},
-};
+use std::{collections::HashMap, iter::zip};
 
 use serde_json::{to_value, Map, Value};
+
+use crate::serde_utils::{serde_as_array, serde_as_array_mapping, serde_as_bool, serde_as_i64, serde_as_object, serde_as_object_from_option, serde_as_string, serde_as_u64};
 
 use super::items_dao::Item;
 
 pub fn form_key(name: &String, source: &String) -> String {
     return name.to_ascii_lowercase().replace(" ", "_") + "|" + source.to_ascii_lowercase().as_str();
-}
-
-pub fn serde_as_string(value: Option<&Value>, default: String) -> String {
-    return value.unwrap_or(&to_value(&default).unwrap()).as_str().unwrap_or(&default.to_string()).to_string();
-}
-
-pub fn serde_as_u64(value: Option<&Value>, default: u64) -> u64 {
-    return value.unwrap_or(&to_value(default).unwrap()).as_u64().unwrap_or(default);
-}
-
-pub fn serde_as_i64(value: Option<&Value>, default: i64) -> i64 {
-    return value.unwrap_or(&to_value(default).unwrap()).as_i64().unwrap_or(default);
-}
-
-pub fn serde_as_bool(value: Option<&Value>, default: bool) -> bool {
-    return value.unwrap_or(&to_value(default).unwrap()).as_bool().unwrap_or(default);
-}
-
-pub fn serde_as_object(value: &Value, default: Map<String, Value>) -> Map<String, Value> {
-    return value.as_object().unwrap_or(&default.clone()).to_owned();
-}
-
-pub fn serde_as_object_from_option(value: Option<&Value>, default: Map<String, Value>) -> Map<String, Value> {
-    return value.unwrap_or(&to_value::<Map<String, Value>>(default.clone()).unwrap()).as_object().unwrap_or(&default.clone()).to_owned();
-}
-
-pub fn serde_as_array(value: Option<&Value>) -> Vec<Value> {
-    return value.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).to_owned();
-}
-
-pub fn serde_as_array_mapping<T: Clone>(value: Option<&Value>, mapping_func: fn(Option<&Value>, T) -> T, default: T) -> Vec<T> {
-    return value.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap()).as_array().unwrap_or(&vec![]).iter().map(|i| mapping_func(Some(i), default.clone())).collect();
 }
 
 #[derive(Debug)]
@@ -120,14 +87,14 @@ impl ChooseAbility {
 
 #[derive(Debug)]
 pub enum Abilities {
-	STRENGTH,
-	DEXTERITY,
-	CONSTITUTION,
-	INTELLIGENCE,
-	WISDOM,
-	CHARISMA,
-	SPELL,
-	NONE,
+    STRENGTH,
+    DEXTERITY,
+    CONSTITUTION,
+    INTELLIGENCE,
+    WISDOM,
+    CHARISMA,
+    SPELL,
+    NONE,
 }
 
 #[derive(Debug)]
@@ -1256,7 +1223,7 @@ pub struct Details {
     pub skin: String,
     pub weight: u64,
     pub height: String,
-	pub appearance: String,
+    pub appearance: String,
     pub personality: String,
     pub ideal: String,
     pub bond: String,
@@ -1264,9 +1231,9 @@ pub struct Details {
     pub backstory: String,
     pub physical: String,
     pub alignment: String,
-	pub allies_and_organizations: String,
-	pub additional_features_and_traits: String,
-	pub treasure: String,
+    pub allies_and_organizations: String,
+    pub additional_features_and_traits: String,
+    pub treasure: String,
 }
 
 #[derive(Debug)]

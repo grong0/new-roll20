@@ -1,6 +1,8 @@
 use serde_json::{Map, Value};
 
-use super::common::{form_key, serde_as_array, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string, serde_as_u64, Components, Duration, Entry, Range, ScalingLevelDice, Source, Time};
+use super::common::{form_key, Components, Duration, Entry, Range, ScalingLevelDice, Source, Time};
+
+use crate::serde_utils::{serde_as_array, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string, serde_as_u64};
 
 #[derive(Debug)]
 pub struct Spell {

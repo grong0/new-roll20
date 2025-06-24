@@ -1,8 +1,8 @@
 use serde_json::{Map, Value};
 
-use super::common::{
-    form_key, serde_as_array, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string, serde_as_u64, AdditionalSpells, ClassStartingEquipment, ClassTableGroup, Die, Entry, Multiclassing, OptionalFeatureProgression, Proficiencies, Source,
-};
+use crate::serde_utils::{serde_as_array, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string, serde_as_u64};
+
+use super::common::{form_key, AdditionalSpells, ClassStartingEquipment, ClassTableGroup, Die, Entry, Multiclassing, OptionalFeatureProgression, Proficiencies, Source};
 
 // TODO: make sure it works with other classes besides artificer
 #[derive(Debug)]

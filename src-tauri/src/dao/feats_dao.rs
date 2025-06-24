@@ -1,9 +1,8 @@
 use serde_json::{Map, Value};
 
-use super::common::{
-    form_key, serde_as_array, serde_as_bool, serde_as_object, serde_as_string, Ability, AdditionalSpells, ArmorProficiencies, Entry, Expertise, LanguageProficiencies, OptionalFeatureProgression, Prerequisite, Resist, SavingThrowProficiencies, SkillProficiencies, SkillToolLanguageProficiencies,
-    Source, ToolProficiencies, WeaponProficiencies,
-};
+use super::common::{form_key, Ability, AdditionalSpells, ArmorProficiencies, Entry, Expertise, LanguageProficiencies, OptionalFeatureProgression, Prerequisite, Resist, SavingThrowProficiencies, SkillProficiencies, SkillToolLanguageProficiencies, Source, ToolProficiencies, WeaponProficiencies};
+
+use crate::serde_utils::{serde_as_array, serde_as_bool, serde_as_object, serde_as_string};
 
 #[derive(Debug)]
 pub struct Feat {

@@ -1,6 +1,8 @@
 use serde_json::{Map, Value};
 
-use super::common::{form_key, serde_as_array, serde_as_bool, serde_as_object, serde_as_string, Entry, Source};
+use super::common::{form_key, Entry, Source};
+
+use crate::serde_utils::{serde_as_array, serde_as_bool, serde_as_object, serde_as_string};
 
 #[derive(Debug)]
 pub struct Skill {

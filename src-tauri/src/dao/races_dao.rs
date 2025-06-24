@@ -2,7 +2,9 @@ use serde_json::{to_value, Map, Value};
 
 use crate::dao::common::{Source, Speed};
 
-use super::common::{form_key, serde_as_array, serde_as_object, Ability, AdditionalSpells, Age, ArmorProficiencies, Entry, HeightAndWeight, LanguageProficiencies, Resist, SkillProficiencies, ToolProficiencies, WeaponProficiencies};
+use super::common::{form_key, Ability, AdditionalSpells, Age, ArmorProficiencies, Entry, HeightAndWeight, LanguageProficiencies, Resist, SkillProficiencies, ToolProficiencies, WeaponProficiencies};
+
+use crate::serde_utils::{serde_as_array, serde_as_object};
 
 #[derive(Debug)]
 pub struct ModifyRaceCopy {

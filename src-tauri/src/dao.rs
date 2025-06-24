@@ -20,7 +20,6 @@ use actions_dao::Action;
 use backgrounds_dao::Background;
 use character_dao::Character;
 use classes_dao::{Class, ClassFeature, Subclass, SubclassFeature};
-use common::serde_as_array;
 use conditionsdiseases_dao::{Condition, Disease, Status};
 use feats_dao::Feat;
 use items_dao::Item;
@@ -29,6 +28,8 @@ use races_dao::Race;
 use serde_json::{from_str, to_value, Map, Value};
 use skills_dao::Skill;
 use spells_dao::Spell;
+
+use crate::serde_utils::serde_as_array;
 
 fn get_actions(path: &str) -> HashMap<String, Action> {
     let file = read_to_string(path);
@@ -405,60 +406,60 @@ pub struct DAO {
 impl DAO {
     pub fn new() -> DAO {
         let class_path_list: Vec<&str> = vec![
-            "data/raw/class/class-artificer.json",
-            "data/raw/class/class-barbarian.json",
-            "data/raw/class/class-bard.json",
-            "data/raw/class/class-cleric.json",
-            "data/raw/class/class-druid.json",
-            "data/raw/class/class-fighter.json",
-            "data/raw/class/class-monk.json",
-            "data/raw/class/class-mystic.json",
-            "data/raw/class/class-paladin.json",
-            "data/raw/class/class-ranger.json",
-            "data/raw/class/class-rogue.json",
-            "data/raw/class/class-sidekick.json",
-            "data/raw/class/class-sorcerer.json",
-            "data/raw/class/class-warlock.json",
-            "data/raw/class/class-wizard.json",
+            "../data/raw/class/class-artificer.json",
+            "../data/raw/class/class-barbarian.json",
+            "../data/raw/class/class-bard.json",
+            "../data/raw/class/class-cleric.json",
+            "../data/raw/class/class-druid.json",
+            "../data/raw/class/class-fighter.json",
+            "../data/raw/class/class-monk.json",
+            "../data/raw/class/class-mystic.json",
+            "../data/raw/class/class-paladin.json",
+            "../data/raw/class/class-ranger.json",
+            "../data/raw/class/class-rogue.json",
+            "../data/raw/class/class-sidekick.json",
+            "../data/raw/class/class-sorcerer.json",
+            "../data/raw/class/class-warlock.json",
+            "../data/raw/class/class-wizard.json",
         ];
 
         let (classes, subclasses, class_features, subclass_features) = get_classes_and_subclasses(class_path_list);
 
         let spell_path_list: Vec<&str> = vec![
-            "data/raw/spells/spells-aag.json",
-            "data/raw/spells/spells-ai.json",
-            "data/raw/spells/spells-aitfr-avt.json",
-            "data/raw/spells/spells-bmt.json",
-            "data/raw/spells/spells-dodk.json",
-            "data/raw/spells/spells-egw.json",
-            "data/raw/spells/spells-ftd.json",
-            "data/raw/spells/spells-ggr.json",
-            "data/raw/spells/spells-ghloe.json",
-            "data/raw/spells/spells-idrotf.json",
-            "data/raw/spells/spells-llk.json",
-            "data/raw/spells/spells-phb.json",
-            "data/raw/spells/spells-sato.json",
-            "data/raw/spells/spells-scc.json",
-            "data/raw/spells/spells-tce.json",
-            "data/raw/spells/spells-tdcsr.json",
-            "data/raw/spells/spells-xge.json",
+            "../data/raw/spells/spells-aag.json",
+            "../data/raw/spells/spells-ai.json",
+            "../data/raw/spells/spells-aitfr-avt.json",
+            "../data/raw/spells/spells-bmt.json",
+            "../data/raw/spells/spells-dodk.json",
+            "../data/raw/spells/spells-egw.json",
+            "../data/raw/spells/spells-ftd.json",
+            "../data/raw/spells/spells-ggr.json",
+            "../data/raw/spells/spells-ghloe.json",
+            "../data/raw/spells/spells-idrotf.json",
+            "../data/raw/spells/spells-llk.json",
+            "../data/raw/spells/spells-phb.json",
+            "../data/raw/spells/spells-sato.json",
+            "../data/raw/spells/spells-scc.json",
+            "../data/raw/spells/spells-tce.json",
+            "../data/raw/spells/spells-tdcsr.json",
+            "../data/raw/spells/spells-xge.json",
         ];
 
-        let (conditions, diseases, statuses) = get_conditions_and_diseases("data/raw/conditionsdiseases.json");
+        let (conditions, diseases, statuses) = get_conditions_and_diseases("../data/raw/conditionsdiseases.json");
 
         return DAO {
-            actions: get_actions("data/raw/actions.json"),
-            backgrounds: get_backgrounds("data/raw/backgrounds.json"),
-            characters: get_characters("data/characters"),
+            actions: get_actions("../data/raw/actions.json"),
+            backgrounds: get_backgrounds("../data/raw/backgrounds.json"),
+            characters: get_characters("../data/characters"),
             classes,
             class_features,
             conditions,
             diseases,
-            feats: get_feats("data/raw/feats.json"),
-            items: get_items("data/raw/items.json"),
-            languages: get_languages("data/raw/languages.json"),
-            races: get_races("data/raw/races.json"),
-            skills: get_skills("data/raw/skills.json"),
+            feats: get_feats("../data/raw/feats.json"),
+            items: get_items("../data/raw/items.json"),
+            languages: get_languages("../data/raw/languages.json"),
+            races: get_races("../data/raw/races.json"),
+            skills: get_skills("../data/raw/skills.json"),
             spells: get_spells(spell_path_list),
             statuses,
             subclasses,

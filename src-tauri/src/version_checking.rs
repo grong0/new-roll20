@@ -5,7 +5,7 @@ use std::{
 
 use serde_json::{from_str, Map, Value};
 
-use crate::dao::common::{serde_as_object_from_option, serde_as_string};
+use crate::serde_utils::{serde_as_object_from_option, serde_as_string};
 
 const REPO_URL: &str = "https://github.com/5etools-mirror-3/5etools-2014-src";
 
