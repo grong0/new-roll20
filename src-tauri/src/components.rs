@@ -67,3 +67,24 @@ pub fn class_badge(class_higher: String, class_lower: String, class_color: Strin
     let file = read_to_string("../components/class-badge.html").unwrap_or("".to_string()).replace("{class}", &class_higher).replace("{class_lower}", &class_lower).replace("{color}", &class_color);
     return file;
 }
+
+// race_selector
+pub fn race_category(name: &String) -> String {
+    let file = read_to_string("../components/race_category.html").unwrap_or("".to_string()).replace("{name}", name);
+    return file;
+}
+
+pub fn race_dropdown(name: &String, source: &String) -> String {
+    let file = read_to_string("../components/race_dropdown.html").unwrap_or("".to_string()).replace("{name}", name).replace("{source}", source);
+    return file;
+}
+
+pub fn badge_primary_md(content: &String) -> String {
+    let file = read_to_string("../components/badge-primary-md.html").unwrap_or("".to_string()).replace("{content}", content);
+    return file;
+}
+
+pub fn race_collapse(name: &String, full_source: &String) -> String {
+	let file = read_to_string("../components/race_collapse.html").unwrap_or("".to_string()).replace("{name}", &name).replace("{full_source}", &full_source);
+	return file;
+}

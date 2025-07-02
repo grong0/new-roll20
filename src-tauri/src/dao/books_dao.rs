@@ -43,17 +43,17 @@ impl Content {
 }
 
 #[derive(Debug)]
-struct Book {
-	name: String,
-	source: String,
-	key: String,
-	id: String,
-	group: String,
-	cover: File,
-	published: String,
-	author: String,
-	contents: Vec<Content>,
-	alias: Vec<String>
+pub struct Book {
+	pub name: String,
+	pub source: String,
+	pub key: String,
+	pub id: String,
+	pub group: String,
+	pub cover: File,
+	pub published: String,
+	pub author: String,
+	pub contents: Vec<Content>,
+	pub alias: Vec<String>
 }
 
 impl Book {
@@ -109,8 +109,8 @@ impl Books {
         return Books { map };
 	}
 
-	pub fn get_book_from_source(self, source: String) -> Option<Book> {
-		for (_, book) in self.map {
+	pub fn get_book_from_source(&self, source: &String) -> Option<&Book> {
+		for (_, book) in self.map.iter() {
 			if book.source.to_lowercase() == source.to_lowercase() {
 				return Some(book);
 			}
