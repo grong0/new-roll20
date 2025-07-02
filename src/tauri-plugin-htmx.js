@@ -22,7 +22,6 @@ const patchedSend = async function (params) {
 
 window.addEventListener("DOMContentLoaded", () => {
     document.body.addEventListener('htmx:beforeSend', (event) => {
-		console.log("htmx before send was called");
         const path = event.detail.requestConfig.path;
         if (path.startsWith(COMMAND_PREFIX)) {
             event.detail.xhr.command = path.slice(COMMAND_PREFIX.length);

@@ -3,6 +3,9 @@ __pycache__
 node_modules
 data
 
+# Nix
+shell.nix
+
 # Logs
 logs
 *.log

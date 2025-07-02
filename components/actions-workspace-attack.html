@@ -7,13 +7,9 @@
 	<td><span class="text-xl font-bold mr-1">{range}</span>ft.</td>
 	<td class="text-xl font-bold">{hitdc}</td>
 	<td class="text-xl font-bold">
-		<span class="flex items-center"
-			>{damage}<span
-				hx-get="/assets/damagetypes/{damage_type}.svg"
-				hx-trigger="load once"
-				hx-swap="outerHTML"
-			></span
-		></span>
+		<span class="flex items-center">
+			{damage}<img class="h-[1em] ml-1 inline-block" src="/assets/damagetypes/{damage_type}.svg" />
+		</span>
 	</td>
 	<td>{notes}</td>
 </tr>

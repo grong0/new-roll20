@@ -1,0 +1,17 @@
+<div class="divider">Limited Use</div>
+<table class="w-full table border-separate border-spacing-y-4">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Range</th>
+			<th>Hit/DC</th>
+			<th>Damage</th>
+			<th>Notes</th>
+		</tr>
+	</thead>
+	<tbody tauri-invoke="player_actions_limiteduse" hx-trigger="load once"></tbody>
+</table>
+<article class="prose">
+	<h3>Actions in Combat</h3>
+	<blockquote tauri-invoke="player_actionsincombat_limiteduse" hx-trigger="load once"></blockquote>
+</article>
