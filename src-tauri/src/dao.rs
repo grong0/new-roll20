@@ -15,6 +15,7 @@ pub mod languages_dao;
 pub mod races_dao;
 pub mod skills_dao;
 pub mod spells_dao;
+pub mod books_dao;
 
 use actions_dao::Action;
 use backgrounds_dao::Background;
@@ -24,10 +25,11 @@ use conditionsdiseases_dao::{Condition, Disease, Status};
 use feats_dao::Feat;
 use items_dao::Item;
 use languages_dao::Language;
-use races_dao::Race;
+use races_dao::Races;
 use serde_json::{from_str, to_value, Map, Value};
 use skills_dao::Skill;
 use spells_dao::Spell;
+use books_dao::Books;
 
 use crate::serde_utils::serde_as_array;
 
@@ -305,30 +307,6 @@ fn get_languages(path: &str) -> HashMap<String, Language> {
     return map;
 }
 
-fn get_races(path: &str) -> HashMap<String, Race> {
-    let file = read_to_string(path);
-    if file.is_err() {
-        return HashMap::new();
-    }
-    let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
-    let value_list: Vec<Value> = serde_as_array(serde_file.get("race"));
-    println!("num of races: {}", value_list.len());
-
-    let mut num_of_na = 0;
-    let mut map: HashMap<String, Race> = HashMap::new();
-    for value in value_list {
-        let new_struct = Race::new(value);
-        if !new_struct.key.contains("n/a") {
-            map.insert(new_struct.key.as_str().to_string(), new_struct);
-        } else {
-            num_of_na += 1;
-        }
-    }
-    println!("number of races with no name: {}", num_of_na);
-
-    return map;
-}
-
 fn get_skills(path: &str) -> HashMap<String, Skill> {
     let file = read_to_string(path);
     if file.is_err() {
@@ -387,6 +365,7 @@ fn get_spells(paths: Vec<&str>) -> HashMap<String, Spell> {
 pub struct DAO {
     pub actions: HashMap<String, Action>,
     pub backgrounds: HashMap<String, Background>,
+	pub books: Books,
     pub characters: HashMap<String, Character>,
     pub classes: HashMap<String, Class>,
     pub class_features: HashMap<String, ClassFeature>,
@@ -395,7 +374,7 @@ pub struct DAO {
     pub feats: HashMap<String, Feat>,
     pub items: HashMap<String, Item>,
     pub languages: HashMap<String, Language>,
-    pub races: HashMap<String, Race>,
+    pub races: Races,
     pub skills: HashMap<String, Skill>,
     pub spells: HashMap<String, Spell>,
     pub statuses: HashMap<String, Status>,
@@ -450,6 +429,7 @@ impl DAO {
         return DAO {
             actions: get_actions("../data/raw/actions.json"),
             backgrounds: get_backgrounds("../data/raw/backgrounds.json"),
+			books: Books::new("../data/books.json"),
             characters: get_characters("../data/characters"),
             classes,
             class_features,
@@ -458,7 +438,7 @@ impl DAO {
             feats: get_feats("../data/raw/feats.json"),
             items: get_items("../data/raw/items.json"),
             languages: get_languages("../data/raw/languages.json"),
-            races: get_races("../data/raw/races.json"),
+            races: Races::new("../data/raw/races.json"),
             skills: get_skills("../data/raw/skills.json"),
             spells: get_spells(spell_path_list),
             statuses,
@@ -466,4 +446,6 @@ impl DAO {
             subclass_features,
         };
     }
+
+
 }

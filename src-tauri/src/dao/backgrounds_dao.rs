@@ -2,7 +2,7 @@ use serde_json::{Map, Value};
 
 use crate::serde_utils::{serde_as_array, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string};
 
-use super::common::{form_key, AdditionalSpells, Entry, LanguageProficiencies, Prerequisite, SkillProficiencies, SkillToolLanguageProficiencies, Source, StartingEquipment, ToolProficiencies};
+use super::common::{form_key, AdditionalFeats, AdditionalSpells, Entry, LanguageProficiencies, Prerequisite, SkillProficiencies, SkillToolLanguageProficiencies, Source, StartingEquipment, ToolProficiencies};
 
 /**
  * Has a _copy
@@ -20,7 +20,7 @@ pub struct Background {
     pub entries: Vec<Entry>,
     pub has_fluff: bool,
     pub tool_proficiencies: ToolProficiencies,
-    pub feats: Vec<String>,
+    pub feats: AdditionalFeats,
     pub from_feature: Vec<String>,
     pub has_fluff_images: bool,
     pub additional_spells: Vec<AdditionalSpells>,
@@ -49,7 +49,7 @@ impl Background {
             entries: serde_as_array(p_object.get("entries")).iter().map(|i| Entry::new(i)).collect(),
             has_fluff: serde_as_bool(p_object.get("hasFluff"), false),
             tool_proficiencies: ToolProficiencies::new(p_object.get("toolProficiencies")),
-            feats: serde_as_array_mapping(p_object.get("feats"), serde_as_string, "N/A".to_string()),
+            feats: AdditionalFeats::new(object.get("feats")),
             from_feature: serde_as_array_mapping(p_object.get("fromFeature"), serde_as_string, "N/A".to_string()),
             has_fluff_images: serde_as_bool(p_object.get("hasFluffImages"), false),
             additional_spells: serde_as_array(p_object.get("additionalSpells")).iter().map(|i| AdditionalSpells::new(Some(i))).collect(),

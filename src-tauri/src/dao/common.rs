@@ -1407,3 +1407,60 @@ impl ClassTableGroup {
         };
     }
 }
+
+#[derive(Debug)]
+pub struct File {
+	file_type: String,
+	path: String
+}
+
+impl File {
+	pub fn new(value: Option<&Value>) -> File {
+		let object = serde_as_object_from_option(value, Map::new());
+
+		return File {
+			file_type: serde_as_string(object.get("type"), "N/A".to_string()),
+			path: serde_as_string(object.get("path"), "N/A".to_string())
+		}
+	}
+}
+
+// TODO: look into why this is a list and if there's occurances of where it gives the player options
+#[derive(Debug)]
+pub struct AdditionalFeats {
+	choose_from: String,
+	choose_amount: u64,
+	list: Vec<String>
+}
+
+impl AdditionalFeats {
+	pub fn new(value: Option<&Value>) -> AdditionalFeats {
+		let array = serde_as_array_mapping(value, serde_as_object_from_option, Map::new());
+		let default = Map::new();
+		let object = array.get(0).unwrap_or(&default);
+
+		let choose_from;
+		let choose_amount;
+		let list;
+		if object.contains_key("any") {
+			choose_from = "any".to_string();
+			choose_amount = serde_as_u64(object.get("any"), 0);
+			list = vec![];
+		} else if object.contains_key("anyFromCategory") {
+			let category_object = serde_as_object_from_option(object.get("anyFromCategory"), Map::new());
+			choose_from = serde_as_string(category_object.get("category"), "N/A".to_string());
+			choose_amount = serde_as_u64(category_object.get("count"), 0);
+			list = vec![];
+		} else {
+			choose_from = "N/A".to_string();
+			choose_amount = 0;
+			list = object.keys().map(|i| i.to_string()).collect();
+		}
+
+		return AdditionalFeats {
+			choose_from,
+			choose_amount,
+			list
+		}
+	}
+}

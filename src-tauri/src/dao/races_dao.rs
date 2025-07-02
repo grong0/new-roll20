@@ -1,8 +1,10 @@
-use serde_json::{to_value, Map, Value};
+use std::{collections::HashMap, fs::read_to_string};
 
-use crate::dao::common::{Source, Speed};
+use serde_json::{from_str, to_value, Map, Value};
 
-use super::common::{form_key, Ability, AdditionalSpells, Age, ArmorProficiencies, Entry, HeightAndWeight, LanguageProficiencies, Resist, SkillProficiencies, ToolProficiencies, WeaponProficiencies};
+use crate::{dao::common::{Source, Speed}, serde_utils::{serde_as_array_mapping, serde_as_bool, serde_as_object_from_option, serde_as_string, serde_as_u64}};
+
+use super::common::{form_key, Ability, AdditionalFeats, AdditionalSpells, Age, ArmorProficiencies, Entry, File, HeightAndWeight, LanguageProficiencies, Resist, SkillProficiencies, SkillToolLanguageProficiencies, ToolProficiencies, WeaponProficiencies};
 
 use crate::serde_utils::{serde_as_array, serde_as_object};
 
@@ -63,7 +65,7 @@ impl RaceCopy {
 }
 
 #[derive(Debug)]
-pub struct Race {
+struct Race {
     pub name: String,
     pub source: Source,
     pub key: String,
@@ -140,5 +142,144 @@ impl Race {
             has_fluff: p_object.get("hasFluff").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
             has_fluff_images: p_object.get("hasFluffImages").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
         };
+    }
+}
+
+#[derive(Debug)]
+struct Subrace {
+    name: String,
+    source: Source,
+    key: String,
+    race_name: String,
+    reprinted_as: String,
+    ability: Ability,
+    entries: Vec<Entry>,
+    has_fluff: bool,
+    has_fluff_images: bool,
+    skill_proficiencies: SkillProficiencies,
+    srd: bool,
+    darkvision: u64,
+    resist: Vec<String>,
+    overwrite: Vec<String>,
+    other_sources: Vec<Source>,
+    trait_tags: Vec<String>,
+    language_proficiencies: LanguageProficiencies,
+    additional_spells: AdditionalSpells,
+    basic_rules: bool,
+    height_and_weight: HeightAndWeight,
+    armor_proficiencies: ArmorProficiencies,
+    alias: Vec<String>,
+    weapon_proficiencies: WeaponProficiencies,
+    speed: Speed,
+    skill_tool_language_proficiencies: SkillToolLanguageProficiencies,
+    age: Age,
+    tool_proficiencies: ToolProficiencies,
+    sound_clip: File,
+    feats: AdditionalFeats,
+}
+
+impl Subrace {
+	pub fn new(value: Value) -> Subrace {
+		let object = serde_as_object(&value, Map::new());
+
+		let name = serde_as_string(object.get("name"), "N/A".to_string());
+		let source = Source::new(object.get("source"), object.get("page"));
+
+		return Subrace {
+			key: form_key(&name, &source.name),
+			name,
+			source,
+			race_name: serde_as_string(object.get("raceName"), "N/A".to_string()),
+			reprinted_as: serde_as_string(object.get("raceName"), "N/A".to_string()),
+			ability: Ability::new(object.get("ability")),
+			entries: serde_as_array(object.get("entries")).iter().map(|i| Entry::new(i)).collect(),
+			has_fluff: serde_as_bool(object.get("hasFluff"), false),
+			has_fluff_images: serde_as_bool(object.get("hasFluffImages"), false),
+			skill_proficiencies: SkillProficiencies::new(object.get("skillProficiencies")),
+			srd: serde_as_bool(object.get("srd"), false),
+			darkvision: serde_as_u64(object.get("darkvision"), 0),
+			resist: serde_as_array_mapping(object.get("resist"), serde_as_string, "N/A".to_string()),
+			overwrite: serde_as_array_mapping(object.get("overwrite"), serde_as_string, "N/A".to_string()),
+			other_sources: serde_as_array_mapping(object.get("otherSources"), serde_as_object_from_option, Map::new()).iter().map(|i| Source::new(i.get("source"), i.get("page"))).collect(),
+			trait_tags: serde_as_array_mapping(object.get("trait_tags"), serde_as_string, "N/A".to_string()),
+			language_proficiencies: LanguageProficiencies::new(object.get("languageProficiencies")),
+			additional_spells: AdditionalSpells::new(object.get("additionalSpells")),
+			basic_rules: serde_as_bool(object.get("basicRules"), false),
+			height_and_weight: HeightAndWeight::new(object.get("heightAndWeight")),
+			armor_proficiencies: ArmorProficiencies::new(object.get("armorProficiencies")),
+			alias: serde_as_array_mapping(object.get("alias"), serde_as_string, "N/A".to_string()),
+			weapon_proficiencies: WeaponProficiencies::new(object.get("weaponProficiencies")),
+			speed: Speed::new(object.get("speed")),
+			skill_tool_language_proficiencies: SkillToolLanguageProficiencies::new(object.get("skillToolLanguageProficiencies")),
+			age: Age::new(object.get("age")),
+			tool_proficiencies: ToolProficiencies::new(object.get("toolProficiencies")),
+			sound_clip: File::new(object.get("soundClip")),
+			feats: AdditionalFeats::new(object.get("additionalFeats")),
+		}
+	}
+}
+
+#[derive(Debug)]
+pub struct Races {
+    pub races: HashMap<String, Race>,
+	pub subraces: HashMap<String, Subrace>>
+}
+
+impl Races {
+    pub fn new(path: &str) -> Races {
+        let file = read_to_string(path);
+        let mut races = HashMap::new();
+		let mut subraces = HashMap::new();
+        if file.is_err() {
+            return Races { races, subraces };
+        }
+        let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
+        let races_value_list: Vec<Value> = serde_as_array(serde_file.get("race"));
+		let subraces_value_list: Vec<Value> = serde_as_array(serde_file.get("subrace"));
+        println!("num of races: {}", races_value_list.len());
+		println!("num of subraces: {}", subraces_value_list.len());
+
+        let mut num_of_na = 0;
+        for value in races_value_list {
+            let new_struct = Race::new(value);
+            if !new_struct.key.contains("n/a") {
+                races.insert(new_struct.key.as_str().to_string(), new_struct);
+            } else {
+                num_of_na += 1;
+            }
+        }
+        println!("number of races with no name: {}", num_of_na);
+		num_of_na = 0;
+		for value in subraces_value_list {
+			let new_struct = Subrace::new(value);
+			if !new_struct.key.contains("n/a") {
+				subraces.insert(new_struct.key.as_str().to_string(), new_struct);
+			} else {
+				num_of_na += 1;
+			}
+		}
+		println!("number of subraces with no name: {}", num_of_na);
+
+        return Races { races, subraces };
+    }
+
+    pub fn get_races_by_name(self, name: String) -> Vec<Race> {
+        let mut matches = vec![];
+        for (_, race) in self.races {
+            if race.name.to_lowercase().contains(name.to_lowercase().as_str()) {
+                matches.push(race);
+            }
+        }
+        return matches;
+    }
+
+    pub fn get_unique_race_names(self) -> Vec<String> {
+        let mut names = vec![];
+        for (_, race) in self.races {
+            if !names.contains(&race.name) {
+                names.push(race.name.clone());
+            }
+        }
+        return names;
     }
 }
