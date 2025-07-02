@@ -1,8 +1,5 @@
 use crate::{
-    components::{
-        actions_workspace_attack, class_badge, skill_status_expert, skill_status_not_proficient, skill_status_proficient, title_card_component, workspace_actions, workspace_actions_action, workspace_actions_bonusaction, workspace_actions_limiteduse, workspace_actions_other,
-        workspace_actions_reaction,
-    },
+    components::{class_badge, skill_status_expert, skill_status_not_proficient, skill_status_proficient, workspace_actions, workspace_actions_action, workspace_actions_attack, workspace_actions_bonusaction, workspace_actions_limiteduse, workspace_actions_other, workspace_actions_reaction},
     frontend_functions::{ability_score_to_modifier, get_class_color},
 };
 
@@ -57,7 +54,7 @@ pub fn player_speed_walking() -> String {
 }
 
 #[tauri::command]
-pub fn player_class_level(class_name: &str) -> String {
+pub fn player_class_level() -> String {
     return "13".to_string();
 }
 
@@ -371,7 +368,7 @@ pub fn player_actions_action() -> String {
 
     let mut content = String::new();
     for action in actions {
-        content += actions_workspace_attack(action.name, action.action_type, action.range, action.hitdc, action.damage.dice, action.damage.damage_type, action.notes).as_str();
+        content += workspace_actions_attack(action.name, action.action_type, action.range, action.hitdc, action.damage.dice, action.damage.damage_type, action.notes).as_str();
     }
     return content;
 }
@@ -392,7 +389,7 @@ pub fn player_actions_bonusaction() -> String {
 
     let mut content = String::new();
     for action in actions {
-        content += actions_workspace_attack(action.name, action.action_type, action.range, action.hitdc, action.damage.dice, action.damage.damage_type, action.notes).as_str();
+        content += workspace_actions_attack(action.name, action.action_type, action.range, action.hitdc, action.damage.dice, action.damage.damage_type, action.notes).as_str();
     }
     return content;
 }
@@ -410,7 +407,7 @@ pub fn player_actions_reaction() -> String {
 
     let mut content = String::new();
     for action in actions {
-        content += actions_workspace_attack(action.name, action.action_type, action.range, action.hitdc, action.damage.dice, action.damage.damage_type, action.notes).as_str();
+        content += workspace_actions_attack(action.name, action.action_type, action.range, action.hitdc, action.damage.dice, action.damage.damage_type, action.notes).as_str();
     }
     return content;
 }
@@ -428,7 +425,7 @@ pub fn player_actions_other() -> String {
 
     let mut content = String::new();
     for action in actions {
-        content += actions_workspace_attack(action.name, action.action_type, action.range, action.hitdc, action.damage.dice, action.damage.damage_type, action.notes).as_str();
+        content += workspace_actions_attack(action.name, action.action_type, action.range, action.hitdc, action.damage.dice, action.damage.damage_type, action.notes).as_str();
     }
     return content;
 }
@@ -446,7 +443,7 @@ pub fn player_actions_limiteduse() -> String {
 
     let mut content = String::new();
     for action in actions {
-        content += actions_workspace_attack(action.name, action.action_type, action.range, action.hitdc, action.damage.dice, action.damage.damage_type, action.notes).as_str();
+        content += workspace_actions_attack(action.name, action.action_type, action.range, action.hitdc, action.damage.dice, action.damage.damage_type, action.notes).as_str();
     }
     return content;
 }
