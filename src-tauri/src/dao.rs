@@ -429,7 +429,7 @@ impl DAO {
         return DAO {
             actions: get_actions("../data/raw/actions.json"),
             backgrounds: get_backgrounds("../data/raw/backgrounds.json"),
-			books: Books::new("../data/books.json"),
+			books: Books::new("../data/raw/books.json"),
             characters: get_characters("../data/characters"),
             classes,
             class_features,
