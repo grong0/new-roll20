@@ -29,6 +29,7 @@
 	background-color: rgb(14, 17, 20);
 } */
 
+/* Actually make a good looking scrollbar */
 .scroll-bar-none::-webkit-scrollbar {
 	display: none; /* Chrome, Safari, and Opera */
 }

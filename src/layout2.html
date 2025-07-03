@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="autumn">
+<html lang="en" data-theme="light">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -222,16 +222,16 @@
 			</div>
 			<!-- </div> -->
 
-			<!-- Skills -->
+			<!-- Saving Throws -->
 			<div id="saving-throws" class="w-full h-auto flex flex-col bg-base-100 rounded-box p-4 gap-1 shadow-lg">
 				<div class="w-full h-fit text-center font-bold">
 					<h1 class="font-2xl">Saving Throws</h1>
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
-						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="player_skills_acrobatics_status"
-						hx-trigger="load once"
+					class="ml-1 mr-1 flex justify-center items-center"
+					tauri-invoke="player_skills_acrobatics_status"
+					hx-trigger="load once"
 					></div>
 					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
 						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
@@ -240,9 +240,9 @@
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
-						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="player_skills_acrobatics_status"
-						hx-trigger="load once"
+					class="ml-1 mr-1 flex justify-center items-center"
+					tauri-invoke="player_skills_acrobatics_status"
+					hx-trigger="load once"
 					></div>
 					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
 						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
@@ -251,9 +251,9 @@
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
-						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="player_skills_acrobatics_status"
-						hx-trigger="load once"
+					class="ml-1 mr-1 flex justify-center items-center"
+					tauri-invoke="player_skills_acrobatics_status"
+					hx-trigger="load once"
 					></div>
 					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
 						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
@@ -262,9 +262,9 @@
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
-						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="player_skills_acrobatics_status"
-						hx-trigger="load once"
+					class="ml-1 mr-1 flex justify-center items-center"
+					tauri-invoke="player_skills_acrobatics_status"
+					hx-trigger="load once"
 					></div>
 					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
 						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
@@ -273,9 +273,9 @@
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
-						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="player_skills_acrobatics_status"
-						hx-trigger="load once"
+					class="ml-1 mr-1 flex justify-center items-center"
+					tauri-invoke="player_skills_acrobatics_status"
+					hx-trigger="load once"
 					></div>
 					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
 						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
@@ -284,9 +284,9 @@
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
-						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="player_skills_acrobatics_status"
-						hx-trigger="load once"
+					class="ml-1 mr-1 flex justify-center items-center"
+					tauri-invoke="player_skills_acrobatics_status"
+					hx-trigger="load once"
 					></div>
 					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
 						<span class="badge badge-ghost badge-sm mt-auto mb-auto ml-2"></span>
@@ -294,14 +294,16 @@
 					<div class="ml-2">Charisma</div>
 				</div>
 			</div>
-			<div id="skills" class="w-full h-auto flex flex-col bg-base-100 rounded-box p-4 gap-1 shadow-lg">
+
+			<!-- Skills -->
+			<div id="skills" class="w-full h-auto flex flex-col bg-base-100 rounded-box p-4 gap-1 shadow-lg overflow-y-scroll scroll-bar-none">
 				<div class="w-full h-fit text-center font-bold">
 					<h1 class="font-2xl">Skills</h1>
 				</div>
 				<div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<div
-						class="ml-1 mr-1 flex justify-center items-center"
-						tauri-invoke="player_skills_acrobatics_status"
+					class="ml-1 mr-1 flex justify-center items-center"
+					tauri-invoke="player_skills_acrobatics_status"
 						hx-trigger="load once"
 					></div>
 					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">
@@ -550,7 +552,7 @@
 						value="actions"
 						checked
 					/>
-					<div role="tabpanel" class="tab-content h-full w-full bg-base-100 rounded-box p-4 overflow-y-scroll">
+					<div role="tabpanel" class="tab-content h-full w-full bg-base-100 rounded-box p-4 overflow-y-scroll scroll-bar-none">
 						<form
 							role="tablist"
 							class="tabs tabs-boxed shadow-md"

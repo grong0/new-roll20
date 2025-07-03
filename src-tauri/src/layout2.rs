@@ -336,7 +336,6 @@ struct Action {
 
 #[tauri::command]
 pub fn sheet_workspace_actions(workspace_actions_filter: String) -> String {
-	println!("{}", &workspace_actions_filter);
 	return match workspace_actions_filter.as_str() {
 		"actions-all" => workspace_actions(),
 		"actions-actions" => workspace_actions_action(),
