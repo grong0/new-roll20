@@ -1,8 +1,8 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-mod version_checking;
 mod serde_utils;
+mod version_checking;
 
 use version_checking::{is_newer_version, update_data};
 
@@ -16,5 +16,5 @@ fn main() {
 		};
 	}
 
-    new_roll20_lib::run()
+	new_roll20_lib::run()
 }

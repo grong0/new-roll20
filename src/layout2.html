@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-theme="autumn">
 	<head>
 		<meta charset="UTF-8" />
@@ -528,7 +528,11 @@
 					<div class="w-full h-fit font-bold">
 						<h1 class="font-xl">Languages</h1>
 					</div>
-					<article class="prose text-base" tauri-invoke="player_proficiencies_languages" hx-trigger="load once"></article>
+					<article
+						class="prose text-base"
+						tauri-invoke="player_proficiencies_languages"
+						hx-trigger="load once"
+					></article>
 				</div>
 			</div>
 			<!-- </div> -->
@@ -550,11 +554,9 @@
 						<form
 							role="tablist"
 							class="tabs tabs-boxed shadow-md"
-							tauri-invoke="sheet_workspace_actions"
-							hx-include="[name='workspaceActionsFilter']"
-							hx-trigger="changed"
+							hx-post="command:sheet_workspace_actions"
+							hx-trigger="change"
 							hx-target="#workspace-actions"
-							hx-swap="innerHTML"
 						>
 							<input
 								type="radio"
@@ -605,24 +607,8 @@
 								aria-label="Limited Use"
 								value="actions-limited"
 							/>
-							<!-- <a role="tab" class="tab tab-active">All</a>
-							<a role="tab" class="tab">Actions</a>
-							<a role="tab" class="tab">Bonus Actions</a>
-							<a role="tab" class="tab">Reactions</a>
-							<a role="tab" class="tab">Other</a>
-							<a role="tab" class="tab">Limited Use</a> -->
 						</form>
-						<!-- <div role="tablist" class="tabs tabs-boxed shadow-md">
-							<a role="tab" class="tab tab-active">All</a>
-							<a role="tab" class="tab">Actions</a>
-							<a role="tab" class="tab">Bonus Actions</a>
-							<a role="tab" class="tab">Reactions</a>
-							<a role="tab" class="tab">Other</a>
-							<a role="tab" class="tab">Limited Use</a>
-						</div> -->
 						<div
-							id="workspace-actions"
-							class="overflow-y-scroll"
 							tauri-invoke="sheet_workspace_actions"
 							hx-trigger="load once"
 							hx-include="[name='workspaceActionsFilter']"
