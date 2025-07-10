@@ -4,7 +4,7 @@ use crate::{
 		workspace_actions_action, workspace_actions_attack, workspace_actions_bonusaction, workspace_actions_limiteduse,
 		workspace_actions_other, workspace_actions_reaction,
 	},
-	frontend_functions::{ability_score_to_modifier, get_class_color},
+	frontend_functions::ability_score_to_modifier,
 };
 
 #[tauri::command]
@@ -65,26 +65,24 @@ pub fn player_class_level() -> String {
 #[tauri::command]
 pub fn player_classes() -> String {
 	let classes = vec![
-		"artificer",
-		"barbarian",
-		"bard",
-		"cleric",
-		"druid",
-		"fighter",
-		"monk",
-		"paladin",
-		"ranger",
-		"rogue",
-		"sorcerer",
-		"warlock",
-		"wizard",
+		String::from("artificer"),
+		// String::from("barbarian"),
+		// String::from("bard"),
+		// String::from("cleric"),
+		// String::from("druid"),
+		// String::from("fighter"),
+		// String::from("monk"),
+		// String::from("paladin"),
+		// String::from("ranger"),
+		// String::from("rogue"),
+		// String::from("sorcerer"),
+		// String::from("warlock"),
+		// String::from("wizard"),
 	];
 
 	let mut content = String::new();
 	for player_class in classes {
-		content +=
-			class_badge(player_class.to_ascii_uppercase().to_string(), player_class.to_string(), get_class_color(player_class.to_string()))
-				.as_str();
+		content += class_badge(&player_class.to_ascii_uppercase().to_string(), &player_class.to_string()).as_str();
 	}
 	return content;
 }
@@ -335,16 +333,133 @@ struct Action {
 }
 
 #[tauri::command]
-pub fn sheet_workspace_actions(workspace_actions_filter: String) -> String {
-	return match workspace_actions_filter.as_str() {
-		"actions-all" => workspace_actions(),
-		"actions-actions" => workspace_actions_action(),
-		"actions-bonus" => workspace_actions_bonusaction(),
-		"actions-reactions" => workspace_actions_reaction(),
-		"actions-other" => workspace_actions_other(),
-		"actions-limited" => workspace_actions_limiteduse(),
-		_ => workspace_actions(),
-	};
+pub fn player_actions() -> String {
+	let actions = vec![
+		Action {
+			name: "Ray of Frost".to_string(),
+			action_type: "Cantrip - Wizard".to_string(),
+			range: 60.to_string(),
+			hitdc: 11.to_string(),
+			damage: Damage { dice: "4d8".to_string(), damage_type: "cold".to_string() },
+			notes: "V/S".to_string(),
+		},
+		Action {
+			name: "Unarmed Strike".to_string(),
+			action_type: "Melee Attack".to_string(),
+			range: 5.to_string(),
+			hitdc: 5.to_string(),
+			damage: Damage { dice: "0".to_string(), damage_type: "bludgeoning".to_string() },
+			notes: "".to_string(),
+		},
+		Action {
+			name: "Melf's Minute Meteors".to_string(),
+			action_type: "3rd Level - Wizard".to_string(),
+			range: "Self".to_string(),
+			hitdc: "DEX 14".to_string(),
+			damage: Damage { dice: "2d6".to_string(), damage_type: "fire".to_string() },
+			notes: "Concentration, V/S/M".to_string(),
+		},
+		Action {
+			name: "Fireball".to_string(),
+			action_type: "3rd Level - Wizard".to_string(),
+			range: "150".to_string(),
+			hitdc: "DEX 14".to_string(),
+			damage: Damage { dice: "8d6".to_string(), damage_type: "fire".to_string() },
+			notes: "V/S/M".to_string(),
+		},
+	]
+	.iter()
+	.map(|i| {
+		workspace_actions_attack(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
+			.chars()
+			.collect::<Vec<_>>()
+	})
+	.flatten()
+	.collect();
+	let bonus_actions = vec![Action {
+		name: "Ray of Frost".to_string(),
+		action_type: "Cantrip - Wizard".to_string(),
+		range: 60.to_string(),
+		hitdc: 11.to_string(),
+		damage: Damage { dice: "4d8".to_string(), damage_type: "cold".to_string() },
+		notes: "V/S".to_string(),
+	}]
+	.iter()
+	.map(|i| {
+		workspace_actions_attack(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
+			.chars()
+			.collect::<Vec<_>>()
+	})
+	.flatten()
+	.collect();
+	let reactions = vec![Action {
+		name: "Unarmed Strike".to_string(),
+		action_type: "Melee Attack".to_string(),
+		range: 5.to_string(),
+		hitdc: 5.to_string(),
+		damage: Damage { dice: "0".to_string(), damage_type: "bludgeoning".to_string() },
+		notes: "".to_string(),
+	}]
+	.iter()
+	.map(|i| {
+		workspace_actions_attack(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
+			.chars()
+			.collect::<Vec<_>>()
+	})
+	.flatten()
+	.collect();
+	let other_actions = vec![Action {
+		name: "Melf's Minute Meteors".to_string(),
+		action_type: "3rd Level - Wizard".to_string(),
+		range: "Self".to_string(),
+		hitdc: "DEX 14".to_string(),
+		damage: Damage { dice: "2d6".to_string(), damage_type: "fire".to_string() },
+		notes: "Concentration, V/S/M".to_string(),
+	}]
+	.iter()
+	.map(|i| {
+		workspace_actions_attack(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
+			.chars()
+			.collect::<Vec<_>>()
+	})
+	.flatten()
+	.collect();
+	let limited_use_actions = vec![Action {
+		name: "Fireball".to_string(),
+		action_type: "3rd Level - Wizard".to_string(),
+		range: "150".to_string(),
+		hitdc: "DEX 14".to_string(),
+		damage: Damage { dice: "8d6".to_string(), damage_type: "fire".to_string() },
+		notes: "V/S/M".to_string(),
+	}]
+	.iter()
+	.map(|i| {
+		workspace_actions_attack(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
+			.chars()
+			.collect::<Vec<_>>()
+	})
+	.flatten()
+	.collect();
+
+	let actions_in_combat =
+		String::from("Attack, Cast a Spell, Dash, Disengage, Dodge, Grapple, Help, Hide, Improvise, Ready, Search, Shove, Use an Object");
+	let bonus_actions_in_combat = String::from("Nothing");
+	let reactions_in_combat = String::from("Nothing");
+	let other_actions_in_combat = String::from("Nothing");
+	let limited_use_actions_in_combat = String::from("Nothing");
+
+	return workspace_actions(
+		&actions,
+		&bonus_actions,
+		&reactions,
+		&other_actions,
+		&limited_use_actions,
+		&actions_in_combat,
+		&bonus_actions_in_combat,
+		&reactions_in_combat,
+		&other_actions_in_combat,
+		&limited_use_actions_in_combat,
+	);
 }
 
 #[tauri::command]
@@ -374,22 +489,32 @@ pub fn player_actions_action() -> String {
 			damage: Damage { dice: "2d6".to_string(), damage_type: "fire".to_string() },
 			notes: "Concentration, V/S/M".to_string(),
 		},
+		Action {
+			name: "Fireball".to_string(),
+			action_type: "3rd Level - Wizard".to_string(),
+			range: "150".to_string(),
+			hitdc: "DEX 14".to_string(),
+			damage: Damage { dice: "8d6".to_string(), damage_type: "fire".to_string() },
+			notes: "V/S/M".to_string(),
+		},
 	];
-
 	let mut content = String::new();
 	for action in actions {
 		content += workspace_actions_attack(
-			action.name,
-			action.action_type,
-			action.range,
-			action.hitdc,
-			action.damage.dice,
-			action.damage.damage_type,
-			action.notes,
+			&action.name,
+			&action.action_type,
+			&action.range,
+			&action.hitdc,
+			&action.damage.dice,
+			&action.damage.damage_type,
+			&action.notes,
 		)
 		.as_str();
 	}
-	return content;
+
+	let actions_in_combat =
+		String::from("Attack, Cast a Spell, Dash, Disengage, Dodge, Grapple, Help, Hide, Improvise, Ready, Search, Shove, Use an Object");
+	return workspace_actions_action(&content, &actions_in_combat);
 }
 
 #[tauri::command]
@@ -402,102 +527,102 @@ pub fn player_actions_bonusaction() -> String {
 		damage: Damage { dice: "2d6".to_string(), damage_type: "fire".to_string() },
 		notes: "Concentration, V/S/M".to_string(),
 	}];
-
 	let mut content = String::new();
 	for action in actions {
 		content += workspace_actions_attack(
-			action.name,
-			action.action_type,
-			action.range,
-			action.hitdc,
-			action.damage.dice,
-			action.damage.damage_type,
-			action.notes,
+			&action.name,
+			&action.action_type,
+			&action.range,
+			&action.hitdc,
+			&action.damage.dice,
+			&action.damage.damage_type,
+			&action.notes,
 		)
 		.as_str();
 	}
-	return content;
+	let actions_in_combat = String::from("Nothing");
+	return workspace_actions_bonusaction(&content, &actions_in_combat);
 }
 
 #[tauri::command]
 pub fn player_actions_reaction() -> String {
 	let actions = vec![Action {
-		name: "Melf's Minute Meteors".to_string(),
-		action_type: "3rd Level - Wizard".to_string(),
-		range: "Self".to_string(),
-		hitdc: "DEX 14".to_string(),
-		damage: Damage { dice: "2d6".to_string(), damage_type: "fire".to_string() },
-		notes: "Concentration, V/S/M".to_string(),
+		name: "Unarmed Strike".to_string(),
+		action_type: "Melee Attack".to_string(),
+		range: 5.to_string(),
+		hitdc: 5.to_string(),
+		damage: Damage { dice: "0".to_string(), damage_type: "bludgeoning".to_string() },
+		notes: "".to_string(),
 	}];
-
 	let mut content = String::new();
 	for action in actions {
 		content += workspace_actions_attack(
-			action.name,
-			action.action_type,
-			action.range,
-			action.hitdc,
-			action.damage.dice,
-			action.damage.damage_type,
-			action.notes,
+			&action.name,
+			&action.action_type,
+			&action.range,
+			&action.hitdc,
+			&action.damage.dice,
+			&action.damage.damage_type,
+			&action.notes,
 		)
 		.as_str();
 	}
-	return content;
+	let actions_in_combat = String::from("Nothing");
+	return workspace_actions_reaction(&content, &actions_in_combat);
 }
 
 #[tauri::command]
 pub fn player_actions_other() -> String {
 	let actions = vec![Action {
-		name: "Melf's Minute Meteors".to_string(),
-		action_type: "3rd Level - Wizard".to_string(),
-		range: "Self".to_string(),
-		hitdc: "DEX 14".to_string(),
-		damage: Damage { dice: "2d6".to_string(), damage_type: "fire".to_string() },
-		notes: "Concentration, V/S/M".to_string(),
+		name: "Ray of Frost".to_string(),
+		action_type: "Cantrip - Wizard".to_string(),
+		range: 60.to_string(),
+		hitdc: 11.to_string(),
+		damage: Damage { dice: "4d8".to_string(), damage_type: "cold".to_string() },
+		notes: "V/S".to_string(),
 	}];
-
 	let mut content = String::new();
 	for action in actions {
 		content += workspace_actions_attack(
-			action.name,
-			action.action_type,
-			action.range,
-			action.hitdc,
-			action.damage.dice,
-			action.damage.damage_type,
-			action.notes,
+			&action.name,
+			&action.action_type,
+			&action.range,
+			&action.hitdc,
+			&action.damage.dice,
+			&action.damage.damage_type,
+			&action.notes,
 		)
 		.as_str();
 	}
-	return content;
+	let actions_in_combat = String::from("Nothing");
+	return workspace_actions_other(&content, &actions_in_combat);
 }
 
 #[tauri::command]
 pub fn player_actions_limiteduse() -> String {
 	let actions = vec![Action {
-		name: "Melf's Minute Meteors".to_string(),
+		name: "Fireball".to_string(),
 		action_type: "3rd Level - Wizard".to_string(),
-		range: "Self".to_string(),
+		range: "150".to_string(),
 		hitdc: "DEX 14".to_string(),
-		damage: Damage { dice: "2d6".to_string(), damage_type: "fire".to_string() },
-		notes: "Concentration, V/S/M".to_string(),
+		damage: Damage { dice: "8d6".to_string(), damage_type: "fire".to_string() },
+		notes: "V/S/M".to_string(),
 	}];
-
 	let mut content = String::new();
 	for action in actions {
 		content += workspace_actions_attack(
-			action.name,
-			action.action_type,
-			action.range,
-			action.hitdc,
-			action.damage.dice,
-			action.damage.damage_type,
-			action.notes,
+			&action.name,
+			&action.action_type,
+			&action.range,
+			&action.hitdc,
+			&action.damage.dice,
+			&action.damage.damage_type,
+			&action.notes,
 		)
 		.as_str();
 	}
-	return content;
+	let actions_in_combat = String::from("Nothing");
+	return workspace_actions_limiteduse(&content, &actions_in_combat);
 }
 
 #[tauri::command]

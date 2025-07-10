@@ -88,6 +88,7 @@ pub fn run() {
 			player_proficiencies_weapons,
 			player_proficiencies_tools,
 			player_proficiencies_languages,
+			player_actions,
 			player_actions_action,
 			player_actions_bonusaction,
 			player_actions_reaction,
@@ -98,7 +99,6 @@ pub fn run() {
 			player_actionsincombat_reaction,
 			player_actionsincombat_other,
 			player_actionsincombat_limiteduse,
-			sheet_workspace_actions,
 			gamer,
 			fortnite
 		])

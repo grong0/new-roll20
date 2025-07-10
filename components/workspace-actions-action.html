@@ -9,9 +9,11 @@
 			<th>Notes</th>
 		</tr>
 	</thead>
-	<tbody tauri-invoke="player_actions_action" hx-trigger="load once"></tbody>
+	<tbody>
+		{actions}
+	</tbody>
 </table>
 <article class="prose">
 	<h3>Actions in Combat</h3>
-	<blockquote tauri-invoke="player_actionsincombat_action" hx-trigger="load once"></blockquote>
+	<blockquote>{actions_in_combat}</blockquote>
 </article>
