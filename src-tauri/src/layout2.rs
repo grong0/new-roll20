@@ -1,8 +1,8 @@
 use crate::{
 	components::{
-		class_badge, skill_status_expert, skill_status_not_proficient, skill_status_proficient, workspace_actions,
-		workspace_actions_action, workspace_actions_attack, workspace_actions_bonusaction, workspace_actions_limiteduse,
-		workspace_actions_other, workspace_actions_reaction,
+		class_badge, skills_status_expert, skills_status_proficient, skills_status_untrained, workspace_actions, workspace_actions_action,
+		workspace_actions_bonusaction, workspace_actions_item, workspace_actions_limiteduse, workspace_actions_other,
+		workspace_actions_reaction, workspace_feats, workspace_feats_class, workspace_feats_race,
 	},
 	frontend_functions::ability_score_to_modifier,
 };
@@ -139,75 +139,75 @@ pub fn player_abilities_cha_modifier() -> String {
 
 #[tauri::command]
 pub fn player_skills_acrobatics_status() -> String {
-	return skill_status_proficient();
+	return skills_status_proficient();
 }
 #[tauri::command]
 pub fn player_skills_animalhandling_status() -> String {
-	return skill_status_proficient();
+	return skills_status_proficient();
 }
 #[tauri::command]
 pub fn player_skills_arcana_status() -> String {
-	return skill_status_proficient();
+	return skills_status_proficient();
 }
 #[tauri::command]
 pub fn player_skills_athletics_status() -> String {
-	return skill_status_expert();
+	return skills_status_expert();
 }
 #[tauri::command]
 pub fn player_skills_deception_status() -> String {
-	return skill_status_proficient();
+	return skills_status_proficient();
 }
 #[tauri::command]
 pub fn player_skills_history_status() -> String {
-	return skill_status_expert();
+	return skills_status_expert();
 }
 #[tauri::command]
 pub fn player_skills_insight_status() -> String {
-	return skill_status_proficient();
+	return skills_status_proficient();
 }
 #[tauri::command]
 pub fn player_skills_intimidation_status() -> String {
-	return skill_status_proficient();
+	return skills_status_proficient();
 }
 #[tauri::command]
 pub fn player_skills_investigation_status() -> String {
-	return skill_status_proficient();
+	return skills_status_proficient();
 }
 #[tauri::command]
 pub fn player_skills_medicine_status() -> String {
-	return skill_status_proficient();
+	return skills_status_proficient();
 }
 #[tauri::command]
 pub fn player_skills_nature_status() -> String {
-	return skill_status_expert();
+	return skills_status_expert();
 }
 #[tauri::command]
 pub fn player_skills_perception_status() -> String {
-	return skill_status_not_proficient();
+	return skills_status_untrained();
 }
 #[tauri::command]
 pub fn player_skills_performance_status() -> String {
-	return skill_status_not_proficient();
+	return skills_status_untrained();
 }
 #[tauri::command]
 pub fn player_skills_persuasion_status() -> String {
-	return skill_status_proficient();
+	return skills_status_proficient();
 }
 #[tauri::command]
 pub fn player_skills_religion_status() -> String {
-	return skill_status_not_proficient();
+	return skills_status_untrained();
 }
 #[tauri::command]
 pub fn player_skills_slightofhand_status() -> String {
-	return skill_status_not_proficient();
+	return skills_status_untrained();
 }
 #[tauri::command]
 pub fn player_skills_stealth_status() -> String {
-	return skill_status_not_proficient();
+	return skills_status_untrained();
 }
 #[tauri::command]
 pub fn player_skills_survival_status() -> String {
-	return skill_status_proficient();
+	return skills_status_proficient();
 }
 
 #[tauri::command]
@@ -370,7 +370,7 @@ pub fn player_actions() -> String {
 	]
 	.iter()
 	.map(|i| {
-		workspace_actions_attack(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
+		workspace_actions_item(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
 			.chars()
 			.collect::<Vec<_>>()
 	})
@@ -386,7 +386,7 @@ pub fn player_actions() -> String {
 	}]
 	.iter()
 	.map(|i| {
-		workspace_actions_attack(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
+		workspace_actions_item(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
 			.chars()
 			.collect::<Vec<_>>()
 	})
@@ -402,7 +402,7 @@ pub fn player_actions() -> String {
 	}]
 	.iter()
 	.map(|i| {
-		workspace_actions_attack(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
+		workspace_actions_item(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
 			.chars()
 			.collect::<Vec<_>>()
 	})
@@ -418,7 +418,7 @@ pub fn player_actions() -> String {
 	}]
 	.iter()
 	.map(|i| {
-		workspace_actions_attack(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
+		workspace_actions_item(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
 			.chars()
 			.collect::<Vec<_>>()
 	})
@@ -434,7 +434,7 @@ pub fn player_actions() -> String {
 	}]
 	.iter()
 	.map(|i| {
-		workspace_actions_attack(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
+		workspace_actions_item(&i.name, &i.action_type, &i.range, &i.hitdc, &i.damage.dice, &i.damage.damage_type, &i.notes)
 			.chars()
 			.collect::<Vec<_>>()
 	})
@@ -500,7 +500,7 @@ pub fn player_actions_action() -> String {
 	];
 	let mut content = String::new();
 	for action in actions {
-		content += workspace_actions_attack(
+		content += workspace_actions_item(
 			&action.name,
 			&action.action_type,
 			&action.range,
@@ -529,7 +529,7 @@ pub fn player_actions_bonusaction() -> String {
 	}];
 	let mut content = String::new();
 	for action in actions {
-		content += workspace_actions_attack(
+		content += workspace_actions_item(
 			&action.name,
 			&action.action_type,
 			&action.range,
@@ -556,7 +556,7 @@ pub fn player_actions_reaction() -> String {
 	}];
 	let mut content = String::new();
 	for action in actions {
-		content += workspace_actions_attack(
+		content += workspace_actions_item(
 			&action.name,
 			&action.action_type,
 			&action.range,
@@ -583,7 +583,7 @@ pub fn player_actions_other() -> String {
 	}];
 	let mut content = String::new();
 	for action in actions {
-		content += workspace_actions_attack(
+		content += workspace_actions_item(
 			&action.name,
 			&action.action_type,
 			&action.range,
@@ -610,7 +610,7 @@ pub fn player_actions_limiteduse() -> String {
 	}];
 	let mut content = String::new();
 	for action in actions {
-		content += workspace_actions_attack(
+		content += workspace_actions_item(
 			&action.name,
 			&action.action_type,
 			&action.range,
@@ -648,4 +648,24 @@ pub fn player_actionsincombat_other() -> String {
 #[tauri::command]
 pub fn player_actionsincombat_limiteduse() -> String {
 	return "Nothing".to_string();
+}
+
+#[tauri::command]
+pub fn player_feats() -> String {
+	return workspace_feats();
+}
+
+#[tauri::command]
+pub fn player_feats_class() -> String {
+	return workspace_feats_class();
+}
+
+#[tauri::command]
+pub fn player_feats_race() -> String {
+	return workspace_feats_race();
+}
+
+#[tauri::command]
+pub fn player_feats_feat() -> String {
+	return workspace_feats_race();
 }

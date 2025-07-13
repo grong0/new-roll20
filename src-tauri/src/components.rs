@@ -1,21 +1,21 @@
 use std::fs::read_to_string;
 
-pub fn skill_status_not_proficient() -> String {
-	let file = read_to_string("../components/skill-status-not-proficient.html").unwrap_or("".to_string());
+pub fn skills_status_untrained() -> String {
+	let file = read_to_string("../components/skills/untrained.html").unwrap_or("".to_string());
 	return file;
 }
 
-pub fn skill_status_proficient() -> String {
-	let file = read_to_string("../components/skill-status-proficient.html").unwrap_or("".to_string());
+pub fn skills_status_proficient() -> String {
+	let file = read_to_string("../components/skills/proficient.html").unwrap_or("".to_string());
 	return file;
 }
 
-pub fn skill_status_expert() -> String {
-	let file = read_to_string("../components/skill-status-expert.html").unwrap_or("".to_string());
+pub fn skills_status_expert() -> String {
+	let file = read_to_string("../components/skills/expert.html").unwrap_or("".to_string());
 	return file;
 }
 
-pub fn workspace_actions_attack(
+pub fn workspace_actions_item(
 	name: &String,
 	action_type: &String,
 	range: &String,
@@ -24,7 +24,7 @@ pub fn workspace_actions_attack(
 	damage_type: &String,
 	notes: &String,
 ) -> String {
-	let file = read_to_string("../components/workspace-actions-attack.html")
+	let file = read_to_string("../components/workspace/actions/item.html")
 		.unwrap_or("".to_string())
 		.replace("{name}", &name.as_str())
 		.replace("{type}", &action_type.as_str())
@@ -48,7 +48,7 @@ pub fn workspace_actions(
 	other_actions_in_combat: &String,
 	limited_use_actions_in_combat: &String,
 ) -> String {
-	let file = read_to_string("../components/workspace-actions.html")
+	let file = read_to_string("../components/workspace/actions/allactions.html")
 		.unwrap_or("".to_string())
 		.replace("{actions}", actions)
 		.replace("{bonus_actions}", bonus_actions)
@@ -64,7 +64,7 @@ pub fn workspace_actions(
 }
 
 pub fn workspace_actions_action(actions: &String, actions_in_combat: &String) -> String {
-	let file = read_to_string("../components/workspace-actions-action.html")
+	let file = read_to_string("../components/workspace/actions/actions.html")
 		.unwrap_or("".to_string())
 		.replace("{actions}", actions)
 		.replace("{actions_in_combat}", actions_in_combat);
@@ -72,7 +72,7 @@ pub fn workspace_actions_action(actions: &String, actions_in_combat: &String) ->
 }
 
 pub fn workspace_actions_bonusaction(actions: &String, actions_in_combat: &String) -> String {
-	let file = read_to_string("../components/workspace-actions-bonusaction.html")
+	let file = read_to_string("../components/workspace/actions/bonusactions.html")
 		.unwrap_or("".to_string())
 		.replace("{actions}", actions)
 		.replace("{actions_in_combat}", actions_in_combat);
@@ -80,7 +80,7 @@ pub fn workspace_actions_bonusaction(actions: &String, actions_in_combat: &Strin
 }
 
 pub fn workspace_actions_reaction(actions: &String, actions_in_combat: &String) -> String {
-	let file = read_to_string("../components/workspace-actions-reaction.html")
+	let file = read_to_string("../components/workspace/actions/reactions.html")
 		.unwrap_or("".to_string())
 		.replace("{actions}", actions)
 		.replace("{actions_in_combat}", actions_in_combat);
@@ -88,7 +88,7 @@ pub fn workspace_actions_reaction(actions: &String, actions_in_combat: &String) 
 }
 
 pub fn workspace_actions_other(actions: &String, actions_in_combat: &String) -> String {
-	let file = read_to_string("../components/workspace-actions-other.html")
+	let file = read_to_string("../components/workspace/actions/otheractions.html")
 		.unwrap_or("".to_string())
 		.replace("{actions}", actions)
 		.replace("{actions_in_combat}", actions_in_combat);
@@ -96,7 +96,7 @@ pub fn workspace_actions_other(actions: &String, actions_in_combat: &String) -> 
 }
 
 pub fn workspace_actions_limiteduse(actions: &String, actions_in_combat: &String) -> String {
-	let file = read_to_string("../components/workspace-actions-limiteduse.html")
+	let file = read_to_string("../components/workspace/actions/limiteduseactions.html")
 		.unwrap_or("".to_string())
 		.replace("{actions}", actions)
 		.replace("{actions_in_combat}", actions_in_combat);
@@ -108,5 +108,25 @@ pub fn class_badge(class_higher: &String, class_lower: &String) -> String {
 		.unwrap_or("".to_string())
 		.replace("{class}", class_higher)
 		.replace("{class_lower}", class_lower);
+	return file;
+}
+
+pub fn workspace_feats() -> String {
+	let file = read_to_string("../components/workspace/feats/allfeats.html").unwrap_or(String::from(""));
+	return file;
+}
+
+pub fn workspace_feats_class() -> String {
+	let file = read_to_string("../components/workspace/feats/classfeats.html").unwrap_or(String::from(""));
+	return file;
+}
+
+pub fn workspace_feats_race() -> String {
+	let file = read_to_string("../components/workspace/feats/racefeats.html").unwrap_or(String::from(""));
+	return file;
+}
+
+pub fn workspace_feats_feat() -> String {
+	let file = read_to_string("../components/workspace/feats/feats.html").unwrap_or(String::from(""));
 	return file;
 }

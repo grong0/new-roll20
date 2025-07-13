@@ -99,6 +99,10 @@ pub fn run() {
 			player_actionsincombat_reaction,
 			player_actionsincombat_other,
 			player_actionsincombat_limiteduse,
+			player_feats,
+			player_feats_class,
+			player_feats_race,
+			player_feats_feat,
 			gamer,
 			fortnite
 		])

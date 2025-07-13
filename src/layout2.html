@@ -43,44 +43,49 @@
 					<div class="stat-value" tauri-invoke="player_hitpoints_current" hx-trigger="load once">0</div>
 					<div class="stat-desc">/ <span tauri-invoke="player_hitpoints_max" hx-trigger="load once">0</span></div>
 					<div class="stat-figure text-primary">
-						<img src="assets/hitpoints.svg" />
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="h-8 w-8 inline-block stroke-current">
+							<path
+								d="M196 16a30 30 0 0 0-30 30v120H46a30 30 0 0 0-30 30v120a30 30 0 0 0 30 30h120v120a30 30 0 0 0 30 30h120a30 30 0 0 0 30-30V346h120a30 30 0 0 0 30-30V196a30 30 0 0 0-30-30H346V46a30 30 0 0 0-30-30H196z"
+							></path>
+						</svg>
 					</div>
 				</div>
 				<div class="stat">
 					<div class="stat-title">Armor Class</div>
 					<div class="stat-value" tauri-invoke="player_armorclass" hx-trigger="load once">10</div>
 					<div class="stat-figure text-primary">
-						<img src="assets/armorclass.svg" />
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="h-8 w-8 inline-block stroke-current">
+							<path
+								d="M256 16c25 24 100 72 150 72v96c0 96-75 240-150 312-75-72-150-216-150-312V88c50 0 125-48 150-72z"
+							></path>
+						</svg>
 					</div>
 				</div>
 				<div class="stat">
 					<div class="stat-title">Initiative</div>
 					<div class="stat-value" tauri-invoke="player_initiative" hx-trigger="load once">0</div>
 					<div class="stat-figure text-primary">
-						<img src="assets/initiative.svg" />
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-8 h-8 inline-block stroke-current">
+							<path
+								d="M494.25 21.125l-164.53 1.25c-15.463 27.984-33.913 52.67-54.163 75.8 6.012 1.497 12.073 2.995 18.027 4.497l13.69 3.453-8.528 11.254c-50.415 66.503-44.632 142.087-27.36 213.694l-18.17 4.383c-16.838-69.817-23.528-148.192 22.64-217.94-88.07-21.897-183.62-43.434-253.374-89.38-1.77 4.89-1.01 10.187 2.262 17.23 2.427 5.222 6.516 11.043 12.14 17.117 53.162 37.938 130.458 65.946 189.778 75.168l-2.87 18.467c-61.85-9.616-139.642-37.397-196.036-77.227.61 5.953 2.61 12.393 6.387 19.36 6.918 12.758 19.275 26.49 35.7 38.907.84.635 1.697 1.265 2.557 1.893 42.555 22.677 93.696 38.914 140.737 42.164l-1.287 18.644c-61.147-4.222-126.33-28.22-175.672-60.745 1.03 4.922 3.253 10.397 6.885 16.38 7.367 12.14 20.078 25.484 36.23 37.675 39.264 17.838 81.604 32.938 128.62 36.473l-1.4 18.636C150.41 244.06 101.38 224.536 57.41 203.57c3.7 19.623 17.285 34.4 38.926 46.805 26.818 15.373 65.26 25.424 105.822 31.328l7.457 1.086.52 7.517c1.074 15.51 4.568 22.832 9.742 31.672l-16.13 9.438c-4.93-8.426-9.286-18.45-11.292-32.436-32.304-5.087-63.402-12.616-89.365-24.265-6.44 7.75-12.784 15.74-18.994 24.033 16.515 23.758 30.6 43.036 52.78 65.78l27.095-9.467 9.343-3.25 2.718 9.53c15.066 53.052 59.564 93.564 113.595 113.813 48.005 17.99 103.003 19.633 150.063.594-68.673-37.578-114.617-123.708-135.782-199.875l-1.125-4.156 2.376-3.564C348.53 203.283 425.85 148.88 494.25 123.97V21.124z"
+							></path>
+						</svg>
 					</div>
 				</div>
 				<div class="stat">
 					<div class="stat-title">Speed</div>
 					<div class="stat-value" tauri-invoke="player_speed_walking" hx-trigger="load once">30</div>
 					<div class="stat-figure text-primary">
-						<img src="assets/speed.svg" />
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-8 h-8 inline-block stroke-current">
+							<path
+								d="M256 54.28c-124.603 0-226 101.398-226 226 0 47.864 14.975 92.293 40.465 128.876l29.79-19.86c-17.188-24.545-28.708-53.362-32.696-84.577H96v-18H66.115c-.07-2.14-.115-4.284-.115-6.44 0-45.378 15.816-86.97 42.236-119.598l17.4 17.4 12.727-12.727-18.133-18.132C152.735 114.057 197.335 92.8 247 90.498v29.22h18V90.5c49.665 2.302 94.265 23.56 126.77 56.725l-18.133 18.132 12.726 12.727 17.4-17.4c26.42 32.63 42.237 74.22 42.237 119.6 0 2.154-.044 4.3-.115 6.437H416v18h28.44c-3.987 31.214-15.507 60.03-32.694 84.575l29.79 19.86C467.025 372.574 482 328.146 482 280.282c0-124.602-101.397-226-226-226zm15.83 66.23a144 160 0 0 1 74.608 100.062l49.966-17.568a160 160 0 0 0-4.3-7.012l-5.135 5.153-30.368-30.29-5.76-5.746 7.85-7.874a160 160 0 0 0-86.862-36.726zm156.15 89.844l-175.332 60.6C240.505 272.618 231 283.155 231 295.72c0 13.7 11.3 25 25 25 6.77 0 12.95-2.764 17.473-7.208L427.98 210.354zm-16.513 32.322l-60.713 40.72a144 160 0 0 1-56.6 108.323h76.057a160 160 0 0 0 39.763-68.572H398.48v-52.515h17.022a160 160 0 0 0-4.035-27.957zM128 421.72v36h256v-36H128z"
+							></path>
+						</svg>
 					</div>
 				</div>
 			</div>
-			<!-- <div class="w-full h-full overflow-hidden grid grid-cols-7 gap-2">
-				<div
-					class="bg-base-100 rounded-box shadow-lg h-full w-full p-2 flex flex-col justify-center items-center"
-				>
-					<div class="radial-progress progress-primary [--value:80]" role="progressbar">
-						<div class="radial-prograss [--value:100]" role="progressbar">
-							<span tauri-invoke="player_hitpoints/percent" hx-trigger="load once"></span>
-						</div>
-					</div>
-				</div>
-				<div
-					class="col-span-4 bg-base-100 rounded-box shadow-lg h-full w-full p-2 grid grid-cols-4"
-				>
+			<div id="test-grid-item" class="w-full h-full overflow-hidden grid grid-cols-7 gap-2">
+				<div class="col-span-3 bg-base-100 rounded-box shadow-lg h-full w-full p-2 grid grid-cols-4">
 					<div class="w-full h-full grid grid-rows-3">
 						<div class="btn-dimensions-override btn-outline btn-success">HEAL</div>
 						<div class="h-full w-full">
@@ -90,43 +95,13 @@
 								class="input-dimensions-override w-full h-full max-w-xs text-center"
 							/>
 						</div>
-						<div class="btn-dimensions-override btn-outline btn-error">DAMAGE</div>
+						<div class="btn-dimensions-override btn-outline btn-error" aria-label="DAMAGE">DAMAGE</div>
 					</div>
 					<div class="w-full h-full col-span-2"></div>
 
 					<div class="w-full h-full"></div>
 				</div>
-				<div
-					class="bg-base-100 rounded-box shadow-lg h-full w-full p-2 flex flex-col justify-center items-center"
-				>
-					<h2
-						class="text-3xl font-bold"
-						tauri-invoke="player_armorclass"
-						hx-trigger="load once"
-					></h2>
-					<p>Armor Class</p>
-				</div>
-				<div
-					class="bg-base-100 rounded-box shadow-lg h-full w-full p-2 flex flex-col justify-center items-center"
-				>
-					<h2
-						class="text-3xl font-bold"
-						tauri-invoke="player_initiative"
-						hx-trigger="load once"
-					></h2>
-					<p>Initiative</p>
-				</div>
-				<div
-					class="bg-base-100 rounded-box shadow-lg h-full w-full p-2 flex flex-col justify-center items-center"
-				>
-					<h2
-						class="text-3xl font-bold"
-						tauri-invoke="player_speed"
-						hx-trigger="load once"
-					></h2>
-					<p>Speed</p>
-				</div>
-			</div> -->
+			</div>
 
 			<!-- Abilities -->
 			<div id="str" class="relative flex flex-col justify-center items-center w-full h-auto aspect-square">
@@ -245,11 +220,97 @@
 			</div>
 
 			<!-- Saving Throws -->
-			<div id="saving-throws" class="w-full h-auto flex flex-col bg-base-100 rounded-box p-4 gap-1 shadow-lg">
+			<div id="saving-throws" class="w-full h-auto flex flex-col bg-base-100 rounded-box p-4 gap-2 shadow-lg">
 				<div class="w-full h-fit text-center font-bold">
 					<h1 class="font-2xl">Saving Throws</h1>
 				</div>
-				<div class="bg-base-100 rounded-lg flex flex-row items-center">
+
+				<div class="overflow-y-scroll scroll-bar-none rounded-btn border">
+					<table class="table table-zebra h-full">
+						<tbody>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_performance_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Strength</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_performance_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_performance_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Strength</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_performance_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_performance_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Constitution</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_performance_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_performance_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Dexterity</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_performance_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_performance_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Wisdom</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_performance_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_performance_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Charisma</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_performance_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<!-- <div class="bg-base-100 rounded-lg flex flex-row items-center">
 					<span tauri-invoke="player_skills_acrobatics_status" hx-trigger="load once" hx-swap="outerHTML">
 						<span class="badge badge-neutral badge-sm">U</span>
 					</span>
@@ -290,18 +351,256 @@
 					</span>
 					<div class="w-full ml-2">Charisma</div>
 					<div tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">0</div>
-				</div>
+				</div> -->
 			</div>
 
 			<!-- Skills -->
-			<div
-				id="skills"
-				class="w-full h-auto flex flex-col bg-base-100 rounded-box p-4 gap-1 shadow-lg overflow-y-scroll scroll-bar-none"
-			>
+			<div id="skills" class="w-full h-auto flex flex-col p-4 bg-base-100 rounded-box gap-2 shadow-lg overflow-hidden">
 				<div class="w-full h-fit text-center font-bold">
 					<h1 class="font-2xl">Skills</h1>
 				</div>
-				<div class="w-full bg-base-100 rounded-lg flex flex-row items-center">
+
+				<div class="overflow-y-scroll scroll-bar-none rounded-btn border">
+					<table class="table table-zebra h-full">
+						<tbody>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_acrobatics_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Acrobatics</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_acrobatics_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_animalhandling_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Animal Handling</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_animalhandling_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_arcana_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Arcana</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_arcana_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_athletics_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Athletics</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_athletics_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_deception_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Deception</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_deception_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_history_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">History</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_history_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_insight_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Insight</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_insight_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_intimidation_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Intimidation</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_intimidation_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_investigation_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Investigation</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_investigation_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_medicine_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Medicine</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_medicine_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_nature_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Nature</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_nature_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_perception_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Perception</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_perception_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_performance_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Performance</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_performance_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_persuasion_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Persuasion</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_persuasion_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_religion_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Religion</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_religion_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_slightofhand_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Slight of Hand</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_slightofhand_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_stealth_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Stealth</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_stealth_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span tauri-invoke="player_skills_survival_status" hx-trigger="load once" hx-swap="outerHTML">
+										<span class="badge badge-neutral badge-sm">U</span>
+									</span>
+								</td>
+								<td>
+									<h3 class="w-full ml-2">Survival</h3>
+								</td>
+								<td>
+									<p tauri-invoke="player_skills_survival_bonus" hx-trigger="load once">0</p>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<!-- <div class="w-full bg-base-100 rounded-lg flex flex-row items-center">
 					<span tauri-invoke="player_skills_acrobatics_status" hx-trigger="load once" hx-swap="outerHTML">
 						<span class="badge badge-neutral badge-sm">U</span>
 					</span>
@@ -426,11 +725,11 @@
 					</span>
 					<span class="w-full ml-2">Survival</span>
 					<div tauri-invoke="player_skills_survival_bonus" hx-trigger="load once">0</div>
-				</div>
+				</div> -->
 			</div>
 
 			<!-- Senses -->
-			<div id="senses" class="w-full h-auto bg-base-100 rounded-box p-4 flex flex-col gap-2 shadow-md">
+			<!-- <div id="senses" class="w-full h-auto bg-base-100 rounded-box p-4 flex flex-col gap-2 shadow-md">
 				<div class="w-full h-fit text-center font-bold">
 					<h1 class="font-2xl">Senses</h1>
 				</div>
@@ -464,10 +763,10 @@
 						<p class="ml-8">Passive Insight</p>
 					</div>
 				</div>
-			</div>
+			</div> -->
 
 			<!-- Proficiencies -->
-			<div id="proficiencies" class="w-full h-auto bg-base-100 rounded-box p-4 flex flex-col gap-2 shadow-lg">
+			<!-- <div id="proficiencies" class="w-full h-auto bg-base-100 rounded-box p-4 flex flex-col gap-2 shadow-lg">
 				<div class="w-full h-fit text-center font-bold">
 					<h1 class="font-2xl">Proficiencies</h1>
 				</div>
@@ -503,7 +802,7 @@
 						None
 					</article>
 				</div>
-			</div>
+			</div> -->
 
 			<!-- Workspace -->
 			<div id="workspace" class="w-full h-full rounded-lg overflow-hidden">
@@ -633,7 +932,62 @@
 						aria-label="Feats"
 						value="feats"
 					/>
-					<div role="tabpanel" class="tab-content h-full w-full bg-base-100 rounded-box p-4">Tab content 4</div>
+					<div role="tabpanel" class="tab-content h-full w-full bg-base-100 rounded-box p-4">
+						<div role="tablist" class="tabs tabs-boxed shadow-md">
+							<button
+								hx-get="command:player_feats"
+								hx-target="#workspace-feats"
+								hx-trigger="click"
+								class="tab-fixed"
+								role="tab"
+								aria-controls="tab-content"
+								aria-selected="true"
+								preload="always"
+							>
+								All
+							</button>
+							<button
+								hx-get="command:player_feats_class"
+								hx-target="#workspace-feats"
+								hx-trigger="click"
+								class="tab-fixed"
+								role="tab"
+								aria-controls="tab-content"
+								aria-selected="false"
+								preload="always"
+							>
+								Class Feats
+							</button>
+							<button
+								hx-get="command:player_feats_race"
+								hx-target="#workspace-feats"
+								hx-trigger="click"
+								class="tab-fixed"
+								role="tab"
+								aria-controls="tab-content"
+								aria-selected="false"
+								preload="always"
+							>
+								Racial Traits
+							</button>
+							<button
+								hx-get="command:player_feats_feat"
+								hx-target="#workspace-feats"
+								class="tab-fixed"
+								role="tab"
+								aria-controls="tab-content"
+								aria-selected="false"
+								preload="always"
+							>
+								Feats
+							</button>
+						</div>
+						<div id="workspace-feats" class="h-auto" tauri-invoke="player_feats" hx-trigger="load once" role="tabpanel">
+							<div class="w-full h-full flex justify-center items-center">
+								<span class="loading loading-spinner loading-lg"></span>
+							</div>
+						</div>
+					</div>
 
 					<input
 						type="radio"
@@ -646,6 +1000,7 @@
 					<div role="tabpanel" class="tab-content h-full w-full bg-base-100 rounded-box p-4">Tab content 5</div>
 				</div>
 			</div>
+			<div id="planner" class="w-full h-full rounded-box bg-base-100 shadow-lg"></div>
 		</div>
 	</body>
 </html>
