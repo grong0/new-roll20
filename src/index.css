@@ -1,115 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@font-face {
-	font-family: Poppins;
-	font-style: normal;
-	font-weight: 100;
-	src: url(fonts/poppins/Poppins-Thin.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: italic;
-	font-weight: 100;
-	src: url(fonts/poppins/Poppins-ThinItalic.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: normal;
-	font-weight: 200;
-	src: url(fonts/poppins/Poppins-ExtraLight.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: italic;
-	font-weight: 200;
-	src: url(fonts/poppins/Poppins-ExtraLightItalic.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: normal;
-	font-weight: 300;
-	src: url(fonts/poppins/Poppins-Light.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: italic;
-	font-weight: 300;
-	src: url(fonts/poppins/Poppins-LightItalic.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: normal;
-	font-weight: normal;
-	src: url(fonts/poppins/Poppins-Regular.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: italic;
-	font-weight: normal;
-	src: url(fonts/poppins/Poppins-RegularItalic.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: normal;
-	font-weight: 500;
-	src: url(fonts/poppins/Poppins-Medium.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: italic;
-	font-weight: 500;
-	src: url(fonts/poppins/Poppins-MediumItalic.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: normal;
-	font-weight: 600;
-	src: url(fonts/poppins/Poppins-SemiBold.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: italic;
-	font-weight: 600;
-	src: url(fonts/poppins/Poppins-SemiBoldItalic.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: normal;
-	font-weight: bold;
-	src: url(fonts/poppins/Poppins-Bold.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: italic;
-	font-weight: bold;
-	src: url(fonts/poppins/Poppins-BoldItalic.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: normal;
-	font-weight: 800;
-	src: url(fonts/poppins/Poppins-ExtraBold.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: italic;
-	font-weight: 800;
-	src: url(fonts/poppins/Poppins-ExtraBoldItalic.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: normal;
-	font-weight: 900;
-	src: url(fonts/poppins/Poppins-Black.ttf) format("ttf");
-}
-@font-face {
-	font-family: Poppins;
-	font-style: italic;
-	font-weight: 900;
-	src: url(fonts/poppins/Poppins-BlackItalic.ttf) format("ttf");
-}
+@import "tailwindcss";
+@plugin "daisyui";
+@plugin "@tailwindcss/typography";
 
 /* width */
 /* ::-webkit-scrollbar {
@@ -145,10 +36,15 @@
 	scrollbar-width: none; /* Firefox */
 }
 
+/* TODO: The gap doesn't go away after hiding the planner; eventually remove gap in favor for padding within the element */
 #charsheet-container {
 	display: grid;
 	grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-	grid-template-columns: 2fr auto 2fr 8fr;
+	grid-template-columns: 4fr auto 3fr 10fr;
+	transition: grid-template-columns .5s ease-in-out;
+}
+#charsheet-container.closedPlanner {
+	grid-template-columns: 0fr auto 3fr 10fr;
 }
 
 /* title card */
@@ -230,7 +126,7 @@
 }
 /* workspace */
 #workspace {
-	grid-row-start: 4;
+	grid-row-start: 3;
 	grid-row-end: 8;
 	grid-column-start: 4;
 	grid-column-end: 5;
@@ -249,26 +145,21 @@
 	grid-column-end: 5;
 }
 
-.tabs-fixed {
-	@apply tabs;
-
-	grid-template-rows: min-content 1fr;
-}
-
-.tab-fixed {
-	@apply tab;
-
-	border-bottom-left-radius: 8px !important;
-	border-bottom-right-radius: 8px !important;
-}
-
 .rounded-box-tablerow td:first-child {
-	border-top-left-radius: var(--rounded-box, 1rem /* 16px */);
-	border-bottom-left-radius: var(--rounded-box, 1rem /* 16px */);
+	border-top-left-radius: var(--radius-box, 1rem /* 16px */);
+	border-bottom-left-radius: var(--radius-box, 1rem /* 16px */);
 }
 .rounded-box-tablerow td:last-child {
-	border-top-right-radius: var(--rounded-box, 1rem /* 16px */);
-	border-bottom-right-radius: var(--rounded-box, 1rem /* 16px */);
+	border-top-right-radius: var(--radius-box, 1rem /* 16px */);
+	border-bottom-right-radius: var(--radius-box, 1rem /* 16px */);
+}
+.rounded-field-tablerow td:first-child {
+	border-top-left-radius: var(--radius-field, 1rem /* 16px */);
+	border-bottom-left-radius: var(--radius-field, 1rem /* 16px */);
+}
+.rounded-field-tablerow td:last-child {
+	border-top-right-radius: var(--radius-field, 1rem /* 16px */);
+	border-bottom-right-radius: var(--radius-field, 1rem /* 16px */);
 }
 
 .hitpoints {
