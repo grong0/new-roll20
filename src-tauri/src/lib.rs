@@ -102,7 +102,7 @@ pub fn run() {
 			player_feats,
 			player_feats_class,
 			player_feats_race,
-			player_feats_feat,
+			player_feats_general,
 			gamer,
 			fortnite
 		])

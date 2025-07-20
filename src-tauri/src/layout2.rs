@@ -2,7 +2,8 @@ use crate::{
 	components::{
 		class_badge, skills_status_expert, skills_status_proficient, skills_status_untrained, workspace_actions, workspace_actions_action,
 		workspace_actions_bonusaction, workspace_actions_item, workspace_actions_limiteduse, workspace_actions_other,
-		workspace_actions_reaction, workspace_feats, workspace_feats_class, workspace_feats_race,
+		workspace_actions_reaction, workspace_feats, workspace_feats_class, workspace_feats_classheader, workspace_feats_general,
+		workspace_feats_item, workspace_feats_race,
 	},
 	frontend_functions::ability_score_to_modifier,
 };
@@ -650,22 +651,290 @@ pub fn player_actionsincombat_limiteduse() -> String {
 	return "Nothing".to_string();
 }
 
+struct MockEntry {
+	title: String,
+	content: Vec<String>,
+}
+
+struct MockEntryParent {
+	title: String,
+	source: String,
+	page: u64,
+	content: Vec<MockEntry>,
+}
+
 #[tauri::command]
 pub fn player_feats() -> String {
-	return workspace_feats();
+	let fighter_entries: Vec<MockEntryParent> = vec![
+		MockEntryParent {
+			title: String::from("Fighting Style"),
+			source: String::from("PHB"),
+			page: 91,
+			content: vec![MockEntry {
+				title: String::new(),
+				content: vec![String::from("You gain a Fighting Style feat of your choice, and whenever you gain a Fighter level, you can replace the feat you chose with a different Fighting Style feat.")],
+			}],
+		},
+		MockEntryParent {
+			title: String::from("Second Wind"),
+			source: String::from("PHB"),
+			page: 91,
+			content: vec![MockEntry {
+				title: String::new(),
+				content: vec![
+					String::from(
+						"As a Bonus Action, you can draw upon a limited well of physical and mental stamina and regain 1d10+5 HP.",
+					),
+					String::from("You can use this 3 times per Long Rest, and can regain one expended use when you finish a Short Rest."),
+				],
+			}],
+		},
+	];
+	let wizard_entries: Vec<MockEntryParent> = vec![
+		MockEntryParent {
+			title: String::from("Spellcasting"),
+			source: String::from("PHB"),
+			page: 114,
+			content: vec![MockEntry {title: String::new(), content: vec![String::from("You can cast prepared wizard spells using INT as your spellcasting modifier (Spell DC 15, Spell Attack +7) and wizard spells in your spellbook as rituals if they have the ritual tag. You can use an arcane focus as a spellcasting focus.")]}]
+		},
+		MockEntryParent {
+			title: String::from("Arcane Recovery"),
+			source: String::from("PHB"),
+			page: 115,
+			content: vec![
+				MockEntry {
+					title: String::new(),
+					content: vec![String::from("You have learned to regain some of your magical energy by studying your spellbook. Once per day when you finish a short rest, you can choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your wizard level (rounded up), and none of the slots can be 6th level or higher.")]
+				},
+				MockEntry {
+					title: String::new(),
+					content: vec![String::from("For example, if you’re a 4th-level wizard, you can recover up to two levels worth of spell slots. You can recover either a 2nd-level spell slot or two 1st-level spell slots.")]
+				},
+			]
+		},
+		MockEntryParent {
+			title: String::from("Evocation Savent"),
+			source: String::from("PHB"),
+			page: 117,
+			content: vec![MockEntry {title: String::new(), content: vec![String::from("Beginning when you select this school at 2nd level, the gold and time you must spend to copy an evocation spell into your spellbook is halved.")]}]
+		},
+	];
+
+	let human_entries: Vec<MockEntryParent> = vec![
+		MockEntryParent {
+			title: String::from("Ability Score Increase"),
+			source: String::from("BR"),
+			page: 31,
+			content: vec![MockEntry { title: String::new(), content: vec![String::from("Your ability scores each increase by 1.")] }],
+		},
+		MockEntryParent {
+			title: String::from("Languages"),
+			source: String::from("BR"),
+			page: 31,
+			content: vec![MockEntry {
+				title: String::new(),
+				content: vec![String::from("You can speak, read, and write Common and one extra language.")],
+			}],
+		},
+	];
+
+	let feat_entries: Vec<MockEntryParent> = vec![
+		MockEntryParent { title: String::from("Elemental Adept"), source: String::from("PHB"), page: 203, content: vec![
+			MockEntry {
+				title: String::from("Ability Score Increase."), content: vec![String::from("Int., Wis., or Cha. increased by 1.")]
+			},
+			MockEntry {
+				title: String::from("Energy Mastery."), content: vec![String::from("Choose one of the following damage types: Acid, Cold, Fire, Lightning, or Thunder. Spells you cast ignore Resistance to damage of the chosen type. In addition, when you roll damage for a spell you cast that deals damage of that type, you can treat any 1 on a damage die as a 2.")]
+			},
+			MockEntry {
+				title: String::from("Repeatable."), content: vec![String::from("You can take this feat more than once, but you must choose a different damage type each time for Energy Mastery.")]
+			}
+		] },
+		MockEntryParent { title: String::from("Grappler"), source: String::from("PHB"), page: 204, content: vec![
+			MockEntry {
+				title: String::from("Ability Score Increase."), content: vec![String::from("Increase your Str. or Dex. by 1.")]
+			},
+			MockEntry {
+				title: String::from("Punch and Grab."), content: vec![String::from("On your turn, when you hit a creature with an Unarmed Strike you can use both the Damage and the Grapple option. You can use this benefit only once per turn.")]
+			},
+			MockEntry {
+				title: String::from("Attack Advantage."), content: vec![String::from("You have Advantage on attack rolls against a creature Grappled by you.")]
+			},
+			MockEntry {
+				title: String::from("Fast Wrestler."), content: vec![String::from("You don't have to spend extra movement to move a creature Grappled by you if the creature is your size or smaller.")]
+			},
+		] },
+	];
+
+	let fighter_name = String::from("Fighter");
+	let wizard_name = String::from("Wizard");
+
+	let mut class_content = String::new();
+	class_content += workspace_feats_classheader(&fighter_name).as_str();
+	for entry in fighter_entries {
+		let content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
+		class_content += workspace_feats_item(&entry.title, &entry.source, entry.page, &content).as_str();
+	}
+	class_content += workspace_feats_classheader(&wizard_name).as_str();
+	for entry in wizard_entries {
+		let content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
+		class_content += workspace_feats_item(&entry.title, &entry.source, entry.page, &content).as_str();
+	}
+
+	let mut racial_content = String::new();
+	for entry in human_entries {
+		let content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
+		racial_content += workspace_feats_item(&entry.title, &entry.source, entry.page, &content).as_str();
+	}
+
+	let mut general_content = String::new();
+	for entry in feat_entries {
+		let content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
+		general_content += workspace_feats_item(&entry.title, &entry.source, entry.page, &content).as_str();
+	}
+
+	return workspace_feats(&class_content, &racial_content, &general_content);
 }
 
 #[tauri::command]
 pub fn player_feats_class() -> String {
-	return workspace_feats_class();
+	let fighter_entries: Vec<MockEntryParent> = vec![
+		MockEntryParent {
+			title: String::from("Fighting Style"),
+			source: String::from("PHB"),
+			page: 91,
+			content: vec![MockEntry {
+				title: String::new(),
+				content: vec![String::from("You gain a Fighting Style feat of your choice, and whenever you gain a Fighter level, you can replace the feat you chose with a different Fighting Style feat.")],
+			}],
+		},
+		MockEntryParent {
+			title: String::from("Second Wind"),
+			source: String::from("PHB"),
+			page: 91,
+			content: vec![MockEntry {
+				title: String::new(),
+				content: vec![
+					String::from(
+						"As a Bonus Action, you can draw upon a limited well of physical and mental stamina and regain 1d10+5 HP.",
+					),
+					String::from("You can use this 3 times per Long Rest, and can regain one expended use when you finish a Short Rest."),
+				],
+			}],
+		},
+	];
+	let wizard_entries: Vec<MockEntryParent> = vec![
+		MockEntryParent {
+			title: String::from("Spellcasting"),
+			source: String::from("PHB"),
+			page: 114,
+			content: vec![MockEntry {title: String::new(), content: vec![String::from("You can cast prepared wizard spells using INT as your spellcasting modifier (Spell DC 15, Spell Attack +7) and wizard spells in your spellbook as rituals if they have the ritual tag. You can use an arcane focus as a spellcasting focus.")]}]
+		},
+		MockEntryParent {
+			title: String::from("Arcane Recovery"),
+			source: String::from("PHB"),
+			page: 115,
+			content: vec![
+				MockEntry {
+					title: String::new(),
+					content: vec![String::from("You have learned to regain some of your magical energy by studying your spellbook. Once per day when you finish a short rest, you can choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your wizard level (rounded up), and none of the slots can be 6th level or higher.")]
+				},
+				MockEntry {
+					title: String::new(),
+					content: vec![String::from("For example, if you’re a 4th-level wizard, you can recover up to two levels worth of spell slots. You can recover either a 2nd-level spell slot or two 1st-level spell slots.")]
+				},
+			]
+		},
+		MockEntryParent {
+			title: String::from("Evocation Savent"),
+			source: String::from("PHB"),
+			page: 117,
+			content: vec![MockEntry {title: String::new(), content: vec![String::from("Beginning when you select this school at 2nd level, the gold and time you must spend to copy an evocation spell into your spellbook is halved.")]}]
+		},
+	];
+
+	let fighter_name = String::from("Fighter");
+	let wizard_name = String::from("Wizard");
+
+	let mut content = String::new();
+	content += workspace_feats_classheader(&fighter_name).as_str();
+	for entry in fighter_entries {
+		let entry_content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
+		content += workspace_feats_item(&entry.title, &entry.source, entry.page, &entry_content).as_str();
+	}
+	content += workspace_feats_classheader(&wizard_name).as_str();
+	for entry in wizard_entries {
+		let entry_content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
+		content += workspace_feats_item(&entry.title, &entry.source, entry.page, &entry_content).as_str();
+	}
+
+	return workspace_feats_class(&content);
 }
 
 #[tauri::command]
 pub fn player_feats_race() -> String {
-	return workspace_feats_race();
+	let entries: Vec<MockEntryParent> = vec![
+		MockEntryParent {
+			title: String::from("Ability Score Increase"),
+			source: String::from("BR"),
+			page: 31,
+			content: vec![MockEntry { title: String::new(), content: vec![String::from("Your ability scores each increase by 1.")] }],
+		},
+		MockEntryParent {
+			title: String::from("Languages"),
+			source: String::from("BR"),
+			page: 31,
+			content: vec![MockEntry {
+				title: String::new(),
+				content: vec![String::from("You can speak, read, and write Common and one extra language.")],
+			}],
+		},
+	];
+
+	let mut content = String::new();
+	for entry in entries {
+		let entry_content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
+		content += workspace_feats_item(&entry.title, &entry.source, entry.page, &entry_content).as_str();
+	}
+
+	return workspace_feats_race(&content);
 }
 
 #[tauri::command]
-pub fn player_feats_feat() -> String {
-	return workspace_feats_race();
+pub fn player_feats_general() -> String {
+	let entries: Vec<MockEntryParent> = vec![
+		MockEntryParent { title: String::from("Elemental Adept"), source: String::from("PHB"), page: 203, content: vec![
+			MockEntry {
+				title: String::from("Ability Score Increase."), content: vec![String::from("Int., Wis., or Cha. increased by 1.")]
+			},
+			MockEntry {
+				title: String::from("Energy Mastery."), content: vec![String::from("Choose one of the following damage types: Acid, Cold, Fire, Lightning, or Thunder. Spells you cast ignore Resistance to damage of the chosen type. In addition, when you roll damage for a spell you cast that deals damage of that type, you can treat any 1 on a damage die as a 2.")]
+			},
+			MockEntry {
+				title: String::from("Repeatable."), content: vec![String::from("You can take this feat more than once, but you must choose a different damage type each time for Energy Mastery.")]
+			}
+		] },
+		MockEntryParent { title: String::from("Grappler"), source: String::from("PHB"), page: 204, content: vec![
+			MockEntry {
+				title: String::from("Ability Score Increase."), content: vec![String::from("Increase your Str. or Dex. by 1.")]
+			},
+			MockEntry {
+				title: String::from("Punch and Grab."), content: vec![String::from("On your turn, when you hit a creature with an Unarmed Strike you can use both the Damage and the Grapple option. You can use this benefit only once per turn.")]
+			},
+			MockEntry {
+				title: String::from("Attack Advantage."), content: vec![String::from("You have Advantage on attack rolls against a creature Grappled by you.")]
+			},
+			MockEntry {
+				title: String::from("Fast Wrestler."), content: vec![String::from("You don't have to spend extra movement to move a creature Grappled by you if the creature is your size or smaller.")]
+			},
+		] },
+	];
+
+	let mut content = String::new();
+	for entry in entries {
+		let entry_content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
+		content += workspace_feats_item(&entry.title, &entry.source, entry.page, &entry_content).as_str();
+	}
+
+	return workspace_feats_general(&content);
 }

@@ -30,8 +30,11 @@
 						<div tauri-invoke="player_classes" hx-trigger="load once"></div>
 					</div>
 					<div>
-						<button class="btn" onclick="document.getElementById('charsheet-container').classList.toggle('closedPlanner')">
-						  Toggle Plan
+						<button
+							class="btn"
+							onclick="document.getElementById('charsheet-container').classList.toggle('closedPlanner')"
+						>
+							Toggle Plan
 						</button>
 					</div>
 				</div>
@@ -934,7 +937,10 @@
 						aria-label="Feats"
 						value="feats"
 					/>
-					<div role="tabpanel" class="tab-content h-full w-full bg-base-100 rounded-box p-4">
+					<div
+						role="tabpanel"
+						class="tab-content h-full w-full bg-base-100 rounded-box p-4 overflow-y-scroll scrollbar-none"
+					>
 						<div role="tablist" class="tabs tabs-box shadow-md">
 							<button
 								hx-get="command:player_feats"
@@ -973,7 +979,7 @@
 								Racial Traits
 							</button>
 							<button
-								hx-get="command:player_feats_feat"
+								hx-get="command:player_feats_general"
 								hx-target="#workspace-feats"
 								class="tab flex-auto"
 								role="tab"
@@ -981,9 +987,11 @@
 								aria-selected="false"
 								preload="always"
 							>
-								Feats
+								General Feats
 							</button>
 						</div>
+						<br />
+						<!-- TODO: Cleanup all of feats -->
 						<div id="workspace-feats" class="h-auto" tauri-invoke="player_feats" hx-trigger="load once" role="tabpanel">
 							<div class="w-full h-full flex justify-center items-center">
 								<span class="loading loading-spinner loading-lg"></span>

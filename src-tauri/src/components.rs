@@ -111,22 +111,41 @@ pub fn class_badge(class_higher: &String, class_lower: &String) -> String {
 	return file;
 }
 
-pub fn workspace_feats() -> String {
-	let file = read_to_string("../components/workspace/feats/allfeats.html").unwrap_or(String::from(""));
+pub fn workspace_feats(class_content: &String, racial_content: &String, general_content: &String) -> String {
+	let file = read_to_string("../components/workspace/feats/allfeats.html")
+		.unwrap_or(String::new())
+		.replace("{class_content}", class_content)
+		.replace("{racial_content}", racial_content)
+		.replace("{general_content}", general_content);
 	return file;
 }
 
-pub fn workspace_feats_class() -> String {
-	let file = read_to_string("../components/workspace/feats/classfeats.html").unwrap_or(String::from(""));
+pub fn workspace_feats_class(content: &String) -> String {
+	let file = read_to_string("../components/workspace/feats/classfeats.html").unwrap_or(String::new()).replace("{content}", content);
 	return file;
 }
 
-pub fn workspace_feats_race() -> String {
-	let file = read_to_string("../components/workspace/feats/racefeats.html").unwrap_or(String::from(""));
+pub fn workspace_feats_race(content: &String) -> String {
+	let file = read_to_string("../components/workspace/feats/racialfeats.html").unwrap_or(String::new()).replace("{content}", content);
 	return file;
 }
 
-pub fn workspace_feats_feat() -> String {
-	let file = read_to_string("../components/workspace/feats/feats.html").unwrap_or(String::from(""));
+pub fn workspace_feats_general(content: &String) -> String {
+	let file = read_to_string("../components/workspace/feats/generalfeats.html").unwrap_or(String::new()).replace("{content}", content);
+	return file;
+}
+
+pub fn workspace_feats_item(name: &String, source: &String, page: u64, content: &String) -> String {
+	let file = read_to_string("../components/workspace/feats/item.html")
+		.unwrap_or(String::new())
+		.replace("{name}", name)
+		.replace("{source}", source)
+		.replace("{page}", page.to_string().as_str())
+		.replace("{content}", content);
+	return file;
+}
+
+pub fn workspace_feats_classheader(name: &String) -> String {
+	let file = read_to_string("../components/workspace/feats/classheader.html").unwrap_or(String::new()).replace("{name}", name);
 	return file;
 }
