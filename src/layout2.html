@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,8 +10,8 @@
 		<script type="module" src="/tauri-plugin-htmx.js"></script>
 		<meta name="htmx-config" content='{"selfRequestsOnly":false}' />
 	</head>
-	<body class="w-screen h-screen bg-base-300" hx-ext="tauri">
-		<div id="charsheet-container" class="w-full h-full gap-4 p-4">
+	<body class="w-screen h-screen bg-base-300 scrollbar-none" hx-ext="tauri">
+		<div id="charsheet-container" class="w-full h-full gap-4 p-4 transition-all duration-500">
 			<!-- Title Card -->
 			<div id="title-card" class="w-full h-full overflow-hidden bg-base-100 rounded-box shadow-md">
 				<div class="flex flex-row h-full items-center">
@@ -30,12 +30,7 @@
 						<div tauri-invoke="player_classes" hx-trigger="load once"></div>
 					</div>
 					<div>
-						<button
-							class="btn"
-							onclick="document.getElementById('charsheet-container').classList.toggle('closedPlanner')"
-						>
-							Toggle Plan
-						</button>
+						<button class="btn" onclick="togglePlanner()">Toggle Plan</button>
 					</div>
 				</div>
 			</div>
@@ -47,7 +42,7 @@
 					<div class="stat-value" tauri-invoke="player_hitpoints_current" hx-trigger="load once">0</div>
 					<div class="stat-desc">/ <span tauri-invoke="player_hitpoints_max" hx-trigger="load once">0</span></div>
 					<div class="stat-figure text-primary">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="h-8 w-8 inline-block stroke-current">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-12 h-12 inline-block stroke-current">
 							<path
 								d="M196 16a30 30 0 0 0-30 30v120H46a30 30 0 0 0-30 30v120a30 30 0 0 0 30 30h120v120a30 30 0 0 0 30 30h120a30 30 0 0 0 30-30V346h120a30 30 0 0 0 30-30V196a30 30 0 0 0-30-30H346V46a30 30 0 0 0-30-30H196z"
 							></path>
@@ -58,7 +53,7 @@
 					<div class="stat-title">Armor Class</div>
 					<div class="stat-value" tauri-invoke="player_armorclass" hx-trigger="load once">10</div>
 					<div class="stat-figure text-primary">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="h-8 w-8 inline-block stroke-current">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-12 h-12 inline-block stroke-current">
 							<path
 								d="M256 16c25 24 100 72 150 72v96c0 96-75 240-150 312-75-72-150-216-150-312V88c50 0 125-48 150-72z"
 							></path>
@@ -69,7 +64,7 @@
 					<div class="stat-title">Initiative</div>
 					<div class="stat-value" tauri-invoke="player_initiative" hx-trigger="load once">0</div>
 					<div class="stat-figure text-primary">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-8 h-8 inline-block stroke-current">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-12 h-12 inline-block stroke-current">
 							<path
 								d="M494.25 21.125l-164.53 1.25c-15.463 27.984-33.913 52.67-54.163 75.8 6.012 1.497 12.073 2.995 18.027 4.497l13.69 3.453-8.528 11.254c-50.415 66.503-44.632 142.087-27.36 213.694l-18.17 4.383c-16.838-69.817-23.528-148.192 22.64-217.94-88.07-21.897-183.62-43.434-253.374-89.38-1.77 4.89-1.01 10.187 2.262 17.23 2.427 5.222 6.516 11.043 12.14 17.117 53.162 37.938 130.458 65.946 189.778 75.168l-2.87 18.467c-61.85-9.616-139.642-37.397-196.036-77.227.61 5.953 2.61 12.393 6.387 19.36 6.918 12.758 19.275 26.49 35.7 38.907.84.635 1.697 1.265 2.557 1.893 42.555 22.677 93.696 38.914 140.737 42.164l-1.287 18.644c-61.147-4.222-126.33-28.22-175.672-60.745 1.03 4.922 3.253 10.397 6.885 16.38 7.367 12.14 20.078 25.484 36.23 37.675 39.264 17.838 81.604 32.938 128.62 36.473l-1.4 18.636C150.41 244.06 101.38 224.536 57.41 203.57c3.7 19.623 17.285 34.4 38.926 46.805 26.818 15.373 65.26 25.424 105.822 31.328l7.457 1.086.52 7.517c1.074 15.51 4.568 22.832 9.742 31.672l-16.13 9.438c-4.93-8.426-9.286-18.45-11.292-32.436-32.304-5.087-63.402-12.616-89.365-24.265-6.44 7.75-12.784 15.74-18.994 24.033 16.515 23.758 30.6 43.036 52.78 65.78l27.095-9.467 9.343-3.25 2.718 9.53c15.066 53.052 59.564 93.564 113.595 113.813 48.005 17.99 103.003 19.633 150.063.594-68.673-37.578-114.617-123.708-135.782-199.875l-1.125-4.156 2.376-3.564C348.53 203.283 425.85 148.88 494.25 123.97V21.124z"
 							></path>
@@ -80,7 +75,7 @@
 					<div class="stat-title">Speed</div>
 					<div class="stat-value" tauri-invoke="player_speed_walking" hx-trigger="load once">30</div>
 					<div class="stat-figure text-primary">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-8 h-8 inline-block stroke-current">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-12 h-12 inline-block stroke-current">
 							<path
 								d="M256 54.28c-124.603 0-226 101.398-226 226 0 47.864 14.975 92.293 40.465 128.876l29.79-19.86c-17.188-24.545-28.708-53.362-32.696-84.577H96v-18H66.115c-.07-2.14-.115-4.284-.115-6.44 0-45.378 15.816-86.97 42.236-119.598l17.4 17.4 12.727-12.727-18.133-18.132C152.735 114.057 197.335 92.8 247 90.498v29.22h18V90.5c49.665 2.302 94.265 23.56 126.77 56.725l-18.133 18.132 12.726 12.727 17.4-17.4c26.42 32.63 42.237 74.22 42.237 119.6 0 2.154-.044 4.3-.115 6.437H416v18h28.44c-3.987 31.214-15.507 60.03-32.694 84.575l29.79 19.86C467.025 372.574 482 328.146 482 280.282c0-124.602-101.397-226-226-226zm15.83 66.23a144 160 0 0 1 74.608 100.062l49.966-17.568a160 160 0 0 0-4.3-7.012l-5.135 5.153-30.368-30.29-5.76-5.746 7.85-7.874a160 160 0 0 0-86.862-36.726zm156.15 89.844l-175.332 60.6C240.505 272.618 231 283.155 231 295.72c0 13.7 11.3 25 25 25 6.77 0 12.95-2.764 17.473-7.208L427.98 210.354zm-16.513 32.322l-60.713 40.72a144 160 0 0 1-56.6 108.323h76.057a160 160 0 0 0 39.763-68.572H398.48v-52.515h17.022a160 160 0 0 0-4.035-27.957zM128 421.72v36h256v-36H128z"
 							></path>
@@ -88,23 +83,38 @@
 					</div>
 				</div>
 			</div>
-			<div id="test-grid-item" class="w-full h-full overflow-hidden grid grid-cols-7 gap-2">
-				<div class="col-span-3 bg-base-100 rounded-box shadow-lg h-full w-full p-2 grid grid-cols-4">
-					<div class="w-full h-full grid grid-rows-3">
-						<div class="btn-dimensions-override btn-outline btn-success">HEAL</div>
-						<div class="h-full w-full">
-							<input
-								type="number"
-								placeholder="Amount"
-								class="input-dimensions-override w-full h-full max-w-xs text-center"
-							/>
-						</div>
-						<div class="btn-dimensions-override btn-outline btn-error" aria-label="DAMAGE">DAMAGE</div>
-					</div>
-					<div class="w-full h-full col-span-2"></div>
 
-					<div class="w-full h-full"></div>
+			<!-- Health -->
+			<!-- <div id="health" class="flex flex-row gap-2 p-2 bg-base-100 shadow-lg rounded-box">
+				<div class="grid grid-rows-3 gap-1">
+					<div class="btn-dimensions-override btn-outline btn-success">HEAL</div>
+					<div class="h-full w-full">
+						<input type="number" placeholder="Amount" class="input-dimensions-override w-full h-full text-center" />
+					</div>
+					<div class="btn-dimensions-override btn-outline btn-error" aria-label="DAMAGE">DAMAGE</div>
 				</div>
+				<div class="grid grid-cols-[1fr_auto_1fr_1fr] grid-rows-3">
+					<div class="flex justify-center items-center"><p class="text-md font-bold text-base-content/60">CURRENT</p></div>
+					<div></div>
+					<div class="flex justify-center items-center"><p class="text-md font-bold text-base-content/60">MAX</p></div>
+					<div class="flex justify-center items-center"><p class="text-md font-bold text-base-content/60">TEMP</p></div>
+					<div class="flex justify-center items-center"><p class="text-3xl font-bold" tauri-invoke="player_hitpoints_current" hx-trigger="load once">0</p></div>
+					<div class="flex justify-center items-center"><p class="text-3xl font-bold text-base-content/60">/</p></div>
+					<div class="flex justify-center items-center"><p class="text-3xl font-bold" tauri-invoke="player_hitpoints_max" hx-trigger="load once">0</p></div>
+					<div class="flex justify-center items-center"><p class="text-3xl font-bold" tauri-invoke="player_hitpoints_temp" hx-trigger="load once">--</p></div>
+					<div class="flex justify-center items-center col-span-3"><p class="text-md font-bold">HIT POINTS</p></div>
+				</div>
+			</div> -->
+			<div id="health" class="flex flex-row gap-4 p-4 bg-base-100 shadow-lg rounded-box">
+				<div class="relative rounded-field h-full bg-base-200 flex items-center gap-2 p-2">
+					<span class="text-3xl font-bold" tauri-invoke="player_hitpoints_current" hx-trigger="load once">0</span>
+					<span class="text-xl">/</span>
+					<span class="text-3xl font-bold" tauri-invoke="player_hitpoints_max" hx-trigger="load once">0</span>
+					<div class="absolute w-full bottom-0 left-0">
+						<progress class="progress progress-success" value="250" max="304"></progress>
+					</div>
+				</div>
+				<div class="rounded-field h-full bg-base-200 aspect-square"></div>
 			</div>
 
 			<!-- Abilities -->
@@ -809,102 +819,391 @@
 			</div> -->
 
 			<!-- Workspace -->
-			<div id="workspace" class="w-full h-full rounded-box overflow-hidden">
+			<div id="workspace" class="w-full h-full rounded-box overflow-hidden bg-base-200">
 				<!-- TODO: `shadow-lg` is causing a shadow problem with the border-radius -->
 				<div role="tablist" class="tabs tabs-lifted h-full w-full shadow-lg">
-					<input
-						type="radio"
-						name="workspace"
-						role="tab"
-						class="tab [--tab-bg:oklch(var(--b1))] [--tab-border-color:transparent]"
-						aria-label="Actions"
-						value="actions"
-						checked
-					/>
+					<input type="radio" name="workspace" role="tab" class="tab" aria-label="Actions" value="actions" checked />
 					<div
 						role="tabpanel"
-						class="tab-content h-full w-full bg-base-100 rounded-box p-4 overflow-y-scroll scrollbar-none"
+						class="tab-content h-full w-full bg-base-100 rounded-box overflow-y-scroll scrollbar-none"
 					>
-						<div role="tablist" class="tabs tabs-box shadow-md">
-							<button
-								hx-get="command:player_actions"
-								hx-target="#workspace-actions"
-								hx-trigger="click"
-								class="tab flex-auto"
-								role="tab"
-								aria-controls="tab-content"
-								aria-selected="true"
-								preload="always"
+						<div class="flex flex-col gap-4 p-4">
+							<div role="tablist" class="tabs tabs-box shadow-md">
+								<button
+									hx-get="command:player_actions"
+									hx-target="#workspace-actions"
+									hx-trigger="click"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="true"
+									preload="always"
+								>
+									All
+								</button>
+								<button
+									hx-get="command:player_actions_action"
+									hx-target="#workspace-actions"
+									hx-trigger="click"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="false"
+									preload="always"
+								>
+									Actions
+								</button>
+								<button
+									hx-get="command:player_actions_bonusaction"
+									hx-target="#workspace-actions"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="false"
+									preload="always"
+								>
+									Bonus Actions
+								</button>
+								<button
+									hx-get="command:player_actions_reaction"
+									hx-target="#workspace-actions"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="false"
+									preload="always"
+								>
+									Reactions
+								</button>
+								<button
+									hx-get="command:player_actions_other"
+									hx-target="#workspace-actions"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="false"
+									preload="always"
+								>
+									Other
+								</button>
+								<button
+									hx-get="command:player_actions_limiteduse"
+									hx-target="#workspace-actions"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="false"
+									preload="always"
+								>
+									Limited Use
+								</button>
+							</div>
+							<div
+								id="workspace-actions"
+								class="h-auto"
+								tauri-invoke="player_actions"
+								hx-trigger="load once"
+								role="tabpanel"
 							>
-								All
-							</button>
-							<button
-								hx-get="command:player_actions_action"
-								hx-target="#workspace-actions"
-								hx-trigger="click"
-								class="tab flex-auto"
-								role="tab"
-								aria-controls="tab-content"
-								aria-selected="false"
-								preload="always"
-							>
-								Actions
-							</button>
-							<button
-								hx-get="command:player_actions_bonusaction"
-								hx-target="#workspace-actions"
-								class="tab flex-auto"
-								role="tab"
-								aria-controls="tab-content"
-								aria-selected="false"
-								preload="always"
-							>
-								Bonus Actions
-							</button>
-							<button
-								hx-get="command:player_actions_reaction"
-								hx-target="#workspace-actions"
-								class="tab flex-auto"
-								role="tab"
-								aria-controls="tab-content"
-								aria-selected="false"
-								preload="always"
-							>
-								Reactions
-							</button>
-							<button
-								hx-get="command:player_actions_other"
-								hx-target="#workspace-actions"
-								class="tab flex-auto"
-								role="tab"
-								aria-controls="tab-content"
-								aria-selected="false"
-								preload="always"
-							>
-								Other
-							</button>
-							<button
-								hx-get="command:player_actions_limiteduse"
-								hx-target="#workspace-actions"
-								class="tab flex-auto"
-								role="tab"
-								aria-controls="tab-content"
-								aria-selected="false"
-								preload="always"
-							>
-								Limited Use
-							</button>
+								<div class="w-full h-full flex justify-center items-center">
+									<span class="loading loading-spinner loading-lg"></span>
+								</div>
+							</div>
 						</div>
-						<br />
-						<div
-							id="workspace-actions"
-							class="h-auto"
-							tauri-invoke="player_actions"
-							hx-trigger="load once"
-							role="tabpanel"
-						>
-							<div class="w-full h-full flex justify-center items-center">
-								<span class="loading loading-spinner loading-lg"></span>
+					</div>
+
+					<input type="radio" name="workspace" role="tab" class="tab" aria-label="Equipment" value="equipment" />
+					<div
+						role="tabpanel"
+						class="tab-content h-full w-full bg-base-100 rounded-box overflow-y-scroll scrollbar-none"
+					>
+						<div class="flex flex-col gap-4 p-4">
+							<div
+								id="currency-wrapper"
+								class="rounded-box bg-base-200 flex flex-row gap-1 items-center p-1 h-14 transition-all duration-300"
+							>
+								<div
+									class="rounded-field grow bg-base-100 p-2 overflow-y-hidden grid gap-2 h-full currency-element-grid-template"
+								>
+									<div class="flex flex-row gap-1 justify-center items-center h-8">
+										<p>Platinum</p>
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="3 3 18 18">
+											<path
+												fill="#b5b5b5"
+												d="M9.96 3.3c.17-.19.4-.3.67-.3h2.74c.26 0 .5.11.67.3l5.74 6.65a.9.9 0 0 1 .22.59v2.92a.9.9 0 0 1-.22.6l-5.74 6.63c-.17.2-.4.31-.67.31h-2.74a.88.88 0 0 1-.67-.3l-5.74-6.65a.9.9 0 0 1-.22-.59v-2.92a.9.9 0 0 1 .22-.6z"
+											/>
+											<path
+												fill="#a3a3a3"
+												d="m10.84 18.16-5.1-5.82a1 1 0 0 1-.24-.66v1a1 1 0 0 0 .25.66l5.09 5.82a1 1 0 0 0 .75.34h.82a1 1 0 0 0 .75-.34l5.1-5.82a1 1 0 0 0 .24-.66v-1a1 1 0 0 1-.25.66l-5.09 5.82a1 1 0 0 1-.75.34h-.82a1 1 0 0 1-.75-.34z"
+											/>
+											<path
+												fill="#949494"
+												fill-rule="evenodd"
+												d="M11.59 4.5a1 1 0 0 0-.75.34l-5.1 5.82a1 1 0 0 0-.24.66v1.36a1 1 0 0 0 .25.66l5.09 5.82a1 1 0 0 0 .75.34h.82a1 1 0 0 0 .75-.34l5.1-5.82a1 1 0 0 0 .24-.66v-1.36a1 1 0 0 0-.25-.66l-5.09-5.82a1 1 0 0 0-.75-.34zM10.45 2a1 1 0 0 0-.75.34L3.25 9.72a1 1 0 0 0-.25.66v3.24a1 1 0 0 0 .25.66l6.45 7.38a1 1 0 0 0 .75.34h3.1a1 1 0 0 0 .75-.34l6.45-7.38a1 1 0 0 0 .25-.66v-3.24a1 1 0 0 0-.25-.66L14.3 2.34a1 1 0 0 0-.75-.34z"
+												clip-rule="evenodd"
+											/>
+											<path
+												fill="#dcdcdc"
+												d="M10.3 9.12a1 1 0 0 1 0-1.41l1.24-1.42a1 1 0 0 1 1.41 0l3.67 4.3a1 1 0 0 1 0 1.41l-1.41 1.41a1 1 0 0 1-1.42 0z"
+											/>
+											<path
+												fill="#ccc"
+												d="M8.35 10.24a1.02 1.02 0 0 1 1.42.1l1.26 1.35a.99.99 0 0 1-.1 1.4c-.43.37-1.06.33-1.43-.09l-1.25-1.35a.99.99 0 0 1 .1-1.4zM12 2.47c.34-.26 1.5-.37 2 .03L18 7c.37.37.32.94-.1 1.26s-1.06.29-1.43-.08c0 0-2.74-3.31-3.57-3.99-.37-.3-.7-.15-1-.45-.3-.3-.24-1 .1-1.27z"
+											/>
+											<circle cx="18.6" cy="9.25" r="1" fill="#b5b5b5" />
+										</svg>
+										<p class="font-bold" tauri-invoke="player_inventory_currency_platinum" hx-trigger="load once">0</p>
+									</div>
+									<div class="flex flex-row gap-1 h-8">
+										<button class="btn btn-error btn-sm aspect-square">-</button>
+										<input type="number" placeholder="Amount" class="input input-sm" />
+										<button class="btn btn-success btn-sm aspect-square">+</button>
+									</div>
+								</div>
+								<div
+									class="rounded-field grow bg-base-100 p-2 overflow-y-hidden grid gap-2 h-full currency-element-grid-template"
+								>
+									<div class="flex flex-row gap-1 justify-center items-center h-8">
+										<p>Gold</p>
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="3 3 18 18">
+											<path
+												fill="#dd970e"
+												d="M4 4.5c0-.28.22-.5.5-.5h15c.28 0 .5.22.5.5v1a.5.5 0 0 1-.5.5s-2 2.33-2 6 2 6 2 6c.28 0 .5.22.5.5v1a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5v-1c0-.28.22-.5.5-.5 0 0 2-1.87 2-6s-2-6-2-6a.5.5 0 0 1-.5-.5z"
+											/>
+											<path
+												fill="#eca825"
+												d="M10 12c0-.62-.03-1.21-.1-1.77l4.12 1.02v.13L9.93 13.4c.04-.45.06-.92.06-1.41zM9.8 14.6l4.2-2.1c.06 1.52.34 2.86.71 4H9.35c.18-.58.33-1.21.44-1.9z"
+											/>
+											<path
+												fill="#ffb72c"
+												d="M14.02 11.25 9.9 10.23C9.8 9.22 9.6 8.3 9.35 7.5h5.36a14.56 14.56 0 0 0-.7 3.75z"
+											/>
+											<path fill="#eca825" d="M6.26 5.5h11.55a12.21 12.21 0 0 0-.77 1.5h-10a10.6 10.6 0 0 0-.78-1.5z" />
+											<path
+												fill="#c78727"
+												fill-rule="evenodd"
+												d="M17.8 5.5H6.27A12.43 12.43 0 0 1 8 12a12.43 12.43 0 0 1-1.74 6.5h11.55a12.62 12.62 0 0 1 0-13zM20.5 18s-2-2.33-2-6 2-6 2-6a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5h-17a.5.5 0 0 0-.5.5v2c0 .28.22.5.5.5 0 0 2 1.87 2 6s-2 6-2 6a.5.5 0 0 0-.5.5v2c0 .28.22.5.5.5h17a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5z"
+												clip-rule="evenodd"
+											/>
+											<path
+												fill="#ffb72c"
+												d="M8 4.25c0-.41.34-.75.75-.75h11a.75.75 0 0 1 0 1.5h-11A.75.75 0 0 1 8 4.25z"
+											/>
+											<circle cx="6.75" cy="4.25" r=".75" fill="#eca825" />
+										</svg>
+										<p class="font-bold" tauri-invoke="player_inventory_currency_gold" hx-trigger="load once">0</p>
+									</div>
+									<div class="flex flex-row gap-1 h-8">
+										<button class="btn btn-error btn-sm aspect-square">-</button>
+										<input type="number" placeholder="Amount" class="input input-sm" />
+										<button class="btn btn-success btn-sm aspect-square">+</button>
+									</div>
+								</div>
+								<div
+									class="rounded-field grow bg-base-100 p-2 overflow-y-hidden grid gap-2 h-full currency-element-grid-template"
+								>
+									<div class="flex flex-row gap-1 justify-center items-center h-8">
+										<p>Electrum</p>
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="3 3 18 18">
+											<path
+												fill="#8a9eac"
+												fill-rule="evenodd"
+												d="M7.33 3c-.43 0-.85.14-1.17.42C4.96 4.5 2 7.6 2 12c0 4.4 2.95 7.5 4.16 8.58.32.28.74.42 1.17.42h9.34c.43 0 .85-.14 1.17-.42C19.04 19.5 22 16.4 22 12c0-4.4-2.95-7.5-4.16-8.58A1.73 1.73 0 0 0 16.67 3zM12 17.25a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5z"
+												clip-rule="evenodd"
+											/>
+											<path
+												fill="#6d7f8c"
+												d="M7.04 16.93c.34.38.84.57 1.36.57h7.2c.52 0 1.02-.2 1.36-.57a9.23 9.23 0 0 0 2.52-5.43l.02.5c0 2.61-1.42 4.7-2.54 5.93-.34.38-.84.57-1.36.57H8.4c-.52 0-1.02-.2-1.36-.57C5.92 16.7 4.5 14.6 4.5 12c0-.17 0-.34.02-.5a9.23 9.23 0 0 0 2.52 5.43z"
+											/>
+											<path fill="#6d7f8c" d="M14.72 16.38a2.75 2.75 0 0 1-5.44 0 2.75 2.75 0 1 0 5.45 0z" />
+											<path
+												fill="#7c8d99"
+												fill-rule="evenodd"
+												d="M14.75 16a2.75 2.75 0 1 1-5.5 0 2.75 2.75 0 0 1 5.5 0zM12 17.25a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5z"
+												clip-rule="evenodd"
+											/>
+											<circle cx="12" cy="16" r="1.25" fill="#8697a3" fill-opacity=".5" />
+											<path
+												fill="#7c8d99"
+												fill-rule="evenodd"
+												d="M8.4 5.5c-.52 0-1.02.2-1.36.57C5.92 7.3 4.5 9.4 4.5 12s1.42 4.7 2.54 5.93c.34.38.84.57 1.36.57h7.2c.52 0 1.02-.2 1.36-.57C18.08 16.7 19.5 14.6 19.5 12s-1.42-4.7-2.54-5.93a1.82 1.82 0 0 0-1.36-.57zM7.33 3c-.43 0-.85.14-1.17.42C4.96 4.5 2 7.6 2 12c0 4.4 2.95 7.5 4.16 8.58.32.28.74.42 1.17.42h9.34c.43 0 .85-.14 1.17-.42C19.04 19.5 22 16.4 22 12c0-4.4-2.95-7.5-4.16-8.58A1.73 1.73 0 0 0 16.67 3z"
+												clip-rule="evenodd"
+											/>
+											<path
+												fill="#7c8d99"
+												d="M9.75 9.14c.24.5.03 1.1-.46 1.35l-1.63.86c-.5.25-1.1.04-1.33-.46s-.04-1.1.46-1.35l1.63-.86a.99.99 0 0 1 1.33.46z"
+											/>
+											<path fill="#9fb3c0" d="M10 8c0-1.1.9-2 2-2h3a3 3 0 0 1 3 3v1a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2z" />
+											<path
+												fill="#9fb3c0"
+												fill-rule="evenodd"
+												d="M11.85 3.53c-.5.03-.88.41-.85.86.03.44.46.78.96.76H12a25.1 25.1 0 0 1 .77-.01l1.38-.02s1.05.01 1.48.05c.21.02.4.04.52.07l.16.04a5.91 5.91 0 0 1 1.97 2.07 15.47 15.47 0 0 1 .97 1.63v.03h.01c.2.41.73.6 1.19.42.46-.17.67-.65.48-1.06h-.01l-.02-.04a7.88 7.88 0 0 0-.27-.52c-.19-.33-.46-.8-.8-1.3a7.49 7.49 0 0 0-2.57-2.6 2.5 2.5 0 0 0-.7-.25 7.01 7.01 0 0 0-.75-.1c-.52-.04-1.65-.06-1.65-.06l-1.46.03H11.86z"
+												clip-rule="evenodd"
+											/>
+											<circle cx="9.75" cy="4.25" r=".75" fill="#8a9eac" />
+										</svg>
+										<p class="font-bold" tauri-invoke="player_inventory_currency_electrum" hx-trigger="load once">0</p>
+									</div>
+									<div class="flex flex-row gap-1 h-8">
+										<button class="btn btn-error btn-sm aspect-square">-</button>
+										<input type="number" placeholder="Amount" class="input input-sm" />
+										<button class="btn btn-success btn-sm aspect-square">+</button>
+									</div>
+								</div>
+								<div
+									class="rounded-field grow bg-base-100 p-2 overflow-y-hidden grid gap-2 h-full currency-element-grid-template"
+								>
+									<div class="flex flex-row gap-1 justify-center items-center h-8">
+										<p>Silver</p>
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="3 3 18 18">
+											<path
+												fill="#a59e98"
+												fill-rule="evenodd"
+												d="M2.5 21a.5.5 0 0 1-.44-.75l9.51-17a.49.49 0 0 1 .86 0l9.5 17a.5.5 0 0 1-.42.75zm9.5-5a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5z"
+												clip-rule="evenodd"
+											/>
+											<path
+												fill="#99938d"
+												fill-rule="evenodd"
+												d="M2.06 20.25a.5.5 0 0 0 .43.75h19.02a.5.5 0 0 0 .42-.75l-9.5-17a.49.49 0 0 0-.86 0zm10.16-12.3a.25.25 0 0 0-.44 0l-5.7 10.18c-.08.16.04.37.23.37h11.38c.2 0 .31-.2.22-.37z"
+												clip-rule="evenodd"
+											/>
+											<path
+												fill="#857d76"
+												d="M12 17.25a2.5 2.5 0 0 0 2.45-3 2.75 2.75 0 1 1-4.9 0 2.51 2.51 0 0 0 2.45 3z"
+											/>
+											<circle cx="12" cy="14.75" r="1.25" fill="#a59e98" fill-opacity=".5" />
+											<path
+												fill="#b5ada7"
+												d="M11.78 7.95c.1-.18.34-.18.44 0l5.7 10.18c.08.16-.04.37-.23.37h-.13l-5.34-9.55a.25.25 0 0 0-.44 0L6.44 18.5h-.13c-.2 0-.31-.2-.22-.37z"
+											/>
+											<path
+												fill="#b5ada7"
+												d="M11.67 11.36c-.23-.42.15-1.89.57-2.12.14-.08.72.84.96 1.26l.52 1.14a.88.88 0 0 1-1.52.86z"
+											/>
+											<path
+												fill="#cec6bf"
+												d="M11.43 5.62c-.24-.42.15-1.88.57-2.12.14-.08.72.84.95 1.26l3.07 5.45a.87.87 0 1 1-1.52.86z"
+											/>
+										</svg>
+										<p class="font-bold" tauri-invoke="player_inventory_currency_silver" hx-trigger="load once">0</p>
+									</div>
+									<div class="flex flex-row gap-1 h-8">
+										<button class="btn btn-error btn-sm aspect-square">-</button>
+										<input type="number" placeholder="Amount" class="input input-sm" />
+										<button class="btn btn-success btn-sm aspect-square">+</button>
+									</div>
+								</div>
+								<div
+									class="rounded-field grow bg-base-100 p-2 overflow-y-hidden grid gap-2 h-full currency-element-grid-template"
+								>
+									<div class="flex flex-row gap-1 justify-center items-center h-8">
+										<p>Copper</p>
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="3 3 18 18">
+											<path
+												fill="#ab6e57"
+												fill-rule="evenodd"
+												d="M6.414 3a1 1 0 0 0-.707.293L3.293 5.707A1 1 0 0 0 3 6.414v11.172a1 1 0 0 0 .293.707l2.414 2.414a1 1 0 0 0 .707.293h11.172a1 1 0 0 0 .707-.293l2.414-2.414a1 1 0 0 0 .293-.707V6.414a1 1 0 0 0-.293-.707l-2.414-2.414A1 1 0 0 0 17.586 3zM12 13.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"
+												clip-rule="evenodd"
+											/>
+											<path
+												fill="#c2866f"
+												d="M10 9a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-1a3 3 0 0 0-5-2.236z"
+											/>
+											<path
+												fill="#9f6854"
+												d="m17.707 7.95-.657-.657A1 1 0 0 0 16.343 7H7.657a1 1 0 0 0-.707.293l-.657.657A1 1 0 0 0 6 8.657v-1a1 1 0 0 1 .293-.707l.657-.657A1 1 0 0 1 7.657 6h8.686a1 1 0 0 1 .707.293l.657.657a1 1 0 0 1 .293.707v1a1 1 0 0 0-.293-.707zM14.959 12.5a3 3 0 0 1-5.918 0 3 3 0 1 0 5.917 0z"
+											/>
+											<g fill="#c2866f">
+												<path
+													fill-rule="evenodd"
+													d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm-3 1.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"
+													clip-rule="evenodd"
+												/>
+												<circle cx="12" cy="12" r="1.5" fill-opacity=".5" />
+												<path
+													fill-rule="evenodd"
+													d="M6.293 6.95A1 1 0 0 0 6 7.657v8.686a1 1 0 0 0 .293.707l.657.657a1 1 0 0 0 .707.293h8.686a1 1 0 0 0 .707-.293l.657-.657a1 1 0 0 0 .293-.707V7.657a1 1 0 0 0-.293-.707l-.657-.657A1 1 0 0 0 16.343 6H7.657a1 1 0 0 0-.707.293zM6.414 3a1 1 0 0 0-.707.293L3.293 5.707A1 1 0 0 0 3 6.414v11.172a1 1 0 0 0 .293.707l2.414 2.414a1 1 0 0 0 .707.293h11.172a1 1 0 0 0 .707-.293l2.414-2.414a1 1 0 0 0 .293-.707V6.414a1 1 0 0 0-.293-.707l-2.414-2.414A1 1 0 0 0 17.586 3z"
+													clip-rule="evenodd"
+												/>
+											</g>
+											<path
+												fill="#e6a58c"
+												fill-rule="evenodd"
+												d="M10.125 4.5c0-.483.392-.875.875-.875h6.086c.497 0 .974.198 1.326.55l1.414 1.413c.352.352.549.829.549 1.326V10.5a.875.875 0 0 1-1.75 0V6.914a.125.125 0 0 0-.037-.088l-1.414-1.414a.125.125 0 0 0-.088-.037H11a.875.875 0 0 1-.875-.875z"
+												clip-rule="evenodd"
+											/>
+											<circle cx="8.375" cy="4.475" r=".875" fill="#e5a48c" />
+										</svg>
+										<p class="font-bold" tauri-invoke="player_inventory_currency_copper" hx-trigger="load once">0</p>
+									</div>
+									<div class="flex flex-row gap-1 h-8">
+										<button class="btn btn-error btn-sm aspect-square">-</button>
+										<input type="number" placeholder="Amount" class="input input-sm" />
+										<button class="btn btn-success btn-sm aspect-square">+</button>
+									</div>
+								</div>
+								<button class="btn p-2 h-full" onclick="toggleCurrency();">\/</button>
+							</div>
+							<div role="tablist" class="tabs tabs-box shadow-md">
+								<button
+									hx-get="command:player_inventory"
+									hx-target="#workspace-inventory"
+									hx-trigger="click"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="true"
+									preload="always"
+								>
+									All
+								</button>
+								<button
+									hx-get="command:player_inventory_equipment"
+									hx-target="#workspace-inventory"
+									hx-trigger="click"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="false"
+									preload="always"
+								>
+									Equipment
+								</button>
+								<button
+									hx-get="command:player_inventory_attunement"
+									hx-target="#workspace-inventory"
+									hx-trigger="click"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="false"
+									preload="always"
+								>
+									Attunement
+								</button>
+								<button
+									hx-get="command:player_inventory_other"
+									hx-target="#workspace-inventory"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="false"
+									preload="always"
+								>
+									Other Possessions
+								</button>
+							</div>
+							<div
+								id="workspace-inventory"
+								class="h-auto"
+								tauri-invoke="player_inventory"
+								hx-trigger="load once"
+								role="tabpanel"
+							>
+								<div class="w-full h-full flex justify-center items-center">
+									<span class="loading loading-spinner loading-lg"></span>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -913,104 +1212,108 @@
 						type="radio"
 						name="workspace"
 						role="tab"
-						class="tab [--tab-bg:oklch(var(--b1))] [--tab-border-color:transparent]"
-						aria-label="Equipment"
-						value="equipment"
-					/>
-					<div role="tabpanel" class="tab-content h-full w-full bg-base-100 rounded-box p-4">Tab content 2</div>
-
-					<input
-						type="radio"
-						name="workspace"
-						role="tab"
-						class="tab [--tab-bg:oklch(var(--b1))] [--tab-border-color:transparent]"
+						class="tab"
 						aria-label="Proficiencies"
 						value="proficiencies"
 					/>
-					<div role="tabpanel" class="tab-content h-full w-full bg-base-100 rounded-box p-4">Tab content 3</div>
+					<div role="tabpanel" class="tab-content h-full w-full bg-base-100 rounded-box">
+						<div class="flex flex-col gap-4 p-4">Tab Content</div>
+					</div>
 
-					<input
-						type="radio"
-						name="workspace"
-						role="tab"
-						class="tab [--tab-bg:oklch(var(--b1))] [--tab-border-color:transparent]"
-						aria-label="Feats"
-						value="feats"
-					/>
+					<input type="radio" name="workspace" role="tab" class="tab" aria-label="Feats" value="feats" />
 					<div
 						role="tabpanel"
-						class="tab-content h-full w-full bg-base-100 rounded-box p-4 overflow-y-scroll scrollbar-none"
+						class="tab-content h-full w-full bg-base-100 rounded-box overflow-y-scroll scrollbar-none"
 					>
-						<div role="tablist" class="tabs tabs-box shadow-md">
-							<button
-								hx-get="command:player_feats"
-								hx-target="#workspace-feats"
-								hx-trigger="click"
-								class="tab flex-auto"
-								role="tab"
-								aria-controls="tab-content"
-								aria-selected="true"
-								preload="always"
+						<div class="flex flex-col gap-4 p-4">
+							<div role="tablist" class="tabs tabs-box shadow-md">
+								<button
+									hx-get="command:player_feats"
+									hx-target="#workspace-feats"
+									hx-trigger="click"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="true"
+									preload="always"
+								>
+									All
+								</button>
+								<button
+									hx-get="command:player_feats_class"
+									hx-target="#workspace-feats"
+									hx-trigger="click"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="false"
+									preload="always"
+								>
+									Class Feats
+								</button>
+								<button
+									hx-get="command:player_feats_race"
+									hx-target="#workspace-feats"
+									hx-trigger="click"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="false"
+									preload="always"
+								>
+									Racial Traits
+								</button>
+								<button
+									hx-get="command:player_feats_general"
+									hx-target="#workspace-feats"
+									class="tab flex-auto"
+									role="tab"
+									aria-controls="tab-content"
+									aria-selected="false"
+									preload="always"
+								>
+									General Feats
+								</button>
+							</div>
+							<!-- TODO: Cleanup all of feats -->
+							<div
+								id="workspace-feats"
+								class="h-auto"
+								tauri-invoke="player_feats"
+								hx-trigger="load once"
+								role="tabpanel"
 							>
-								All
-							</button>
-							<button
-								hx-get="command:player_feats_class"
-								hx-target="#workspace-feats"
-								hx-trigger="click"
-								class="tab flex-auto"
-								role="tab"
-								aria-controls="tab-content"
-								aria-selected="false"
-								preload="always"
-							>
-								Class Feats
-							</button>
-							<button
-								hx-get="command:player_feats_race"
-								hx-target="#workspace-feats"
-								hx-trigger="click"
-								class="tab flex-auto"
-								role="tab"
-								aria-controls="tab-content"
-								aria-selected="false"
-								preload="always"
-							>
-								Racial Traits
-							</button>
-							<button
-								hx-get="command:player_feats_general"
-								hx-target="#workspace-feats"
-								class="tab flex-auto"
-								role="tab"
-								aria-controls="tab-content"
-								aria-selected="false"
-								preload="always"
-							>
-								General Feats
-							</button>
-						</div>
-						<br />
-						<!-- TODO: Cleanup all of feats -->
-						<div id="workspace-feats" class="h-auto" tauri-invoke="player_feats" hx-trigger="load once" role="tabpanel">
-							<div class="w-full h-full flex justify-center items-center">
-								<span class="loading loading-spinner loading-lg"></span>
+								<div class="w-full h-full flex justify-center items-center">
+									<span class="loading loading-spinner loading-lg"></span>
+								</div>
 							</div>
 						</div>
 					</div>
 
-					<input
-						type="radio"
-						name="workspace"
-						role="tab"
-						class="tab [--tab-bg:oklch(var(--b1))] [--tab-border-color:transparent]"
-						aria-label="Bio"
-						value="bio"
-					/>
-					<div role="tabpanel" class="tab-content h-full w-full bg-base-100 rounded-box p-4">Tab content 5</div>
+					<input type="radio" name="workspace" role="tab" class="tab" aria-label="Bio" value="bio" />
+					<div role="tabpanel" class="tab-content h-full w-full bg-base-100 rounded-box">
+						<div class="flex flex-col gap-4 p-4">Tab Content</div>
+					</div>
 				</div>
 			</div>
 			<div id="planner" class="w-full h-full rounded-box bg-base-100 shadow-lg"></div>
 		</div>
+		<script>
+			const charsheetElement = document.getElementById("charsheet-container");
+			const currencyElement = document.getElementById("currency-wrapper");
+			const currencyModal = document.getElementById("currency-modal");
+
+			function togglePlanner() {
+				charsheetElement.classList.toggle("closedPlanner");
+			}
+
+			function toggleCurrency() {
+				currencyElement.classList.toggle("expanded-currency");
+			}
+
+			function openCurrencyModal() {
+				currencyModal.showModal();
+			}
+		</script>
 	</body>
 </html>

@@ -103,6 +103,16 @@ pub fn run() {
 			player_feats_class,
 			player_feats_race,
 			player_feats_general,
+			player_inventory,
+			player_inventory_equipment,
+			player_inventory_attunement,
+			player_inventory_other,
+			player_inventory_currency,
+			player_inventory_currency_platinum,
+			player_inventory_currency_gold,
+			player_inventory_currency_electrum,
+			player_inventory_currency_silver,
+			player_inventory_currency_copper,
 			gamer,
 			fortnite
 		])

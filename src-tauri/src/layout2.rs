@@ -938,3 +938,53 @@ pub fn player_feats_general() -> String {
 
 	return workspace_feats_general(&content);
 }
+
+#[tauri::command]
+pub fn player_inventory() -> String {
+	return String::new();
+}
+
+#[tauri::command]
+pub fn player_inventory_equipment() -> String {
+	return String::new();
+}
+
+#[tauri::command]
+pub fn player_inventory_attunement() -> String {
+	return String::new();
+}
+
+#[tauri::command]
+pub fn player_inventory_other() -> String {
+	return String::new();
+}
+
+#[tauri::command]
+pub fn player_inventory_currency() -> String {
+	return 232.to_string();
+}
+
+#[tauri::command]
+pub fn player_inventory_currency_platinum() -> String {
+	return 20.to_string();
+}
+
+#[tauri::command]
+pub fn player_inventory_currency_gold() -> String {
+	return 20.to_string();
+}
+
+#[tauri::command]
+pub fn player_inventory_currency_electrum() -> String {
+	return 20.to_string();
+}
+
+#[tauri::command]
+pub fn player_inventory_currency_silver() -> String {
+	return 20.to_string();
+}
+
+#[tauri::command]
+pub fn player_inventory_currency_copper() -> String {
+	return 20.to_string();
+}
