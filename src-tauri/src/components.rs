@@ -26,13 +26,13 @@ pub fn workspace_actions_item(
 ) -> String {
 	let file = read_to_string("../components/workspace/actions/item.html")
 		.unwrap_or("".to_string())
-		.replace("{name}", &name.as_str())
-		.replace("{type}", &action_type.as_str())
-		.replace("{range}", &range.as_str())
-		.replace("{hitdc}", &hitdc.as_str())
-		.replace("{damage}", &damage.as_str())
-		.replace("{damage_type}", &damage_type.as_str())
-		.replace("{notes}", &notes.as_str());
+		.replace("{name}", name)
+		.replace("{type}", action_type)
+		.replace("{range}", range)
+		.replace("{hitdc}", hitdc)
+		.replace("{damage}", damage)
+		.replace("{damage_type}", damage_type)
+		.replace("{notes}", notes);
 	return file;
 }
 
@@ -135,7 +135,7 @@ pub fn workspace_feats_general(content: &String) -> String {
 	return file;
 }
 
-pub fn workspace_feats_item(name: &String, source: &String, page: u64, content: &String) -> String {
+pub fn workspace_feats_item(name: &String, source: &String, page: &u64, content: &String) -> String {
 	let file = read_to_string("../components/workspace/feats/item.html")
 		.unwrap_or(String::new())
 		.replace("{name}", name)
@@ -147,5 +147,17 @@ pub fn workspace_feats_item(name: &String, source: &String, page: u64, content: 
 
 pub fn workspace_feats_classheader(name: &String) -> String {
 	let file = read_to_string("../components/workspace/feats/classheader.html").unwrap_or(String::new()).replace("{name}", name);
+	return file;
+}
+
+pub fn workspace_inventory(active: &bool, name: &String, num_of_items: &u64, weight: &u64, content: &String) -> String {
+	let active_element = if *active { String::from("<input type='checkbox' class='checkbox' checked />") } else { String::new() };
+	let file = read_to_string("../components/workspace/inventory/allinventory.html")
+		.unwrap_or(String::new())
+		.replace("{active}", &active_element)
+		.replace("{name}", name)
+		.replace("{num_of_items}", num_of_items.to_string().as_str())
+		.replace("{weight}", weight.to_string().as_str())
+		.replace("{content}", content);
 	return file;
 }

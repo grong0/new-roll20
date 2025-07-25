@@ -1137,9 +1137,6 @@
       gap: calc(0.25rem * 4);
     }
   }
-  .m-0 {
-    margin: calc(var(--spacing) * 0);
-  }
   .filter {
     display: flex;
     flex-wrap: wrap;
@@ -1905,6 +1902,9 @@
   }
   .justify-center {
     justify-content: center;
+  }
+  .justify-start {
+    justify-content: flex-start;
   }
   .gap-1 {
     gap: calc(var(--spacing) * 1);

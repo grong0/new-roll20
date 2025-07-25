@@ -773,24 +773,24 @@ pub fn player_feats() -> String {
 	class_content += workspace_feats_classheader(&fighter_name).as_str();
 	for entry in fighter_entries {
 		let content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
-		class_content += workspace_feats_item(&entry.title, &entry.source, entry.page, &content).as_str();
+		class_content += workspace_feats_item(&entry.title, &entry.source, &entry.page, &content).as_str();
 	}
 	class_content += workspace_feats_classheader(&wizard_name).as_str();
 	for entry in wizard_entries {
 		let content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
-		class_content += workspace_feats_item(&entry.title, &entry.source, entry.page, &content).as_str();
+		class_content += workspace_feats_item(&entry.title, &entry.source, &entry.page, &content).as_str();
 	}
 
 	let mut racial_content = String::new();
 	for entry in human_entries {
 		let content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
-		racial_content += workspace_feats_item(&entry.title, &entry.source, entry.page, &content).as_str();
+		racial_content += workspace_feats_item(&entry.title, &entry.source, &entry.page, &content).as_str();
 	}
 
 	let mut general_content = String::new();
 	for entry in feat_entries {
 		let content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
-		general_content += workspace_feats_item(&entry.title, &entry.source, entry.page, &content).as_str();
+		general_content += workspace_feats_item(&entry.title, &entry.source, &entry.page, &content).as_str();
 	}
 
 	return workspace_feats(&class_content, &racial_content, &general_content);
@@ -860,12 +860,12 @@ pub fn player_feats_class() -> String {
 	content += workspace_feats_classheader(&fighter_name).as_str();
 	for entry in fighter_entries {
 		let entry_content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
-		content += workspace_feats_item(&entry.title, &entry.source, entry.page, &entry_content).as_str();
+		content += workspace_feats_item(&entry.title, &entry.source, &entry.page, &entry_content).as_str();
 	}
 	content += workspace_feats_classheader(&wizard_name).as_str();
 	for entry in wizard_entries {
 		let entry_content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
-		content += workspace_feats_item(&entry.title, &entry.source, entry.page, &entry_content).as_str();
+		content += workspace_feats_item(&entry.title, &entry.source, &entry.page, &entry_content).as_str();
 	}
 
 	return workspace_feats_class(&content);
@@ -894,7 +894,7 @@ pub fn player_feats_race() -> String {
 	let mut content = String::new();
 	for entry in entries {
 		let entry_content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
-		content += workspace_feats_item(&entry.title, &entry.source, entry.page, &entry_content).as_str();
+		content += workspace_feats_item(&entry.title, &entry.source, &entry.page, &entry_content).as_str();
 	}
 
 	return workspace_feats_race(&content);
@@ -933,7 +933,7 @@ pub fn player_feats_general() -> String {
 	let mut content = String::new();
 	for entry in entries {
 		let entry_content = entry.content.iter().map(|i| format!("<h4>{}</h4>{}", i.title, i.content.join(""))).collect();
-		content += workspace_feats_item(&entry.title, &entry.source, entry.page, &entry_content).as_str();
+		content += workspace_feats_item(&entry.title, &entry.source, &entry.page, &entry_content).as_str();
 	}
 
 	return workspace_feats_general(&content);

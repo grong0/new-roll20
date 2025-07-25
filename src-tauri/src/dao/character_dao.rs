@@ -139,7 +139,7 @@ pub struct Character {
 	exhastion_level: u64,
 	attacks: Vec<Attack>,
 	currency: Currency,
-	equipment: Vec<String>,           // TODO: actually implement
+	inventory: Vec<String>,           // TODO: actually implement
 	tool_proficiencies: Vec<String>,  // TODO: actually implement
 	other_proficiencies: Vec<String>, // TODO: actually implement
 	feats_and_traits: Vec<String>,    // a list of feat and traits' keys

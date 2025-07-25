@@ -85,7 +85,7 @@
 			</div>
 
 			<!-- Health -->
-			<!-- <div id="health" class="flex flex-row gap-2 p-2 bg-base-100 shadow-lg rounded-box">
+			<div id="health" class="flex flex-row gap-2 p-2 bg-base-100 shadow-lg rounded-box">
 				<div class="grid grid-rows-3 gap-1">
 					<div class="btn-dimensions-override btn-outline btn-success">HEAL</div>
 					<div class="h-full w-full">
@@ -94,18 +94,26 @@
 					<div class="btn-dimensions-override btn-outline btn-error" aria-label="DAMAGE">DAMAGE</div>
 				</div>
 				<div class="grid grid-cols-[1fr_auto_1fr_1fr] grid-rows-3">
-					<div class="flex justify-center items-center"><p class="text-md font-bold text-base-content/60">CURRENT</p></div>
+					<div class="flex justify-center items-center">
+						<p class="text-md font-bold text-base-content/60">CURRENT</p>
+					</div>
 					<div></div>
 					<div class="flex justify-center items-center"><p class="text-md font-bold text-base-content/60">MAX</p></div>
 					<div class="flex justify-center items-center"><p class="text-md font-bold text-base-content/60">TEMP</p></div>
-					<div class="flex justify-center items-center"><p class="text-3xl font-bold" tauri-invoke="player_hitpoints_current" hx-trigger="load once">0</p></div>
+					<div class="flex justify-center items-center">
+						<p class="text-3xl font-bold" tauri-invoke="player_hitpoints_current" hx-trigger="load once">0</p>
+					</div>
 					<div class="flex justify-center items-center"><p class="text-3xl font-bold text-base-content/60">/</p></div>
-					<div class="flex justify-center items-center"><p class="text-3xl font-bold" tauri-invoke="player_hitpoints_max" hx-trigger="load once">0</p></div>
-					<div class="flex justify-center items-center"><p class="text-3xl font-bold" tauri-invoke="player_hitpoints_temp" hx-trigger="load once">--</p></div>
+					<div class="flex justify-center items-center">
+						<p class="text-3xl font-bold" tauri-invoke="player_hitpoints_max" hx-trigger="load once">0</p>
+					</div>
+					<div class="flex justify-center items-center">
+						<p class="text-3xl font-bold" tauri-invoke="player_hitpoints_temp" hx-trigger="load once">--</p>
+					</div>
 					<div class="flex justify-center items-center col-span-3"><p class="text-md font-bold">HIT POINTS</p></div>
 				</div>
-			</div> -->
-			<div id="health" class="flex flex-row gap-4 p-4 bg-base-100 shadow-lg rounded-box">
+			</div>
+			<!-- <div id="health" class="flex flex-row gap-4 p-4 bg-base-100 shadow-lg rounded-box">
 				<div class="relative rounded-field h-full bg-base-200 flex items-center gap-2 p-2">
 					<span class="text-3xl font-bold" tauri-invoke="player_hitpoints_current" hx-trigger="load once">0</span>
 					<span class="text-xl">/</span>
@@ -115,7 +123,7 @@
 					</div>
 				</div>
 				<div class="rounded-field h-full bg-base-200 aspect-square"></div>
-			</div>
+			</div> -->
 
 			<!-- Abilities -->
 			<div id="str" class="relative flex flex-col justify-center items-center w-full h-auto aspect-square">
@@ -819,10 +827,10 @@
 			</div> -->
 
 			<!-- Workspace -->
-			<div id="workspace" class="w-full h-full rounded-box overflow-hidden bg-base-200">
+			<div id="workspace" class="w-full h-full rounded-box overflow-hidden bg-base-200 shadow-lg">
 				<!-- TODO: `shadow-lg` is causing a shadow problem with the border-radius -->
 				<div role="tablist" class="tabs tabs-lifted h-full w-full shadow-lg">
-					<input type="radio" name="workspace" role="tab" class="tab" aria-label="Actions" value="actions" checked />
+					<input type="radio" name="workspace" role="tab" class="tab" aria-label="Actions" value="actions" />
 					<div
 						role="tabpanel"
 						class="tab-content h-full w-full bg-base-100 rounded-box overflow-y-scroll scrollbar-none"
@@ -912,7 +920,15 @@
 						</div>
 					</div>
 
-					<input type="radio" name="workspace" role="tab" class="tab" aria-label="Equipment" value="equipment" />
+					<input
+						type="radio"
+						name="workspace"
+						role="tab"
+						class="tab"
+						aria-label="Inventory"
+						value="inventory"
+						checked
+					/>
 					<div
 						role="tabpanel"
 						class="tab-content h-full w-full bg-base-100 rounded-box overflow-y-scroll scrollbar-none"
@@ -1144,6 +1160,9 @@
 									</div>
 								</div>
 								<button class="btn p-2 h-full" onclick="toggleCurrency();">\/</button>
+							</div>
+							<div>
+								<input type="text" placeholder="Search Inventory" class="input w-full" />
 							</div>
 							<div role="tablist" class="tabs tabs-box shadow-md">
 								<button
