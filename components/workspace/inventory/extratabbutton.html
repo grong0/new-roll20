@@ -1,0 +1,13 @@
+<button
+	hx-post="command:player_inventory_containers"
+	hx-target="#workspace-inventory"
+	hx-trigger="click"
+	hx-include="find [name='containerId']"
+	class="tab flex-auto"
+	role="tab"
+	aria-controls="tab-content"
+	aria-selected="false"
+>
+	<input type="hidden" value="{container_id}" name="containerId" />
+	{label}
+</button>

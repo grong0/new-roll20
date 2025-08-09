@@ -2,6 +2,15 @@
 @plugin "daisyui";
 @plugin "@tailwindcss/typography";
 
+@theme {
+	--color-common-500: var(--text-base-content);
+	--color-uncommon-500: #5cbe3e;
+	--color-rare-500: #5991dc;
+	--color-veryrare-500: #b55dff;
+	--color-legendary-500: #f2a546;
+	--color-artifact-500: #b78b76;
+}
+
 /* width */
 /* ::-webkit-scrollbar {
 	width: 10px;
@@ -39,11 +48,8 @@
 /* TODO: The gap doesn't go away after hiding the planner; eventually remove gap in favor for padding within the element */
 #charsheet-container {
 	display: grid;
-	grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+	grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
 	grid-template-columns: 4fr auto 3fr 10fr;
-}
-#charsheet-container.closedPlanner {
-	grid-template-columns: 0fr auto 3fr 10fr;
 }
 
 /* title card */
@@ -130,18 +136,17 @@
 	grid-column-start: 4;
 	grid-column-end: 5;
 }
-#planner {
-	grid-row-start: 1;
-	grid-row-end: 8;
-	grid-column-start: 1;
-	grid-column-end: 2;
-}
 
 #health {
 	grid-row-start: 2;
 	grid-row-end: 3;
 	grid-column-start: 4;
 	grid-column-end: 5;
+}
+
+#planner.closed {
+	width: 0px;
+	margin-right: 0em;
 }
 
 .rounded-box-tablerow td:first-child {
@@ -199,4 +204,9 @@
 .currency-element-grid-template {
 	grid-template-columns: 100%;
 	grid-template-rows: 1fr 1fr;
+}
+
+.rounded-field-container {
+	--box-radius: calc(var(--radius-field) + var(--radius-field) + var(--radius-field));
+	border-radius: calc(var(--radius-field) + min(.25rem, var(--box-radius)));
 }

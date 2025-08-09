@@ -3,7 +3,8 @@ use crate::{
 		class_badge, skills_status_expert, skills_status_proficient, skills_status_untrained, workspace_actions, workspace_actions_action,
 		workspace_actions_bonusaction, workspace_actions_item, workspace_actions_limiteduse, workspace_actions_other,
 		workspace_actions_reaction, workspace_feats, workspace_feats_class, workspace_feats_classheader, workspace_feats_general,
-		workspace_feats_item, workspace_feats_race,
+		workspace_feats_item, workspace_feats_race, workspace_inventory_container, workspace_inventory_equipment,
+		workspace_inventory_extratabbutton, workspace_inventory_item,
 	},
 	frontend_functions::ability_score_to_modifier,
 };
@@ -939,14 +940,252 @@ pub fn player_feats_general() -> String {
 	return workspace_feats_general(&content);
 }
 
+pub enum Active {
+	ACTIVE,
+	INACTIVE,
+	NONE,
+}
+
+pub enum Rarity {
+	COMMON,
+	UNCOMMON,
+	RARE,
+	VERYRARE,
+	LEGENDARY,
+	ARTIFACT,
+}
+impl Rarity {
+	pub fn to_string(&self) -> String {
+		return match *self {
+			Rarity::UNCOMMON => String::from("uncommon"),
+			Rarity::RARE => String::from("rare"),
+			Rarity::VERYRARE => String::from("veryrare"),
+			Rarity::LEGENDARY => String::from("legendary"),
+			Rarity::ARTIFACT => String::from("artifact"),
+			_ => String::from("common"),
+		};
+	}
+}
+
+struct TestItem {
+	active: Active,
+	rarity: Rarity,
+	name: String,
+	tags: Vec<String>,
+	weight: u64,
+	quantity: u64,
+	cost: f64,
+	notes: String,
+}
+
 #[tauri::command]
 pub fn player_inventory() -> String {
-	return String::new();
+	return String::from("nothing");
 }
 
 #[tauri::command]
 pub fn player_inventory_equipment() -> String {
-	return String::new();
+	let items: Vec<TestItem> = vec![
+		TestItem {
+			active: Active::ACTIVE,
+			rarity: Rarity::UNCOMMON,
+			name: String::from("Periapt of Health"),
+			tags: vec![String::from("Wondrous item")],
+			weight: 0,
+			quantity: 1,
+			cost: 0f64,
+			notes: String::from("1 Charge"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::RARE,
+			name: String::from("Clothes, Common"),
+			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+			weight: 3,
+			quantity: 1,
+			cost: 0.5,
+			notes: String::from("Social, Outerwear"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::VERYRARE,
+			name: String::from("Emblem"),
+			tags: vec![String::from("Gear"), String::from("Holy Symbol")],
+			weight: 0,
+			quantity: 1,
+			cost: 5f64,
+			notes: String::from("Utility"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::LEGENDARY,
+			name: String::from("Orb"),
+			tags: vec![String::from("Gear"), String::from("Arcane Focus")],
+			weight: 3,
+			quantity: 1,
+			cost: 20f64,
+			notes: String::from("Utility"),
+		},
+		TestItem {
+			active: Active::ACTIVE,
+			rarity: Rarity::ARTIFACT,
+			name: String::from("Quaterstaff"),
+			tags: vec![String::from("Quaterstaff")],
+			weight: 4,
+			quantity: 1,
+			cost: 0.2,
+			notes: String::from("Simple, Versatile, Topple"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::COMMON,
+			name: String::from("Spellbook"),
+			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+			weight: 3,
+			quantity: 1,
+			cost: 50f64,
+			notes: String::from("Utility"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::COMMON,
+			name: String::from("Vestments"),
+			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+			weight: 0,
+			quantity: 1,
+			cost: 0f64,
+			notes: String::from("Social, Utility"),
+		},
+	];
+
+	let mut content = String::new();
+	for item in &items {
+		content += workspace_inventory_item(
+			&item.active,
+			&item.rarity,
+			&item.name,
+			&item.tags,
+			&item.weight,
+			&item.quantity,
+			&item.cost,
+			&item.notes,
+		)
+		.as_str();
+	}
+
+	return workspace_inventory_equipment(
+		&String::from("Equipment"),
+		&(items.len() as u64),
+		&items.iter().map(|i| i.weight as u64).sum(),
+		&content,
+	);
+}
+
+#[tauri::command]
+pub fn player_inventory_containers(container_id: String) -> String {
+	println!("{}", container_id);
+	if container_id != "backpack" {
+		return String::from("damn");
+	}
+
+	let backpack = vec![
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::COMMON,
+			name: String::from("Book"),
+			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+			weight: 5,
+			quantity: 1,
+			cost: 25f64,
+			notes: String::from("Social, Utility"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::COMMON,
+			name: String::from("Ink (1 ounce bottle)"),
+			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+			weight: 0,
+			quantity: 1,
+			cost: 10f64,
+			notes: String::from("Communication, Social, Utility, Consumable"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::COMMON,
+			name: String::from("Ink Pen"),
+			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+			weight: 0,
+			quantity: 1,
+			cost: 0.02,
+			notes: String::from("Communication, Social, Utility"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::COMMON,
+			name: String::from("Little Bag of Sand"),
+			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+			weight: 0,
+			quantity: 1,
+			cost: 0f64,
+			notes: String::from("Utility"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::COMMON,
+			name: String::from("Parchment (one sheet)"),
+			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+			weight: 0,
+			quantity: 10,
+			cost: 1f64,
+			notes: String::from("Communication, Social, Utility, Consumable"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::COMMON,
+			name: String::from("Small Knife"),
+			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+			weight: 0,
+			quantity: 1,
+			cost: 0f64,
+			notes: String::from("Utility"),
+		},
+	];
+
+	let mut content = String::new();
+	for item in &backpack {
+		content += workspace_inventory_item(
+			&item.active,
+			&item.rarity,
+			&item.name,
+			&item.tags,
+			&item.weight,
+			&item.quantity,
+			&item.cost,
+			&item.notes,
+		)
+		.as_str();
+	}
+
+	return workspace_inventory_container(
+		&Active::ACTIVE,
+		&container_id,
+		&(backpack.len() as u64),
+		&(5 as u64),
+		&backpack.iter().map(|i| i.weight as u64).sum(),
+		&(30 as u64),
+		&content,
+	);
+}
+
+#[tauri::command]
+pub fn player_inventory_containers_buttons() -> String {
+	let containers = vec![String::from("Backpack")];
+
+	let mut content = String::new();
+	for container in &containers {
+		content += workspace_inventory_extratabbutton(&container, &container.to_lowercase()).as_str();
+	}
+	return content;
 }
 
 #[tauri::command]

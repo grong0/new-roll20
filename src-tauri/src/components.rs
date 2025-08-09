@@ -1,5 +1,7 @@
 use std::fs::read_to_string;
 
+use crate::layout2::{Active, Rarity};
+
 pub fn skills_status_untrained() -> String {
 	let file = read_to_string("../components/skills/untrained.html").unwrap_or("".to_string());
 	return file;
@@ -150,14 +152,74 @@ pub fn workspace_feats_classheader(name: &String) -> String {
 	return file;
 }
 
-pub fn workspace_inventory(active: &bool, name: &String, num_of_items: &u64, weight: &u64, content: &String) -> String {
-	let active_element = if *active { String::from("<input type='checkbox' class='checkbox' checked />") } else { String::new() };
-	let file = read_to_string("../components/workspace/inventory/allinventory.html")
+pub fn workspace_inventory_equipment(name: &String, num_of_items: &u64, weight: &u64, content: &String) -> String {
+	let file = read_to_string("../components/workspace/inventory/equipment.html")
 		.unwrap_or(String::new())
-		.replace("{active}", &active_element)
 		.replace("{name}", name)
 		.replace("{num_of_items}", num_of_items.to_string().as_str())
 		.replace("{weight}", weight.to_string().as_str())
 		.replace("{content}", content);
+	return file;
+}
+
+pub fn workspace_inventory_container(
+	active: &Active,
+	name: &String,
+	num_of_items: &u64,
+	container_weight: &u64,
+	contains_weight: &u64,
+	max_weight: &u64,
+	content: &String,
+) -> String {
+	let active_element = match &active {
+		Active::ACTIVE => String::from("<input type='checkbox' class='checkbox' checked />"),
+		Active::INACTIVE => String::from("<input type='checkbox' class='checkbox' />"),
+		Active::NONE => String::new(),
+	};
+	let file = read_to_string("../components/workspace/inventory/container.html")
+		.unwrap_or(String::new())
+		.replace("{active}", &active_element)
+		.replace("{weight_constraints}", format!("({}/{} lb.)", contains_weight.to_string(), max_weight.to_string()).as_str())
+		.replace("{name}", name)
+		.replace("{num_of_items}", num_of_items.to_string().as_str())
+		.replace("{weight}", (container_weight + contains_weight).to_string().as_str())
+		.replace("{content}", content);
+	return file;
+}
+
+pub fn workspace_inventory_item(
+	active: &Active,
+	rarity: &Rarity,
+	name: &String,
+	tags: &Vec<String>,
+	weight: &u64,
+	quantity: &u64,
+	cost: &f64,
+	notes: &String,
+) -> String {
+	let active_element = match &active {
+		Active::ACTIVE => String::from("<input type='checkbox' class='checkbox' checked />"),
+		Active::INACTIVE => String::from("<input type='checkbox' class='checkbox' />"),
+		Active::NONE => String::from("-"),
+	};
+	let tag_content = tags.join(" • ");
+	let file = read_to_string("../components/workspace/inventory/item.html")
+		.unwrap_or(String::new())
+		.replace("{active}", &active_element)
+		.replace("{rarity}", rarity.to_string().as_str())
+		.replace("{name}", name)
+		.replace("{tags}", &tag_content)
+		.replace("{weight}", weight.to_string().as_str())
+		.replace("{quantity}", quantity.to_string().as_str())
+		.replace("{cost}", cost.to_string().as_str())
+		.replace("{notes}", notes);
+	return file;
+}
+
+pub fn workspace_inventory_extratabbutton(label: &String, container_id: &String) -> String {
+	let file = read_to_string("../components/workspace/inventory/extratabbutton.html")
+		.unwrap_or(String::new())
+		.replace("{label}", label)
+		.replace("{container_id}", container_id);
 	return file;
 }

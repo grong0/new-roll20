@@ -101,6 +101,8 @@ pub fn run() {
 			player_actionsincombat_limiteduse,
 			player_inventory,
 			player_inventory_equipment,
+			player_inventory_containers,
+			player_inventory_containers_buttons,
 			player_inventory_attunement,
 			player_inventory_other,
 			player_inventory_currency,
