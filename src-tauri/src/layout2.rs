@@ -1,17 +1,20 @@
+use std::collections::HashMap;
+
 use crate::{
 	components::{
-		class_badge, skills_status_expert, skills_status_proficient, skills_status_untrained, workspace_actions, workspace_actions_action,
-		workspace_actions_bonusaction, workspace_actions_item, workspace_actions_limiteduse, workspace_actions_other,
-		workspace_actions_reaction, workspace_feats, workspace_feats_class, workspace_feats_classheader, workspace_feats_general,
-		workspace_feats_item, workspace_feats_race, workspace_inventory_container, workspace_inventory_equipment,
-		workspace_inventory_extratabbutton, workspace_inventory_item,
+		class_badge, proficiency_expertise, proficiency_halfproficient, proficiency_proficient, proficiency_untrained, workspace_actions,
+		workspace_actions_action, workspace_actions_bonusaction, workspace_actions_item, workspace_actions_limiteduse,
+		workspace_actions_other, workspace_actions_reaction, workspace_feats, workspace_feats_class, workspace_feats_classheader,
+		workspace_feats_general, workspace_feats_item, workspace_feats_race, workspace_inventory, workspace_inventory_attunement,
+		workspace_inventory_attunmentitem, workspace_inventory_container, workspace_inventory_containeritem, workspace_inventory_equipment,
+		workspace_inventory_extratabbutton, workspace_inventory_otherpossessions,
 	},
 	frontend_functions::ability_score_to_modifier,
 };
 
 #[tauri::command]
 pub fn player_name() -> String {
-	return "George".to_string();
+	return "Test Character".to_string();
 }
 
 #[tauri::command]
@@ -26,12 +29,12 @@ pub fn player_level() -> String {
 
 #[tauri::command]
 pub fn player_hitpoints_max() -> String {
-	return "304".to_string();
+	return "38".to_string();
 }
 
 #[tauri::command]
 pub fn player_hitpoints_current() -> String {
-	return "250".to_string();
+	return "27".to_string();
 }
 
 #[tauri::command]
@@ -46,12 +49,12 @@ pub fn player_hitpoints_temp() -> String {
 
 #[tauri::command]
 pub fn player_armorclass() -> String {
-	return "20".to_string();
+	return "15".to_string();
 }
 
 #[tauri::command]
 pub fn player_initiative() -> String {
-	return "4".to_string();
+	return "5".to_string();
 }
 
 #[tauri::command]
@@ -67,19 +70,19 @@ pub fn player_class_level() -> String {
 #[tauri::command]
 pub fn player_classes() -> String {
 	let classes = vec![
-		String::from("artificer"),
+		// String::from("artificer"),
 		// String::from("barbarian"),
 		// String::from("bard"),
 		// String::from("cleric"),
 		// String::from("druid"),
-		// String::from("fighter"),
+		String::from("fighter"),
 		// String::from("monk"),
 		// String::from("paladin"),
 		// String::from("ranger"),
 		// String::from("rogue"),
 		// String::from("sorcerer"),
 		// String::from("warlock"),
-		// String::from("wizard"),
+		String::from("wizard"),
 	];
 
 	let mut content = String::new();
@@ -91,15 +94,15 @@ pub fn player_classes() -> String {
 
 #[tauri::command]
 pub fn player_abilities_str_score() -> String {
-	return 9.to_string();
+	return 11.to_string();
 }
 #[tauri::command]
 pub fn player_abilities_dex_score() -> String {
-	return 16.to_string();
+	return 20.to_string();
 }
 #[tauri::command]
 pub fn player_abilities_con_score() -> String {
-	return 11.to_string();
+	return 14.to_string();
 }
 #[tauri::command]
 pub fn player_abilities_int_score() -> String {
@@ -107,24 +110,24 @@ pub fn player_abilities_int_score() -> String {
 }
 #[tauri::command]
 pub fn player_abilities_wis_score() -> String {
-	return 10.to_string();
+	return 11.to_string();
 }
 #[tauri::command]
 pub fn player_abilities_cha_score() -> String {
-	return 8.to_string();
+	return 11.to_string();
 }
 
 #[tauri::command]
 pub fn player_abilities_str_modifier() -> String {
-	return ability_score_to_modifier(9).to_string();
+	return ability_score_to_modifier(11).to_string();
 }
 #[tauri::command]
 pub fn player_abilities_dex_modifier() -> String {
-	return ability_score_to_modifier(16).to_string();
+	return ability_score_to_modifier(20).to_string();
 }
 #[tauri::command]
 pub fn player_abilities_con_modifier() -> String {
-	return ability_score_to_modifier(11).to_string();
+	return ability_score_to_modifier(14).to_string();
 }
 #[tauri::command]
 pub fn player_abilities_int_modifier() -> String {
@@ -132,84 +135,84 @@ pub fn player_abilities_int_modifier() -> String {
 }
 #[tauri::command]
 pub fn player_abilities_wis_modifier() -> String {
-	return ability_score_to_modifier(10).to_string();
+	return ability_score_to_modifier(11).to_string();
 }
 #[tauri::command]
 pub fn player_abilities_cha_modifier() -> String {
-	return ability_score_to_modifier(8).to_string();
+	return ability_score_to_modifier(11).to_string();
 }
 
 #[tauri::command]
 pub fn player_skills_acrobatics_status() -> String {
-	return skills_status_proficient();
+	return proficiency_untrained(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_animalhandling_status() -> String {
-	return skills_status_proficient();
+	return proficiency_untrained(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_arcana_status() -> String {
-	return skills_status_proficient();
+	return proficiency_expertise(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_athletics_status() -> String {
-	return skills_status_expert();
+	return proficiency_halfproficient(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_deception_status() -> String {
-	return skills_status_proficient();
+	return proficiency_untrained(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_history_status() -> String {
-	return skills_status_expert();
+	return proficiency_untrained(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_insight_status() -> String {
-	return skills_status_proficient();
+	return proficiency_proficient(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_intimidation_status() -> String {
-	return skills_status_proficient();
+	return proficiency_untrained(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_investigation_status() -> String {
-	return skills_status_proficient();
+	return proficiency_proficient(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_medicine_status() -> String {
-	return skills_status_proficient();
+	return proficiency_untrained(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_nature_status() -> String {
-	return skills_status_expert();
+	return proficiency_untrained(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_perception_status() -> String {
-	return skills_status_untrained();
+	return proficiency_untrained(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_performance_status() -> String {
-	return skills_status_untrained();
+	return proficiency_untrained(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_persuasion_status() -> String {
-	return skills_status_proficient();
+	return proficiency_untrained(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_religion_status() -> String {
-	return skills_status_untrained();
+	return proficiency_proficient(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_slightofhand_status() -> String {
-	return skills_status_untrained();
+	return proficiency_untrained(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_stealth_status() -> String {
-	return skills_status_untrained();
+	return proficiency_untrained(&String::from("right"));
 }
 #[tauri::command]
 pub fn player_skills_survival_status() -> String {
-	return skills_status_proficient();
+	return proficiency_untrained(&String::from("right"));
 }
 
 #[tauri::command]
@@ -218,19 +221,19 @@ pub fn player_skills_acrobatics_bonus() -> String {
 }
 #[tauri::command]
 pub fn player_skills_animalhandling_bonus() -> String {
-	return 5.to_string();
+	return 0.to_string();
 }
 #[tauri::command]
 pub fn player_skills_arcana_bonus() -> String {
-	return 5.to_string();
+	return 15.to_string();
 }
 #[tauri::command]
 pub fn player_skills_athletics_bonus() -> String {
-	return 5.to_string();
+	return 2.to_string();
 }
 #[tauri::command]
 pub fn player_skills_deception_bonus() -> String {
-	return 5.to_string();
+	return 0.to_string();
 }
 #[tauri::command]
 pub fn player_skills_history_bonus() -> String {
@@ -242,15 +245,15 @@ pub fn player_skills_insight_bonus() -> String {
 }
 #[tauri::command]
 pub fn player_skills_intimidation_bonus() -> String {
-	return 5.to_string();
+	return 0.to_string();
 }
 #[tauri::command]
 pub fn player_skills_investigation_bonus() -> String {
-	return 5.to_string();
+	return 10.to_string();
 }
 #[tauri::command]
 pub fn player_skills_medicine_bonus() -> String {
-	return 5.to_string();
+	return 0.to_string();
 }
 #[tauri::command]
 pub fn player_skills_nature_bonus() -> String {
@@ -258,19 +261,19 @@ pub fn player_skills_nature_bonus() -> String {
 }
 #[tauri::command]
 pub fn player_skills_perception_bonus() -> String {
-	return 5.to_string();
+	return 0.to_string();
 }
 #[tauri::command]
 pub fn player_skills_performance_bonus() -> String {
-	return 5.to_string();
+	return 0.to_string();
 }
 #[tauri::command]
 pub fn player_skills_persuasion_bonus() -> String {
-	return 5.to_string();
+	return 0.to_string();
 }
 #[tauri::command]
 pub fn player_skills_religion_bonus() -> String {
-	return 5.to_string();
+	return 10.to_string();
 }
 #[tauri::command]
 pub fn player_skills_slightofhand_bonus() -> String {
@@ -282,42 +285,42 @@ pub fn player_skills_stealth_bonus() -> String {
 }
 #[tauri::command]
 pub fn player_skills_survival_bonus() -> String {
-	return 5.to_string();
+	return 0.to_string();
 }
 
 #[tauri::command]
 pub fn player_senses_perception() -> String {
-	return "18".to_string();
+	return "10".to_string();
 }
 
 #[tauri::command]
 pub fn player_senses_investigation() -> String {
-	return "18".to_string();
+	return "20".to_string();
 }
 
 #[tauri::command]
 pub fn player_senses_insight() -> String {
-	return "18".to_string();
+	return "15".to_string();
 }
 
 #[tauri::command]
 pub fn player_proficiencies_armor() -> String {
-	return "None".to_string();
+	return "Light Armor, Medium Armor, Shields".to_string();
 }
 
 #[tauri::command]
 pub fn player_proficiencies_weapons() -> String {
-	return "Crossbow, Light, Dagger, Dart, Quarterstaff, Sling".to_string();
+	return "Crossbow, Light, Dagger, Dart, Martial Weapons, Quarterstaff, Sling".to_string();
 }
 
 #[tauri::command]
 pub fn player_proficiencies_tools() -> String {
-	return "Tinkerers' Tools, Artisan Tools".to_string();
+	return "None".to_string();
 }
 
 #[tauri::command]
 pub fn player_proficiencies_languages() -> String {
-	return "Abyssal, Celestial, Draconic".to_string();
+	return "Common, Deep Speech, Draconic, Infernal".to_string();
 }
 
 struct Damage {
@@ -980,7 +983,226 @@ struct TestItem {
 
 #[tauri::command]
 pub fn player_inventory() -> String {
-	return String::from("nothing");
+	let equipment_items: Vec<TestItem> = vec![
+		TestItem {
+			active: Active::ACTIVE,
+			rarity: Rarity::UNCOMMON,
+			name: String::from("Periapt of Health"),
+			tags: vec![String::from("Wondrous item")],
+			weight: 0,
+			quantity: 1,
+			cost: 0f64,
+			notes: String::from("1 Charge"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::RARE,
+			name: String::from("Clothes, Common"),
+			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+			weight: 3,
+			quantity: 1,
+			cost: 0.5,
+			notes: String::from("Social, Outerwear"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::VERYRARE,
+			name: String::from("Emblem"),
+			tags: vec![String::from("Gear"), String::from("Holy Symbol")],
+			weight: 0,
+			quantity: 1,
+			cost: 5f64,
+			notes: String::from("Utility"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::LEGENDARY,
+			name: String::from("Orb"),
+			tags: vec![String::from("Gear"), String::from("Arcane Focus")],
+			weight: 3,
+			quantity: 1,
+			cost: 20f64,
+			notes: String::from("Utility"),
+		},
+		TestItem {
+			active: Active::ACTIVE,
+			rarity: Rarity::ARTIFACT,
+			name: String::from("Quaterstaff"),
+			tags: vec![String::from("Quaterstaff")],
+			weight: 4,
+			quantity: 1,
+			cost: 0.2,
+			notes: String::from("Simple, Versatile, Topple"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::COMMON,
+			name: String::from("Spellbook"),
+			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+			weight: 3,
+			quantity: 1,
+			cost: 50f64,
+			notes: String::from("Utility"),
+		},
+		TestItem {
+			active: Active::NONE,
+			rarity: Rarity::COMMON,
+			name: String::from("Vestments"),
+			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+			weight: 0,
+			quantity: 1,
+			cost: 0f64,
+			notes: String::from("Social, Utility"),
+		},
+	];
+
+	let mut containers = HashMap::<String, Vec<TestItem>>::new();
+	containers.insert(
+		String::from("Backpack"),
+		vec![
+			TestItem {
+				active: Active::NONE,
+				rarity: Rarity::COMMON,
+				name: String::from("Book"),
+				tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+				weight: 5,
+				quantity: 1,
+				cost: 25f64,
+				notes: String::from("Social, Utility"),
+			},
+			TestItem {
+				active: Active::NONE,
+				rarity: Rarity::COMMON,
+				name: String::from("Ink (1 ounce bottle)"),
+				tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+				weight: 0,
+				quantity: 1,
+				cost: 10f64,
+				notes: String::from("Communication, Social, Utility, Consumable"),
+			},
+			TestItem {
+				active: Active::NONE,
+				rarity: Rarity::COMMON,
+				name: String::from("Ink Pen"),
+				tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+				weight: 0,
+				quantity: 1,
+				cost: 0.02,
+				notes: String::from("Communication, Social, Utility"),
+			},
+			TestItem {
+				active: Active::NONE,
+				rarity: Rarity::COMMON,
+				name: String::from("Little Bag of Sand"),
+				tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+				weight: 0,
+				quantity: 1,
+				cost: 0f64,
+				notes: String::from("Utility"),
+			},
+			TestItem {
+				active: Active::NONE,
+				rarity: Rarity::COMMON,
+				name: String::from("Parchment (one sheet)"),
+				tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+				weight: 0,
+				quantity: 10,
+				cost: 1f64,
+				notes: String::from("Communication, Social, Utility, Consumable"),
+			},
+			TestItem {
+				active: Active::NONE,
+				rarity: Rarity::COMMON,
+				name: String::from("Small Knife"),
+				tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+				weight: 0,
+				quantity: 1,
+				cost: 0f64,
+				notes: String::from("Utility"),
+			},
+		],
+	);
+	containers.insert(String::from("Bag of Holding"), vec![]);
+
+	let attunement_items = vec![TestItem {
+		active: Active::ACTIVE,
+		rarity: Rarity::UNCOMMON,
+		name: String::from("Periapt of Health"),
+		tags: vec![String::from("Wondrous item")],
+		weight: 0,
+		quantity: 1,
+		cost: 0f64,
+		notes: String::from("1 Charge"),
+	}];
+
+	let other_possessions = vec![String::from("a prayer book"), String::from("5 sticks of incense")];
+
+	let mut equipment_content = String::new();
+	for item in &equipment_items {
+		equipment_content += workspace_inventory_containeritem(
+			&item.active,
+			&item.rarity,
+			&item.name,
+			&item.tags,
+			&item.weight,
+			&item.quantity,
+			&item.cost,
+			&item.notes,
+		)
+		.as_str();
+	}
+
+	// TODO: make the ordering consistant (alphabetically or something)
+	let mut containers_content = String::new();
+	for (key, container) in &containers {
+		let mut container_items = String::new();
+		for item in container {
+			container_items += workspace_inventory_containeritem(
+				&item.active,
+				&item.rarity,
+				&item.name,
+				&item.tags,
+				&item.weight,
+				&item.quantity,
+				&item.cost,
+				&item.notes,
+			)
+			.as_str();
+		}
+		containers_content += workspace_inventory_container(
+			&Active::ACTIVE,
+			&key,
+			&(container.len() as u64),
+			&(5 as u64),
+			&container.iter().map(|i| i.weight as u64).sum(),
+			&(30 as u64),
+			&container_items,
+		)
+		.as_str();
+	}
+
+	let mut attunement_content = String::new();
+	for item in &attunement_items {
+		attunement_content += workspace_inventory_attunmentitem(&item.active, &item.rarity, &item.name, &item.tags).as_str();
+	}
+
+	return workspace_inventory(
+		&(equipment_items.len() as u64),
+		&equipment_items.iter().map(|i| i.weight as u64).sum(),
+		&equipment_content,
+		&containers_content,
+		&attunement_items[0].rarity,
+		&attunement_items[0].name,
+		&attunement_items[0].tags,
+		&Rarity::COMMON,
+		&String::new(),
+		&vec![],
+		&Rarity::COMMON,
+		&String::new(),
+		&vec![],
+		&attunement_content,
+		&other_possessions,
+	);
 }
 
 #[tauri::command]
@@ -1060,7 +1282,7 @@ pub fn player_inventory_equipment() -> String {
 
 	let mut content = String::new();
 	for item in &items {
-		content += workspace_inventory_item(
+		content += workspace_inventory_containeritem(
 			&item.active,
 			&item.rarity,
 			&item.name,
@@ -1073,87 +1295,85 @@ pub fn player_inventory_equipment() -> String {
 		.as_str();
 	}
 
-	return workspace_inventory_equipment(
-		&String::from("Equipment"),
-		&(items.len() as u64),
-		&items.iter().map(|i| i.weight as u64).sum(),
-		&content,
-	);
+	return workspace_inventory_equipment(&(items.len() as u64), &items.iter().map(|i| i.weight as u64).sum(), &content);
 }
 
 #[tauri::command]
 pub fn player_inventory_containers(container_id: String) -> String {
-	println!("{}", container_id);
-	if container_id != "backpack" {
-		return String::from("damn");
-	}
+	let mut containers = HashMap::<String, Vec<TestItem>>::new();
+	containers.insert(
+		String::from("Backpack"),
+		vec![
+			TestItem {
+				active: Active::NONE,
+				rarity: Rarity::COMMON,
+				name: String::from("Book"),
+				tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+				weight: 5,
+				quantity: 1,
+				cost: 25f64,
+				notes: String::from("Social, Utility"),
+			},
+			TestItem {
+				active: Active::NONE,
+				rarity: Rarity::COMMON,
+				name: String::from("Ink (1 ounce bottle)"),
+				tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+				weight: 0,
+				quantity: 1,
+				cost: 10f64,
+				notes: String::from("Communication, Social, Utility, Consumable"),
+			},
+			TestItem {
+				active: Active::NONE,
+				rarity: Rarity::COMMON,
+				name: String::from("Ink Pen"),
+				tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+				weight: 0,
+				quantity: 1,
+				cost: 0.02,
+				notes: String::from("Communication, Social, Utility"),
+			},
+			TestItem {
+				active: Active::NONE,
+				rarity: Rarity::COMMON,
+				name: String::from("Little Bag of Sand"),
+				tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+				weight: 0,
+				quantity: 1,
+				cost: 0f64,
+				notes: String::from("Utility"),
+			},
+			TestItem {
+				active: Active::NONE,
+				rarity: Rarity::COMMON,
+				name: String::from("Parchment (one sheet)"),
+				tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+				weight: 0,
+				quantity: 10,
+				cost: 1f64,
+				notes: String::from("Communication, Social, Utility, Consumable"),
+			},
+			TestItem {
+				active: Active::NONE,
+				rarity: Rarity::COMMON,
+				name: String::from("Small Knife"),
+				tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
+				weight: 0,
+				quantity: 1,
+				cost: 0f64,
+				notes: String::from("Utility"),
+			},
+		],
+	);
+	containers.insert(String::from("Bag of Holding"), vec![]);
 
-	let backpack = vec![
-		TestItem {
-			active: Active::NONE,
-			rarity: Rarity::COMMON,
-			name: String::from("Book"),
-			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
-			weight: 5,
-			quantity: 1,
-			cost: 25f64,
-			notes: String::from("Social, Utility"),
-		},
-		TestItem {
-			active: Active::NONE,
-			rarity: Rarity::COMMON,
-			name: String::from("Ink (1 ounce bottle)"),
-			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
-			weight: 0,
-			quantity: 1,
-			cost: 10f64,
-			notes: String::from("Communication, Social, Utility, Consumable"),
-		},
-		TestItem {
-			active: Active::NONE,
-			rarity: Rarity::COMMON,
-			name: String::from("Ink Pen"),
-			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
-			weight: 0,
-			quantity: 1,
-			cost: 0.02,
-			notes: String::from("Communication, Social, Utility"),
-		},
-		TestItem {
-			active: Active::NONE,
-			rarity: Rarity::COMMON,
-			name: String::from("Little Bag of Sand"),
-			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
-			weight: 0,
-			quantity: 1,
-			cost: 0f64,
-			notes: String::from("Utility"),
-		},
-		TestItem {
-			active: Active::NONE,
-			rarity: Rarity::COMMON,
-			name: String::from("Parchment (one sheet)"),
-			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
-			weight: 0,
-			quantity: 10,
-			cost: 1f64,
-			notes: String::from("Communication, Social, Utility, Consumable"),
-		},
-		TestItem {
-			active: Active::NONE,
-			rarity: Rarity::COMMON,
-			name: String::from("Small Knife"),
-			tags: vec![String::from("Legacy"), String::from("Gear"), String::from("Adventuring Gear")],
-			weight: 0,
-			quantity: 1,
-			cost: 0f64,
-			notes: String::from("Utility"),
-		},
-	];
+	let backup: Vec<TestItem> = vec![];
+	let container = containers.get(&container_id).unwrap_or(&backup);
 
 	let mut content = String::new();
-	for item in &backpack {
-		content += workspace_inventory_item(
+	for item in container {
+		content += workspace_inventory_containeritem(
 			&item.active,
 			&item.rarity,
 			&item.name,
@@ -1169,9 +1389,9 @@ pub fn player_inventory_containers(container_id: String) -> String {
 	return workspace_inventory_container(
 		&Active::ACTIVE,
 		&container_id,
-		&(backpack.len() as u64),
+		&(container.len() as u64),
 		&(5 as u64),
-		&backpack.iter().map(|i| i.weight as u64).sum(),
+		&container.iter().map(|i| i.weight as u64).sum(),
 		&(30 as u64),
 		&content,
 	);
@@ -1179,23 +1399,49 @@ pub fn player_inventory_containers(container_id: String) -> String {
 
 #[tauri::command]
 pub fn player_inventory_containers_buttons() -> String {
-	let containers = vec![String::from("Backpack")];
+	let containers = vec![String::from("Backpack"), String::from("Bag of Holding")];
 
 	let mut content = String::new();
 	for container in &containers {
-		content += workspace_inventory_extratabbutton(&container, &container.to_lowercase()).as_str();
+		content += workspace_inventory_extratabbutton(&container, &container).as_str();
 	}
 	return content;
 }
 
 #[tauri::command]
 pub fn player_inventory_attunement() -> String {
-	return String::new();
+	let items = vec![TestItem {
+		active: Active::ACTIVE,
+		rarity: Rarity::UNCOMMON,
+		name: String::from("Periapt of Health"),
+		tags: vec![String::from("Wondrous item")],
+		weight: 0,
+		quantity: 1,
+		cost: 0f64,
+		notes: String::from("1 Charge"),
+	}];
+	let mut items_content = String::new();
+	for item in &items {
+		items_content += workspace_inventory_attunmentitem(&item.active, &item.rarity, &item.name, &item.tags).as_str();
+	}
+	return workspace_inventory_attunement(
+		&items[0].rarity,
+		&items[0].name,
+		&items[0].tags,
+		&Rarity::COMMON,
+		&String::new(),
+		&vec![],
+		&Rarity::COMMON,
+		&String::new(),
+		&vec![],
+		&items_content,
+	);
 }
 
 #[tauri::command]
-pub fn player_inventory_other() -> String {
-	return String::new();
+pub fn player_inventory_otherpossessions() -> String {
+	let items = vec![String::from("a prayer book"), String::from("5 sticks of incense")];
+	return workspace_inventory_otherpossessions(&items);
 }
 
 #[tauri::command]
@@ -1226,4 +1472,54 @@ pub fn player_inventory_currency_silver() -> String {
 #[tauri::command]
 pub fn player_inventory_currency_copper() -> String {
 	return 20.to_string();
+}
+
+#[tauri::command]
+pub fn player_savingthrows_strength_bonus() -> String {
+	return 0.to_string();
+}
+#[tauri::command]
+pub fn player_savingthrows_dexterity_bonus() -> String {
+	return 5.to_string();
+}
+#[tauri::command]
+pub fn player_savingthrows_constitution_bonus() -> String {
+	return 2.to_string();
+}
+#[tauri::command]
+pub fn player_savingthrows_intelligence_bonus() -> String {
+	return 10.to_string();
+}
+#[tauri::command]
+pub fn player_savingthrows_wisdom_bonus() -> String {
+	return 5.to_string();
+}
+#[tauri::command]
+pub fn player_savingthrows_charisma_bonus() -> String {
+	return 0.to_string();
+}
+
+#[tauri::command]
+pub fn player_savingthrows_strength_status() -> String {
+	return proficiency_untrained(&String::from("top"));
+}
+#[tauri::command]
+pub fn player_savingthrows_dexterity_status() -> String {
+	return proficiency_untrained(&String::from("top"));
+}
+#[tauri::command]
+pub fn player_savingthrows_constitution_status() -> String {
+	return proficiency_untrained(&String::from("top"));
+}
+#[tauri::command]
+pub fn player_savingthrows_intelligence_status() -> String {
+	return proficiency_proficient(&String::from("top"));
+}
+#[tauri::command]
+pub fn player_savingthrows_wisdom_status() -> String {
+	return proficiency_proficient(&String::from("top"));
+}
+#[tauri::command]
+pub fn player_savingthrows_charisma_status() -> String {
+	return proficiency_untrained(&String::from("top"));
 }

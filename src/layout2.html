@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="sunset">
+<html lang="en" data-theme="light">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,14 +11,12 @@
 		<meta name="htmx-config" content='{"selfRequestsOnly":false}' />
 
 		<!-- Dev CDNs -->
-		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 		<link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
 		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 		<link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
 	</head>
-	<body class="w-screen h-screen bg-base-300 scrollbar-none" hx-ext="tauri">
-		<div class="w-full h-full flex p-4">
-			<!-- Planner -->
+	<body hx-ext="tauri">
+		<div class="w-screen h-screen p-4 bg-base-300">
 			<div
 				class="w-full h-full gap-4 transition-all duration-500 grid grid-rows-[100px_100px_100px_200px_1fr] grid-cols-[350px_100px_100px_100px_100px_100px_100px_100px_100px_100px_1fr]"
 			>
@@ -33,7 +31,7 @@
 							</span>
 						</div>
 						<div class="mt-auto mb-auto">
-							<h1 class="text-4xl font-bold" tauri-invoke="player_name" hx-trigger="load once">Player</h1>
+							<h1 class="text-2xl font-bold" tauri-invoke="player_name" hx-trigger="load once">Player</h1>
 							<div>
 								<span class="text-lg italic text-base-500" tauri-invoke="player_race" hx-trigger="load once">Race</span>
 								Lv.
@@ -362,62 +360,134 @@
 					<div class="grid grid-rows-3 grid-cols-2 gap-2">
 						<div class="flex flex-row items-center relative">
 							<div
-								class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg z-10 absolute left-0"
+								class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg absolute left-0"
 							>
-								<p tauri-invoke="player_savingthrows_strength" hx-trigger="load once">0</p>
+								<p tauri-invoke="player_savingthrows_strength_bonus" hx-trigger="load once">0</p>
 							</div>
 							<div class="rounded-field w-full bg-base-200 h-10 flex items-center ml-4">
 								<p class="ml-8">Strength</p>
 							</div>
+							<div class="w-2"></div>
+							<div
+								class="absolute right-0 flex justify-center items-center"
+								tauri-invoke="player_savingthrows_strength_status"
+								hx-trigger="load once"
+							>
+								<div class="tooltip flex justify-center items-center rounded-full bg-base-100" data-tip="Untrained">
+									<div
+										class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+									></div>
+								</div>
+							</div>
 						</div>
 						<div class="flex flex-row items-center relative">
 							<div
-								class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg z-10 absolute left-0"
+								class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg absolute left-0"
 							>
-								<p tauri-invoke="player_savingthrows_intelligence" hx-trigger="load once">0</p>
+								<p tauri-invoke="player_savingthrows_intelligence_bonus" hx-trigger="load once">0</p>
 							</div>
 							<div class="rounded-field w-full bg-base-200 h-10 flex items-center ml-4">
 								<p class="ml-8">Intelligence</p>
 							</div>
+							<div class="w-2"></div>
+							<div
+								class="absolute right-0 flex justify-center items-center"
+								tauri-invoke="player_savingthrows_intelligence_status"
+								hx-trigger="load once"
+							>
+								<div class="tooltip flex justify-center items-center rounded-full bg-base-100" data-tip="Untrained">
+									<div
+										class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+									></div>
+								</div>
+							</div>
 						</div>
 						<div class="flex flex-row items-center relative">
 							<div
-								class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg z-10 absolute left-0"
+								class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg absolute left-0"
 							>
-								<p tauri-invoke="player_savingthrows_dexterity" hx-trigger="load once">0</p>
+								<p tauri-invoke="player_savingthrows_dexterity_bonus" hx-trigger="load once">0</p>
 							</div>
 							<div class="rounded-field w-full bg-base-200 h-10 flex items-center ml-4">
-								<p class="ml-8">Dexterity</p>
+								<p class="ml-8 text-md">Dexterity</p>
+							</div>
+							<div class="w-2"></div>
+							<div
+								class="absolute right-0 flex justify-center items-center"
+								tauri-invoke="player_savingthrows_dexterity_status"
+								hx-trigger="load once"
+							>
+								<div class="tooltip flex justify-center items-center rounded-full bg-base-100" data-tip="Untrained">
+									<div
+										class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+									></div>
+								</div>
 							</div>
 						</div>
 						<div class="flex flex-row items-center relative">
 							<div
-								class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg z-10 absolute left-0"
+								class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg absolute left-0"
 							>
-								<p tauri-invoke="player_savingthrows_wisdom" hx-trigger="load once">0</p>
+								<p tauri-invoke="player_savingthrows_wisdom_bonus" hx-trigger="load once">0</p>
 							</div>
 							<div class="rounded-field w-full bg-base-200 h-10 flex items-center ml-4">
-								<p class="ml-8">Wisdom</p>
+								<p class="ml-8 text-md">Wisdom</p>
+							</div>
+							<div class="w-2"></div>
+							<div
+								class="absolute right-0 flex justify-center items-center"
+								tauri-invoke="player_savingthrows_wisdom_status"
+								hx-trigger="load once"
+							>
+								<div class="tooltip flex justify-center items-center rounded-full bg-base-100" data-tip="Untrained">
+									<div
+										class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+									></div>
+								</div>
 							</div>
 						</div>
 						<div class="flex flex-row items-center relative">
 							<div
-								class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg z-10 absolute left-0"
+								class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg absolute left-0"
 							>
-								<p tauri-invoke="player_savingthrows_constitution" hx-trigger="load once">0</p>
+								<p tauri-invoke="player_savingthrows_constitution_bonus" hx-trigger="load once">0</p>
 							</div>
 							<div class="rounded-field w-full bg-base-200 h-10 flex items-center ml-4">
-								<p class="ml-8">Constitution</p>
+								<p class="ml-8 text-md">Constitution</p>
+							</div>
+							<div class="w-2"></div>
+							<div
+								class="absolute right-0 flex justify-center items-center"
+								tauri-invoke="player_savingthrows_constitution_status"
+								hx-trigger="load once"
+							>
+								<div class="tooltip flex justify-center items-center rounded-full bg-base-100" data-tip="Untrained">
+									<div
+										class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+									></div>
+								</div>
 							</div>
 						</div>
 						<div class="flex flex-row items-center relative">
 							<div
-								class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg z-10 absolute left-0"
+								class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg absolute left-0"
 							>
-								<p tauri-invoke="player_savingthrows_charisma" hx-trigger="load once">0</p>
+								<p tauri-invoke="player_savingthrows_charisma_bonus" hx-trigger="load once">0</p>
 							</div>
 							<div class="rounded-field w-full bg-base-200 h-10 flex items-center ml-4">
 								<p class="ml-8">Charisma</p>
+							</div>
+							<div class="w-2"></div>
+							<div
+								class="absolute right-0 flex justify-center items-center"
+								tauri-invoke="player_savingthrows_charisma_status"
+								hx-trigger="load once"
+							>
+								<div class="tooltip flex justify-center items-center rounded-full bg-base-100" data-tip="Untrained">
+									<div
+										class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+									></div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -429,13 +499,17 @@
 					<div class="w-full h-fit text-center font-bold">
 						<h1 class="font-2xl">Skills</h1>
 					</div>
-					<div class="overflow-y-scroll scrollbar-none rounded-field border border-base-content/5">
+					<div class="overflow-y-scroll scrollbar-none rounded-field border border-base-content/5 relative">
 						<table class="table table-zebra table-sm h-full">
 							<tbody>
 								<tr>
 									<td>
-										<span tauri-invoke="player_skills_acrobatics_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+										<span tauri-invoke="player_skills_acrobatics_status" hx-trigger="load once" hx-swap="">
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -448,7 +522,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_animalhandling_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -460,9 +538,13 @@
 								</tr>
 								<tr>
 									<td>
-										<span tauri-invoke="player_skills_arcana_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
-										</span>
+										<div tauri-invoke="player_skills_arcana_status" hx-trigger="load once">
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
+										</div>
 									</td>
 									<td>
 										<h3 class="w-full ml-2">Arcana</h3>
@@ -474,7 +556,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_athletics_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -487,7 +573,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_deception_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -500,7 +590,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_history_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -513,7 +607,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_insight_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -526,7 +624,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_intimidation_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -539,7 +641,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_investigation_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -552,7 +658,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_medicine_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -565,7 +675,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_nature_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -578,7 +692,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_perception_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -591,7 +709,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_performance_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -604,7 +726,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_persuasion_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -617,7 +743,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_religion_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -630,7 +760,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_slightofhand_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -643,7 +777,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_stealth_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -656,7 +794,11 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_survival_status" hx-trigger="load once" hx-swap="outerHTML">
-											<span class="badge badge-neutral badge-sm">U</span>
+											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
+												<div
+													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
+												></div>
+											</div>
 										</span>
 									</td>
 									<td>
@@ -679,7 +821,7 @@
 					</div>
 					<div class="flex flex-row items-center relative">
 						<div
-							class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg z-10 absolute left-0"
+							class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg absolute left-0"
 						>
 							<p tauri-invoke="player_senses_perception" hx-trigger="load once">10</p>
 						</div>
@@ -689,7 +831,7 @@
 					</div>
 					<div class="flex flex-row items-center relative">
 						<div
-							class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg z-10 absolute left-0"
+							class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg absolute left-0"
 						>
 							<p tauri-invoke="player_senses_investigation" hx-trigger="load once">10</p>
 						</div>
@@ -699,7 +841,7 @@
 					</div>
 					<div class="flex flex-row items-center relative">
 						<div
-							class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg z-10 absolute left-0"
+							class="rounded-selector h-10 aspect-square bg-base-300 flex justify-center items-center font-bold text-lg absolute left-0"
 						>
 							<p tauri-invoke="player_senses_insight" hx-trigger="load once">10</p>
 						</div>
@@ -710,49 +852,48 @@
 				</div>
 				<!-- Proficiencies -->
 				<div
-					class="w-full max-h-full bg-base-100 rounded-box p-4 grid grid-rows-[auto_1fr] gap-2 shadow-md row-start-5 row-end-6 col-start-2 col-end-5"
+					class="w-full h-full flex bg-base-100 rounded-box p-4 shadow-md row-start-5 row-end-6 col-start-2 col-end-5 overflow-y-scroll scrollbar-none"
 				>
-					<div class="w-full h-fit text-center font-bold">
-						<h1 class="font-2xl">Proficiencies</h1>
-					</div>
-					<div class="w-full max-h-full grid grid-rows-[repeat(4,_1fr)] grid-cols-1 gap-2">
-						<div
-							class="w-full max-h-full grid grid-rows-[auto_1fr] grid-cols-1 bg-base-200 rounded-field p-2 overflow-hidden"
-						>
+					<!-- <div class="w-full h-full grid grid-rows-[min-content_1fr] gap-2"> -->
+					<div class="w-full h-full flex flex-col gap-2">
+						<div class="w-full h-fit text-center font-bold">
+							<h1 class="font-2xl">Proficiencies</h1>
+						</div>
+						<div class="w-full flex flex-col bg-base-200 rounded-field p-2">
 							<div class="w-full h-fit font-bold">
 								<h1 class="font-xl">Armor</h1>
 							</div>
-							<!-- <div class="w-full h-full overflow-y-scroll" tauri-invoke="player_proficiencies_armor" hx-trigger="load once"> -->
-							<div class="w-full h-full overflow-y-scroll">
-								<!-- <p>
-									Lorem, ipsum dolor sit amet consectetur adipisicing elit. Maxime doloremque nemo molestias culpa, vel,
-									cupiditate recusandae corporis eligendi esse delectus quia alias tenetur? Expedita quia labore commodi
-									accusantium. Officiis, quo?
-								</p> -->
+							<div class="w-full">
+								<p class="text-sm" tauri-invoke="player_proficiencies_armor" hx-trigger="load once">None</p>
 							</div>
 						</div>
-						<div class="w-full max-h-full grid grid-rows-[auto_1fr] grid-cols-1 bg-base-200 rounded-field p-2">
+						<div class="w-full flex flex-col bg-base-200 rounded-field p-2">
 							<div class="w-full h-fit font-bold">
 								<h1 class="font-xl">Weapons</h1>
 							</div>
-							<div class="w-full overflow-y-scroll">
-								<!-- <p tauri-invoke="player_proficiencies_weapons" hx-trigger="load once">None</p> -->
+							<div class="w-full">
+								<p class="text-sm" tauri-invoke="player_proficiencies_weapons" hx-trigger="load once">None</p>
 							</div>
 						</div>
-						<div class="w-full max-h-full grid grid-rows-[auto_1fr] grid-cols-1 bg-base-200 rounded-field p-2">
+						<div class="w-full flex flex-col bg-base-200 rounded-field p-2">
 							<div class="w-full h-fit font-bold">
 								<h1 class="font-xl">Tools</h1>
 							</div>
-							<div class="w-full h-full overflow-y-scroll">
-								<p tauri-invoke="player_proficiencies_tools" hx-trigger="load once">None</p>
+							<div class="w-full">
+								<p class="text-sm" tauri-invoke="player_proficiencies_tools" hx-trigger="load once">None</p>
+								<!-- <p class="text-sm">
+									Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit est laboriosam nemo animi omnis
+									recusandae sed temporibus, reiciendis asperiores eveniet esse voluptas ullam ipsum veritatis aliquid
+									repellat porro consequuntur doloremque?
+								</p> -->
 							</div>
 						</div>
-						<div class="w-full max-h-full grid grid-rows-[auto_1fr] grid-cols-1 bg-base-200 rounded-field p-2">
+						<div class="w-full flex flex-col bg-base-200 rounded-field p-2">
 							<div class="w-full h-fit font-bold">
 								<h1 class="font-xl">Languages</h1>
 							</div>
-							<div class="w-full h-full overflow-y-scroll">
-								<p tauri-invoke="player_proficiencies_languages" hx-trigger="load once">None</p>
+							<div class="w-full">
+								<p class="text-sm" tauri-invoke="player_proficiencies_languages" hx-trigger="load once">None</p>
 							</div>
 						</div>
 					</div>
@@ -1141,7 +1282,11 @@
 									>
 										Equipment
 									</button>
-									<span tauri-invoke="player_inventory_containers_buttons" hx-trigger="load once" hx-swap="outerHTML"></span>
+									<span
+										tauri-invoke="player_inventory_containers_buttons"
+										hx-trigger="load once"
+										hx-swap="outerHTML"
+									></span>
 									<button
 										hx-get="command:player_inventory_attunement"
 										hx-target="#workspace-inventory"
@@ -1155,7 +1300,7 @@
 										Attunement
 									</button>
 									<button
-										hx-get="command:player_inventory_other"
+										hx-get="command:player_inventory_otherpossessions"
 										hx-target="#workspace-inventory"
 										class="tab flex-auto"
 										role="tab"

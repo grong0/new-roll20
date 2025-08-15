@@ -1,1 +1,70 @@
-<p>All</p>
+<table class="table table-xs">
+	<thead>
+		<tr>
+			<th class="text-center">Active</th>
+			<th>Name</th>
+			<th>Weight</th>
+			<th>Qty</th>
+			<th>Cost (GP)</th>
+			<th>Notes</th>
+		</tr>
+		<tr>
+			<td></td>
+			<td>
+				<p class="font-bold">
+					<span class="text-lg text-base-content">Equipment</span>
+					<span class="font-md">({num_of_equipment_items})</span>
+				</p>
+			</td>
+			<td colspan="4">
+				<p class="font-bold">
+					<span class="text-lg text-base-content">{equipment_weight}</span>
+					<span> lb.</span>
+				</p>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		{equipment_items}
+	</tbody>
+</table>
+
+<br />
+
+<div class="flex flex-col gap-4">
+	{containers}
+</div>
+
+<br />
+
+<div class="divider">Attunement</div>
+<div class="grid grid-cols-2 gap-4">
+	<div class="grid grid-rows-3 gap-2">
+		<div class="rounded-field w-full bg-base-200 flex items-center p-2">
+			<div class="flex flex-col justify-start">
+				<h3 class="text-lg font-bold {attunement_slot1_rarity}">{attunement_slot1_name}</h3>
+				<p class="text-sm text-base-content/60">{attunement_slot1_tags}</p>
+			</div>
+		</div>
+		<div class="rounded-field w-full bg-base-200 flex items-center p-2">
+			<div class="flex flex-col justify-start">
+				<h3 class="text-lg font-bold {attunement_slot2_rarity}">{attunement_slot2_name}</h3>
+				<p class="text-sm text-base-content/60">{attunement_slot2_tags}</p>
+			</div>
+		</div>
+		<div class="rounded-field w-full bg-base-200 flex items-center p-2">
+			<div class="flex flex-col justify-start">
+				<h3 class="text-lg font-bold {attunement_slot3_rarity}">{attunement_slot3_name}</h3>
+				<p class="text-sm text-base-content/60">{attunement_slot3_tags}</p>
+			</div>
+		</div>
+	</div>
+	<div class="flex flex-col gap-1">{attunement_items}</div>
+</div>
+
+<br />
+
+<div class="divider">Other Possessions</div>
+<div>
+	<article class="prose">{other_possessions}</article>
+</div>

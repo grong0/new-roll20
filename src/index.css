@@ -2,151 +2,33 @@
 @plugin "daisyui";
 @plugin "@tailwindcss/typography";
 
-@theme {
-	--color-common-500: var(--text-base-content);
-	--color-uncommon-500: #5cbe3e;
-	--color-rare-500: #5991dc;
-	--color-veryrare-500: #b55dff;
-	--color-legendary-500: #f2a546;
-	--color-artifact-500: #b78b76;
+/* TODO: add dark mode variants */
+.common {
+	color: var(--text-base-content);
+}
+.uncommon {
+	color: #5cbe3e;
+}
+.rare {
+	color: #5991dc;
+}
+.veryrare {
+	color: #b55dff;
+}
+.legendary {
+	color: #f2a546;
+}
+.artifact {
+	color: #b78b76;
 }
 
-/* width */
-/* ::-webkit-scrollbar {
-	width: 10px;
-} */
-
-/* Track */
-/* ::-webkit-scrollbar-track {
-	border-radius: 10px;
-	background: rgb(25, 30, 36);
-	padding: 4px;
-	box-sizing: border-box;
-} */
-
-/* Handle */
-/* ::-webkit-scrollbar-thumb {
-	border-radius: 10px;
-	background-color: rgb(21, 25, 30);
-	transition: background-color 0.5s;
-} */
-
-/* Handle on hover */
-/* ::-webkit-scrollbar-thumb:hover {
-	background-color: rgb(14, 17, 20);
-} */
-
-/* Actually make a good looking scrollbar */
+/* TODO: actually make a good looking scrollbar */
 .scrollbar-none::-webkit-scrollbar {
 	display: none; /* Chrome, Safari, and Opera */
 }
 .scrollbar-none {
 	-ms-overflow-style: none; /* IE and Edge */
 	scrollbar-width: none; /* Firefox */
-}
-
-/* TODO: The gap doesn't go away after hiding the planner; eventually remove gap in favor for padding within the element */
-#charsheet-container {
-	display: grid;
-	grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
-	grid-template-columns: 4fr auto 3fr 10fr;
-}
-
-/* title card */
-#title-card {
-	grid-row-start: 1;
-	grid-row-end: 2;
-	grid-column-start: 2;
-	grid-column-end: 4;
-}
-/* important stats */
-#important-stats {
-	grid-row-start: 1;
-	grid-row-end: 2;
-	grid-column-start: 4;
-	grid-column-end: 5;
-}
-/* abilities */
-#str {
-	grid-row-start: 2;
-	grid-row-end: 3;
-	grid-column-start: 2;
-	grid-column-end: 3;
-}
-#dex {
-	grid-row-start: 3;
-	grid-row-end: 4;
-	grid-column-start: 2;
-	grid-column-end: 3;
-}
-#con {
-	grid-row-start: 4;
-	grid-row-end: 5;
-	grid-column-start: 2;
-	grid-column-end: 3;
-}
-#int {
-	grid-row-start: 5;
-	grid-row-end: 6;
-	grid-column-start: 2;
-	grid-column-end: 3;
-}
-#wis {
-	grid-row-start: 6;
-	grid-row-end: 7;
-	grid-column-start: 2;
-	grid-column-end: 3;
-}
-#cha {
-	grid-row-start: 7;
-	grid-row-end: 8;
-	grid-column-start: 2;
-	grid-column-end: 3;
-}
-/* skills */
-#saving-throws {
-	grid-row-start: 2;
-	grid-row-end: 4;
-	grid-column-start: 3;
-	grid-column-end: 4;
-}
-#skills {
-	grid-row-start: 4;
-	grid-row-end: 8;
-	grid-column-start: 3;
-	grid-column-end: 4;
-}
-/* senses and proficiencies */
-#senses {
-	grid-row-start: 2;
-	grid-row-end: 4;
-	grid-column-start: 3;
-	grid-column-end: 4;
-}
-#proficiencies {
-	grid-row-start: 4;
-	grid-row-end: 8;
-	grid-column-start: 3;
-	grid-column-end: 4;
-}
-/* workspace */
-#workspace {
-	grid-row-start: 3;
-	grid-row-end: 8;
-	grid-column-start: 4;
-	grid-column-end: 5;
-}
-
-#health {
-	grid-row-start: 2;
-	grid-row-end: 3;
-	grid-column-start: 4;
-	grid-column-end: 5;
-}
-
-#planner.closed {
-	width: 0px;
-	margin-right: 0em;
 }
 
 .rounded-box-tablerow td:first-child {
@@ -164,23 +46,6 @@
 .rounded-field-tablerow td:last-child {
 	border-top-right-radius: var(--radius-field, 1rem /* 16px */);
 	border-bottom-right-radius: var(--radius-field, 1rem /* 16px */);
-}
-
-.hitpoints {
-	clip-path: polygon(
-		25% 0%,
-		75% 0,
-		75% 25%,
-		100% 25%,
-		100% 75%,
-		75% 75%,
-		75% 100%,
-		25% 100%,
-		25% 75%,
-		0% 75%,
-		0% 25%,
-		25% 25%
-	);
 }
 
 .btn-dimensions-override {
@@ -208,5 +73,5 @@
 
 .rounded-field-container {
 	--box-radius: calc(var(--radius-field) + var(--radius-field) + var(--radius-field));
-	border-radius: calc(var(--radius-field) + min(.25rem, var(--box-radius)));
+	border-radius: calc(var(--radius-field) + min(0.25rem, var(--box-radius)));
 }

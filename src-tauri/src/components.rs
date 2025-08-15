@@ -2,18 +2,31 @@ use std::fs::read_to_string;
 
 use crate::layout2::{Active, Rarity};
 
-pub fn skills_status_untrained() -> String {
-	let file = read_to_string("../components/skills/untrained.html").unwrap_or("".to_string());
+pub fn proficiency_untrained(tooptip_direction: &String) -> String {
+	let file = read_to_string("../components/proficiency/untrained.html")
+		.unwrap_or("".to_string())
+		.replace("{tooltip_direction}", tooptip_direction);
 	return file;
 }
 
-pub fn skills_status_proficient() -> String {
-	let file = read_to_string("../components/skills/proficient.html").unwrap_or("".to_string());
+pub fn proficiency_halfproficient(tooptip_direction: &String) -> String {
+	let file = read_to_string("../components/proficiency/halfproficient.html")
+		.unwrap_or(String::new())
+		.replace("{tooltip_direction}", tooptip_direction);
 	return file;
 }
 
-pub fn skills_status_expert() -> String {
-	let file = read_to_string("../components/skills/expert.html").unwrap_or("".to_string());
+pub fn proficiency_proficient(tooptip_direction: &String) -> String {
+	let file = read_to_string("../components/proficiency/proficient.html")
+		.unwrap_or("".to_string())
+		.replace("{tooltip_direction}", tooptip_direction);
+	return file;
+}
+
+pub fn proficiency_expertise(tooptip_direction: &String) -> String {
+	let file = read_to_string("../components/proficiency/expertise.html")
+		.unwrap_or("".to_string())
+		.replace("{tooltip_direction}", tooptip_direction);
 	return file;
 }
 
@@ -152,10 +165,55 @@ pub fn workspace_feats_classheader(name: &String) -> String {
 	return file;
 }
 
-pub fn workspace_inventory_equipment(name: &String, num_of_items: &u64, weight: &u64, content: &String) -> String {
+pub fn workspace_inventory(
+	num_of_equipment_items: &u64,
+	equipment_weight: &u64,
+	equipment_items: &String,
+	containers: &String,
+	attunement_slot1_rarity: &Rarity,
+	attunement_slot1_name: &String,
+	attunement_slot1_tags: &Vec<String>,
+	attunement_slot2_rarity: &Rarity,
+	attunement_slot2_name: &String,
+	attunement_slot2_tags: &Vec<String>,
+	attunement_slot3_rarity: &Rarity,
+	attunement_slot3_name: &String,
+	attunement_slot3_tags: &Vec<String>,
+	attunement_items: &String,
+	other_possessions: &Vec<String>,
+) -> String {
+	let file = read_to_string("../components/workspace/inventory/allinventory.html")
+		.unwrap_or(String::new())
+		.replace("{num_of_equipment_items}", num_of_equipment_items.to_string().as_str())
+		.replace("{equipment_weight}", equipment_weight.to_string().as_str())
+		.replace("{equipment_items}", equipment_items)
+		.replace("{containers}", containers)
+		.replace("{attunement_slot1_rarity}", &attunement_slot1_rarity.to_string())
+		.replace(
+			"{attunement_slot1_name}",
+			if attunement_slot1_name.len() == 0 { "<p class='text-base-content/60'>Empty</p>" } else { attunement_slot1_name },
+		)
+		.replace("{attunement_slot1_tags}", &attunement_slot1_tags.join(" • "))
+		.replace("{attunement_slot2_rarity}", &attunement_slot2_rarity.to_string())
+		.replace(
+			"{attunement_slot2_name}",
+			if attunement_slot2_name.len() == 0 { "<p class='text-base-content/60'>Empty</p>" } else { attunement_slot2_name },
+		)
+		.replace("{attunement_slot2_tags}", &attunement_slot2_tags.join(" • "))
+		.replace("{attunement_slot3_rarity}", &attunement_slot3_rarity.to_string())
+		.replace(
+			"{attunement_slot3_name}",
+			if attunement_slot3_name.len() == 0 { "<p class='text-base-content/60'>Empty</p>" } else { attunement_slot3_name },
+		)
+		.replace("{attunement_slot3_tags}", &attunement_slot3_tags.join(" • "))
+		.replace("{attunement_items}", attunement_items)
+		.replace("{other_possessions}", &other_possessions.iter().map(|i| format!("<p>{}</p>", i)).collect::<Vec<String>>().join("\n"));
+	return file;
+}
+
+pub fn workspace_inventory_equipment(num_of_items: &u64, weight: &u64, content: &String) -> String {
 	let file = read_to_string("../components/workspace/inventory/equipment.html")
 		.unwrap_or(String::new())
-		.replace("{name}", name)
 		.replace("{num_of_items}", num_of_items.to_string().as_str())
 		.replace("{weight}", weight.to_string().as_str())
 		.replace("{content}", content);
@@ -187,7 +245,7 @@ pub fn workspace_inventory_container(
 	return file;
 }
 
-pub fn workspace_inventory_item(
+pub fn workspace_inventory_containeritem(
 	active: &Active,
 	rarity: &Rarity,
 	name: &String,
@@ -197,13 +255,14 @@ pub fn workspace_inventory_item(
 	cost: &f64,
 	notes: &String,
 ) -> String {
+	// TODO: make active into a component
 	let active_element = match &active {
 		Active::ACTIVE => String::from("<input type='checkbox' class='checkbox' checked />"),
 		Active::INACTIVE => String::from("<input type='checkbox' class='checkbox' />"),
 		Active::NONE => String::from("-"),
 	};
 	let tag_content = tags.join(" • ");
-	let file = read_to_string("../components/workspace/inventory/item.html")
+	let file = read_to_string("../components/workspace/inventory/containeritem.html")
 		.unwrap_or(String::new())
 		.replace("{active}", &active_element)
 		.replace("{rarity}", rarity.to_string().as_str())
@@ -221,5 +280,57 @@ pub fn workspace_inventory_extratabbutton(label: &String, container_id: &String)
 		.unwrap_or(String::new())
 		.replace("{label}", label)
 		.replace("{container_id}", container_id);
+	return file;
+}
+
+pub fn workspace_inventory_attunement(
+	slot1_rarity: &Rarity,
+	slot1_name: &String,
+	slot1_tags: &Vec<String>,
+	slot2_rarity: &Rarity,
+	slot2_name: &String,
+	slot2_tags: &Vec<String>,
+	slot3_rarity: &Rarity,
+	slot3_name: &String,
+	slot3_tags: &Vec<String>,
+	items: &String,
+) -> String {
+	// TODO: make empty <p> a component
+	let file = read_to_string("../components/workspace/inventory/attunement.html")
+		.unwrap_or(String::new())
+		.replace("{slot1_rarity}", &slot1_rarity.to_string())
+		.replace("{slot1_name}", if slot1_name.len() == 0 { "<p class='text-base-content/60'>Empty</p>" } else { slot1_name })
+		.replace("{slot1_tags}", &slot1_tags.join(" • "))
+		.replace("{slot2_rarity}", &slot2_rarity.to_string())
+		.replace("{slot2_name}", if slot2_name.len() == 0 { "<p class='text-base-content/60'>Empty</p>" } else { slot2_name })
+		.replace("{slot2_tags}", &slot2_tags.join(" • "))
+		.replace("{slot3_rarity}", &slot3_rarity.to_string())
+		.replace("{slot3_name}", if slot3_name.len() == 0 { "<p class='text-base-content/60'>Empty</p>" } else { slot3_name })
+		.replace("{slot3_tags}", &slot3_tags.join(" • "))
+		.replace("{items}", &items);
+	return file;
+}
+
+pub fn workspace_inventory_attunmentitem(active: &Active, rarity: &Rarity, name: &String, tags: &Vec<String>) -> String {
+	// TODO: make active into a component
+	let active_element = match &active {
+		Active::ACTIVE => String::from("<input type='checkbox' class='checkbox' checked />"),
+		Active::INACTIVE => String::from("<input type='checkbox' class='checkbox' />"),
+		Active::NONE => String::from("-"),
+	};
+	let tag_content = tags.join(" • ");
+	let file = read_to_string("../components/workspace/inventory/attunementitem.html")
+		.unwrap_or(String::new())
+		.replace("{active}", &active_element)
+		.replace("{rarity}", &rarity.to_string())
+		.replace("{name}", name)
+		.replace("{tags}", &tag_content);
+	return file;
+}
+
+pub fn workspace_inventory_otherpossessions(items: &Vec<String>) -> String {
+	let file = read_to_string("../components/workspace/inventory/otherpossessions.html")
+		.unwrap_or(String::new())
+		.replace("{items}", &items.iter().map(|i| format!("<p>{}</p>", i)).collect::<Vec<String>>().join("\n"));
 	return file;
 }

@@ -6,16 +6,6 @@ mod serde_utils;
 
 use crate::layout2::*;
 
-#[tauri::command]
-fn gamer() -> String {
-	return "we be gaming!!".to_string();
-}
-
-#[tauri::command]
-fn fortnite() -> String {
-	return "fortnite!!!".to_string();
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
 	tauri::Builder::default()
@@ -104,7 +94,7 @@ pub fn run() {
 			player_inventory_containers,
 			player_inventory_containers_buttons,
 			player_inventory_attunement,
-			player_inventory_other,
+			player_inventory_otherpossessions,
 			player_inventory_currency,
 			player_inventory_currency_platinum,
 			player_inventory_currency_gold,
@@ -115,8 +105,18 @@ pub fn run() {
 			player_feats_class,
 			player_feats_race,
 			player_feats_general,
-			gamer,
-			fortnite
+			player_savingthrows_strength_bonus,
+			player_savingthrows_dexterity_bonus,
+			player_savingthrows_constitution_bonus,
+			player_savingthrows_intelligence_bonus,
+			player_savingthrows_wisdom_bonus,
+			player_savingthrows_charisma_bonus,
+			player_savingthrows_strength_status,
+			player_savingthrows_dexterity_status,
+			player_savingthrows_constitution_status,
+			player_savingthrows_intelligence_status,
+			player_savingthrows_wisdom_status,
+			player_savingthrows_charisma_status
 		])
 		.run(tauri::generate_context!())
 		.expect("error while running tauri application");
