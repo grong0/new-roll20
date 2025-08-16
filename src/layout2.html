@@ -904,7 +904,7 @@
 				>
 					<!-- TODO: `shadow-md` is causing a shadow problem with the border-radius -->
 					<div role="tablist" class="tabs tabs-lifted h-full w-full shadow-md">
-						<input type="radio" name="workspace" role="tab" class="tab" aria-label="Actions" value="actions" />
+						<input type="radio" name="workspace" role="tab" class="tab" aria-label="Actions" value="actions" checked />
 						<div
 							role="tabpanel"
 							class="tab-content h-full w-full bg-base-100 rounded-box overflow-y-scroll scrollbar-none"
@@ -914,7 +914,6 @@
 									<button
 										hx-get="command:player_actions"
 										hx-target="#workspace-actions"
-										hx-trigger="click"
 										class="tab flex-auto"
 										role="tab"
 										aria-controls="tab-content"
@@ -926,7 +925,6 @@
 									<button
 										hx-get="command:player_actions_action"
 										hx-target="#workspace-actions"
-										hx-trigger="click"
 										class="tab flex-auto"
 										role="tab"
 										aria-controls="tab-content"
@@ -993,15 +991,164 @@
 								</div>
 							</div>
 						</div>
-						<input
-							type="radio"
-							name="workspace"
-							role="tab"
-							class="tab"
-							aria-label="Inventory"
-							value="inventory"
-							checked
-						/>
+						<input type="radio" name="workspace" role="tab" class="tab" aria-label="Spells" value="spells" />
+						<div
+							role="tabpanel"
+							class="tab-content h-full w-full bg-base-100 rounded-box overflow-y-scroll scrollbar-none"
+						>
+							<div class="flex flex-col gap-4 p-4">
+								<div class="w-full flex flex-row justify-center gap-2">
+									<div class="flex flex-col items-center gap-1 font-bold">
+										<p class="text-lg" tauri-invoke="player_spells_modifier" hx-trigger="load once">0</p>
+										<p class="text-sm text-base-content/60">MODIFIER</p>
+									</div>
+									<div class="flex flex-col items-center gap-1 font-bold">
+										<p class="text-lg" tauri-invoke="player_spells_attack" hx-trigger="load once">0</p>
+										<p class="text-sm text-base-content/60">SPELL ATTACK</p>
+									</div>
+									<div class="flex flex-col items-center gap-1 font-bold">
+										<p class="text-lg" tauri-invoke="player_spells_savedc" hx-trigger="load once">10</p>
+										<p class="text-sm text-base-content/60">SAVE DC</p>
+									</div>
+								</div>
+								<input type="text" placeholder="Search Spells" class="input w-full" />
+								<div role="tablist" class="tabs tabs-box">
+									<button
+										hx-get="command:player_spells"
+										hx-target="#workspace-spells"
+										class="tab flex-auto"
+										role="tab"
+										aria-controls="tab-content"
+										aria-selected="true"
+										preload="always"
+									>
+										All
+									</button>
+									<button
+										hx-get="command:player_spells_cantrips"
+										hx-target="#workspace-spells"
+										class="tab flex-auto"
+										role="tab"
+										aria-controls="tab-content"
+										aria-selected="false"
+										preload="always"
+									>
+										Cantrips
+									</button>
+									<button
+										hx-get="command:player_spells_1st"
+										hx-target="#workspace-spells"
+										class="tab flex-auto"
+										role="tab"
+										aria-controls="tab-content"
+										aria-selected="false"
+										preload="always"
+									>
+										1st
+									</button>
+									<button
+										hx-get="command:player_spells_2nd"
+										hx-target="#workspace-spells"
+										class="tab flex-auto"
+										role="tab"
+										aria-controls="tab-content"
+										aria-selected="false"
+										preload="always"
+									>
+										2nd
+									</button>
+									<button
+										hx-get="command:player_spells_3rd"
+										hx-target="#workspace-spells"
+										class="tab flex-auto"
+										role="tab"
+										aria-controls="tab-content"
+										aria-selected="false"
+										preload="always"
+									>
+										3rd
+									</button>
+									<button
+										hx-get="command:player_spells_4th"
+										hx-target="#workspace-spells"
+										class="tab flex-auto"
+										role="tab"
+										aria-controls="tab-content"
+										aria-selected="false"
+										preload="always"
+									>
+										4th
+									</button>
+									<button
+										hx-get="command:player_spells_5th"
+										hx-target="#workspace-spells"
+										class="tab flex-auto"
+										role="tab"
+										aria-controls="tab-content"
+										aria-selected="false"
+										preload="always"
+									>
+										5th
+									</button>
+									<button
+										hx-get="command:player_spells_6th"
+										hx-target="#workspace-spells"
+										class="tab flex-auto"
+										role="tab"
+										aria-controls="tab-content"
+										aria-selected="false"
+										preload="always"
+									>
+										6th
+									</button>
+									<button
+										hx-get="command:player_spells_7th"
+										hx-target="#workspace-spells"
+										class="tab flex-auto"
+										role="tab"
+										aria-controls="tab-content"
+										aria-selected="false"
+										preload="always"
+									>
+										7th
+									</button>
+									<button
+										hx-get="command:player_spells_8th"
+										hx-target="#workspace-spells"
+										class="tab flex-auto"
+										role="tab"
+										aria-controls="tab-content"
+										aria-selected="false"
+										preload="always"
+									>
+										8th
+									</button>
+									<button
+										hx-get="command:player_spells_9th"
+										hx-target="#workspace-spells"
+										class="tab flex-auto"
+										role="tab"
+										aria-controls="tab-content"
+										aria-selected="false"
+										preload="always"
+									>
+										9th
+									</button>
+								</div>
+								<div
+									id="workspace-spells"
+									class="h-auto"
+									tauri-invoke="player_spells"
+									hx-trigger="load once"
+									role="tabpanel"
+								>
+									<div class="w-full h-full flex justify-center items-center">
+										<span class="loading loading-spinner loading-lg"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<input type="radio" name="workspace" role="tab" class="tab" aria-label="Inventory" value="inventory" />
 						<div
 							role="tabpanel"
 							class="tab-content h-full w-full bg-base-100 rounded-box overflow-y-scroll scrollbar-none"
@@ -1261,7 +1408,6 @@
 									<button
 										hx-get="command:player_inventory"
 										hx-target="#workspace-inventory"
-										hx-trigger="click"
 										class="tab flex-auto"
 										role="tab"
 										aria-controls="tab-content"
@@ -1273,7 +1419,6 @@
 									<button
 										hx-get="command:player_inventory_equipment"
 										hx-target="#workspace-inventory"
-										hx-trigger="click"
 										class="tab flex-auto"
 										role="tab"
 										aria-controls="tab-content"
@@ -1290,7 +1435,6 @@
 									<button
 										hx-get="command:player_inventory_attunement"
 										hx-target="#workspace-inventory"
-										hx-trigger="click"
 										class="tab flex-auto"
 										role="tab"
 										aria-controls="tab-content"
@@ -1324,17 +1468,6 @@
 								</div>
 							</div>
 						</div>
-						<input
-							type="radio"
-							name="workspace"
-							role="tab"
-							class="tab"
-							aria-label="Proficiencies"
-							value="proficiencies"
-						/>
-						<div role="tabpanel" class="tab-content h-full w-full bg-base-100 rounded-box">
-							<div class="flex flex-col gap-4 p-4">Tab Content</div>
-						</div>
 						<input type="radio" name="workspace" role="tab" class="tab" aria-label="Feats" value="feats" />
 						<div
 							role="tabpanel"
@@ -1345,7 +1478,6 @@
 									<button
 										hx-get="command:player_feats"
 										hx-target="#workspace-feats"
-										hx-trigger="click"
 										class="tab flex-auto"
 										role="tab"
 										aria-controls="tab-content"
@@ -1357,7 +1489,6 @@
 									<button
 										hx-get="command:player_feats_class"
 										hx-target="#workspace-feats"
-										hx-trigger="click"
 										class="tab flex-auto"
 										role="tab"
 										aria-controls="tab-content"
@@ -1369,7 +1500,6 @@
 									<button
 										hx-get="command:player_feats_race"
 										hx-target="#workspace-feats"
-										hx-trigger="click"
 										class="tab flex-auto"
 										role="tab"
 										aria-controls="tab-content"
