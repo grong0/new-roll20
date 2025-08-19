@@ -334,3 +334,13 @@ pub fn workspace_inventory_otherpossessions(items: &Vec<String>) -> String {
 		.replace("{items}", &items.iter().map(|i| format!("<p>{}</p>", i)).collect::<Vec<String>>().join("\n"));
 	return file;
 }
+
+pub fn workspace_spells_table() -> String {
+	let file = read_to_string("../components/workspace/spells/table.html").unwrap_or(String::new());
+	return file;
+}
+
+pub fn workspace_spells_item() -> String {
+	let file = read_to_string("../components/workspace/spells/item.html").unwrap_or(String::new());
+	return file;
+}

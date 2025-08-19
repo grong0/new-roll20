@@ -116,7 +116,8 @@ pub fn run() {
 			player_savingthrows_constitution_status,
 			player_savingthrows_intelligence_status,
 			player_savingthrows_wisdom_status,
-			player_savingthrows_charisma_status
+			player_savingthrows_charisma_status,
+			player_spells
 		])
 		.run(tauri::generate_context!())
 		.expect("error while running tauri application");

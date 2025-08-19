@@ -7,7 +7,7 @@ use crate::{
 		workspace_actions_other, workspace_actions_reaction, workspace_feats, workspace_feats_class, workspace_feats_classheader,
 		workspace_feats_general, workspace_feats_item, workspace_feats_race, workspace_inventory, workspace_inventory_attunement,
 		workspace_inventory_attunmentitem, workspace_inventory_container, workspace_inventory_containeritem, workspace_inventory_equipment,
-		workspace_inventory_extratabbutton, workspace_inventory_otherpossessions,
+		workspace_inventory_extratabbutton, workspace_inventory_otherpossessions, workspace_spells_table,
 	},
 	frontend_functions::ability_score_to_modifier,
 };
@@ -1522,4 +1522,9 @@ pub fn player_savingthrows_wisdom_status() -> String {
 #[tauri::command]
 pub fn player_savingthrows_charisma_status() -> String {
 	return proficiency_untrained(&String::from("top"));
+}
+
+#[tauri::command]
+pub fn player_spells() -> String {
+	return workspace_spells_table();
 }
