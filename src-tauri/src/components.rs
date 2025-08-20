@@ -2,31 +2,31 @@ use std::fs::read_to_string;
 
 use crate::layout2::{Active, Rarity};
 
+// TODO: for whole file: use tauri resources instead of normal pathing
+
 pub fn proficiency_untrained(tooptip_direction: &String) -> String {
-	let file = read_to_string("../components/proficiency/untrained.html")
-		.unwrap_or("".to_string())
-		.replace("{tooltip_direction}", tooptip_direction);
+	let file =
+		read_to_string("components/proficiency/untrained.html").unwrap_or("".to_string()).replace("{tooltip_direction}", tooptip_direction);
 	return file;
 }
 
 pub fn proficiency_halfproficient(tooptip_direction: &String) -> String {
-	let file = read_to_string("../components/proficiency/halfproficient.html")
+	let file = read_to_string("components/proficiency/halfproficient.html")
 		.unwrap_or(String::new())
 		.replace("{tooltip_direction}", tooptip_direction);
 	return file;
 }
 
 pub fn proficiency_proficient(tooptip_direction: &String) -> String {
-	let file = read_to_string("../components/proficiency/proficient.html")
+	let file = read_to_string("components/proficiency/proficient.html")
 		.unwrap_or("".to_string())
 		.replace("{tooltip_direction}", tooptip_direction);
 	return file;
 }
 
 pub fn proficiency_expertise(tooptip_direction: &String) -> String {
-	let file = read_to_string("../components/proficiency/expertise.html")
-		.unwrap_or("".to_string())
-		.replace("{tooltip_direction}", tooptip_direction);
+	let file =
+		read_to_string("components/proficiency/expertise.html").unwrap_or("".to_string()).replace("{tooltip_direction}", tooptip_direction);
 	return file;
 }
 
@@ -39,7 +39,7 @@ pub fn workspace_actions_item(
 	damage_type: &String,
 	notes: &String,
 ) -> String {
-	let file = read_to_string("../components/workspace/actions/item.html")
+	let file = read_to_string("components/workspace/actions/item.html")
 		.unwrap_or("".to_string())
 		.replace("{name}", name)
 		.replace("{type}", action_type)
@@ -63,7 +63,7 @@ pub fn workspace_actions(
 	other_actions_in_combat: &String,
 	limited_use_actions_in_combat: &String,
 ) -> String {
-	let file = read_to_string("../components/workspace/actions/allactions.html")
+	let file = read_to_string("components/workspace/actions/allactions.html")
 		.unwrap_or("".to_string())
 		.replace("{actions}", actions)
 		.replace("{bonus_actions}", bonus_actions)
@@ -79,7 +79,7 @@ pub fn workspace_actions(
 }
 
 pub fn workspace_actions_action(actions: &String, actions_in_combat: &String) -> String {
-	let file = read_to_string("../components/workspace/actions/actions.html")
+	let file = read_to_string("components/workspace/actions/actions.html")
 		.unwrap_or("".to_string())
 		.replace("{actions}", actions)
 		.replace("{actions_in_combat}", actions_in_combat);
@@ -87,7 +87,7 @@ pub fn workspace_actions_action(actions: &String, actions_in_combat: &String) ->
 }
 
 pub fn workspace_actions_bonusaction(actions: &String, actions_in_combat: &String) -> String {
-	let file = read_to_string("../components/workspace/actions/bonusactions.html")
+	let file = read_to_string("components/workspace/actions/bonusactions.html")
 		.unwrap_or("".to_string())
 		.replace("{actions}", actions)
 		.replace("{actions_in_combat}", actions_in_combat);
@@ -95,7 +95,7 @@ pub fn workspace_actions_bonusaction(actions: &String, actions_in_combat: &Strin
 }
 
 pub fn workspace_actions_reaction(actions: &String, actions_in_combat: &String) -> String {
-	let file = read_to_string("../components/workspace/actions/reactions.html")
+	let file = read_to_string("components/workspace/actions/reactions.html")
 		.unwrap_or("".to_string())
 		.replace("{actions}", actions)
 		.replace("{actions_in_combat}", actions_in_combat);
@@ -103,7 +103,7 @@ pub fn workspace_actions_reaction(actions: &String, actions_in_combat: &String) 
 }
 
 pub fn workspace_actions_other(actions: &String, actions_in_combat: &String) -> String {
-	let file = read_to_string("../components/workspace/actions/otheractions.html")
+	let file = read_to_string("components/workspace/actions/otheractions.html")
 		.unwrap_or("".to_string())
 		.replace("{actions}", actions)
 		.replace("{actions_in_combat}", actions_in_combat);
@@ -111,7 +111,7 @@ pub fn workspace_actions_other(actions: &String, actions_in_combat: &String) -> 
 }
 
 pub fn workspace_actions_limiteduse(actions: &String, actions_in_combat: &String) -> String {
-	let file = read_to_string("../components/workspace/actions/limiteduseactions.html")
+	let file = read_to_string("components/workspace/actions/limiteduseactions.html")
 		.unwrap_or("".to_string())
 		.replace("{actions}", actions)
 		.replace("{actions_in_combat}", actions_in_combat);
@@ -119,7 +119,7 @@ pub fn workspace_actions_limiteduse(actions: &String, actions_in_combat: &String
 }
 
 pub fn class_badge(class_higher: &String, class_lower: &String) -> String {
-	let file = read_to_string("../components/class-badge.html")
+	let file = read_to_string("components/class-badge.html")
 		.unwrap_or("".to_string())
 		.replace("{class}", class_higher)
 		.replace("{class_lower}", class_lower);
@@ -127,7 +127,7 @@ pub fn class_badge(class_higher: &String, class_lower: &String) -> String {
 }
 
 pub fn workspace_feats(class_content: &String, racial_content: &String, general_content: &String) -> String {
-	let file = read_to_string("../components/workspace/feats/allfeats.html")
+	let file = read_to_string("components/workspace/feats/allfeats.html")
 		.unwrap_or(String::new())
 		.replace("{class_content}", class_content)
 		.replace("{racial_content}", racial_content)
@@ -136,22 +136,22 @@ pub fn workspace_feats(class_content: &String, racial_content: &String, general_
 }
 
 pub fn workspace_feats_class(content: &String) -> String {
-	let file = read_to_string("../components/workspace/feats/classfeats.html").unwrap_or(String::new()).replace("{content}", content);
+	let file = read_to_string("components/workspace/feats/classfeats.html").unwrap_or(String::new()).replace("{content}", content);
 	return file;
 }
 
 pub fn workspace_feats_race(content: &String) -> String {
-	let file = read_to_string("../components/workspace/feats/racialfeats.html").unwrap_or(String::new()).replace("{content}", content);
+	let file = read_to_string("components/workspace/feats/racialfeats.html").unwrap_or(String::new()).replace("{content}", content);
 	return file;
 }
 
 pub fn workspace_feats_general(content: &String) -> String {
-	let file = read_to_string("../components/workspace/feats/generalfeats.html").unwrap_or(String::new()).replace("{content}", content);
+	let file = read_to_string("components/workspace/feats/generalfeats.html").unwrap_or(String::new()).replace("{content}", content);
 	return file;
 }
 
 pub fn workspace_feats_item(name: &String, source: &String, page: &u64, content: &String) -> String {
-	let file = read_to_string("../components/workspace/feats/item.html")
+	let file = read_to_string("components/workspace/feats/item.html")
 		.unwrap_or(String::new())
 		.replace("{name}", name)
 		.replace("{source}", source)
@@ -161,7 +161,7 @@ pub fn workspace_feats_item(name: &String, source: &String, page: &u64, content:
 }
 
 pub fn workspace_feats_classheader(name: &String) -> String {
-	let file = read_to_string("../components/workspace/feats/classheader.html").unwrap_or(String::new()).replace("{name}", name);
+	let file = read_to_string("components/workspace/feats/classheader.html").unwrap_or(String::new()).replace("{name}", name);
 	return file;
 }
 
@@ -182,7 +182,7 @@ pub fn workspace_inventory(
 	attunement_items: &String,
 	other_possessions: &Vec<String>,
 ) -> String {
-	let file = read_to_string("../components/workspace/inventory/allinventory.html")
+	let file = read_to_string("components/workspace/inventory/allinventory.html")
 		.unwrap_or(String::new())
 		.replace("{num_of_equipment_items}", num_of_equipment_items.to_string().as_str())
 		.replace("{equipment_weight}", equipment_weight.to_string().as_str())
@@ -212,7 +212,7 @@ pub fn workspace_inventory(
 }
 
 pub fn workspace_inventory_equipment(num_of_items: &u64, weight: &u64, content: &String) -> String {
-	let file = read_to_string("../components/workspace/inventory/equipment.html")
+	let file = read_to_string("components/workspace/inventory/equipment.html")
 		.unwrap_or(String::new())
 		.replace("{num_of_items}", num_of_items.to_string().as_str())
 		.replace("{weight}", weight.to_string().as_str())
@@ -234,7 +234,7 @@ pub fn workspace_inventory_container(
 		Active::INACTIVE => String::from("<input type='checkbox' class='checkbox' />"),
 		Active::NONE => String::new(),
 	};
-	let file = read_to_string("../components/workspace/inventory/container.html")
+	let file = read_to_string("components/workspace/inventory/container.html")
 		.unwrap_or(String::new())
 		.replace("{active}", &active_element)
 		.replace("{weight_constraints}", format!("({}/{} lb.)", contains_weight.to_string(), max_weight.to_string()).as_str())
@@ -262,7 +262,7 @@ pub fn workspace_inventory_containeritem(
 		Active::NONE => String::from("-"),
 	};
 	let tag_content = tags.join(" • ");
-	let file = read_to_string("../components/workspace/inventory/containeritem.html")
+	let file = read_to_string("components/workspace/inventory/containeritem.html")
 		.unwrap_or(String::new())
 		.replace("{active}", &active_element)
 		.replace("{rarity}", rarity.to_string().as_str())
@@ -276,7 +276,7 @@ pub fn workspace_inventory_containeritem(
 }
 
 pub fn workspace_inventory_extratabbutton(label: &String, container_id: &String) -> String {
-	let file = read_to_string("../components/workspace/inventory/extratabbutton.html")
+	let file = read_to_string("components/workspace/inventory/extratabbutton.html")
 		.unwrap_or(String::new())
 		.replace("{label}", label)
 		.replace("{container_id}", container_id);
@@ -296,7 +296,7 @@ pub fn workspace_inventory_attunement(
 	items: &String,
 ) -> String {
 	// TODO: make empty <p> a component
-	let file = read_to_string("../components/workspace/inventory/attunement.html")
+	let file = read_to_string("components/workspace/inventory/attunement.html")
 		.unwrap_or(String::new())
 		.replace("{slot1_rarity}", &slot1_rarity.to_string())
 		.replace("{slot1_name}", if slot1_name.len() == 0 { "<p class='text-base-content/60'>Empty</p>" } else { slot1_name })
@@ -319,7 +319,7 @@ pub fn workspace_inventory_attunmentitem(active: &Active, rarity: &Rarity, name:
 		Active::NONE => String::from("-"),
 	};
 	let tag_content = tags.join(" • ");
-	let file = read_to_string("../components/workspace/inventory/attunementitem.html")
+	let file = read_to_string("components/workspace/inventory/attunementitem.html")
 		.unwrap_or(String::new())
 		.replace("{active}", &active_element)
 		.replace("{rarity}", &rarity.to_string())
@@ -329,18 +329,18 @@ pub fn workspace_inventory_attunmentitem(active: &Active, rarity: &Rarity, name:
 }
 
 pub fn workspace_inventory_otherpossessions(items: &Vec<String>) -> String {
-	let file = read_to_string("../components/workspace/inventory/otherpossessions.html")
+	let file = read_to_string("components/workspace/inventory/otherpossessions.html")
 		.unwrap_or(String::new())
 		.replace("{items}", &items.iter().map(|i| format!("<p>{}</p>", i)).collect::<Vec<String>>().join("\n"));
 	return file;
 }
 
-pub fn workspace_spells_table() -> String {
-	let file = read_to_string("../components/workspace/spells/table.html").unwrap_or(String::new());
+pub fn workspace_spells_table(content: &String) -> String {
+	let file = read_to_string("components/workspace/spells/table.html").unwrap_or(String::new()).replace("{content}", content);
 	return file;
 }
 
 pub fn workspace_spells_item() -> String {
-	let file = read_to_string("../components/workspace/spells/item.html").unwrap_or(String::new());
+	let file = read_to_string("components/workspace/spells/item.html").unwrap_or(String::new());
 	return file;
 }

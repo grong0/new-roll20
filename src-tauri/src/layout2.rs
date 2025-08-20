@@ -1,13 +1,10 @@
 use std::collections::HashMap;
 
+use tauri::{AppHandle, Manager};
+
 use crate::{
 	components::{
-		class_badge, proficiency_expertise, proficiency_halfproficient, proficiency_proficient, proficiency_untrained, workspace_actions,
-		workspace_actions_action, workspace_actions_bonusaction, workspace_actions_item, workspace_actions_limiteduse,
-		workspace_actions_other, workspace_actions_reaction, workspace_feats, workspace_feats_class, workspace_feats_classheader,
-		workspace_feats_general, workspace_feats_item, workspace_feats_race, workspace_inventory, workspace_inventory_attunement,
-		workspace_inventory_attunmentitem, workspace_inventory_container, workspace_inventory_containeritem, workspace_inventory_equipment,
-		workspace_inventory_extratabbutton, workspace_inventory_otherpossessions, workspace_spells_table,
+		class_badge, proficiency_expertise, proficiency_halfproficient, proficiency_proficient, proficiency_untrained, workspace_actions, workspace_actions_action, workspace_actions_bonusaction, workspace_actions_item, workspace_actions_limiteduse, workspace_actions_other, workspace_actions_reaction, workspace_feats, workspace_feats_class, workspace_feats_classheader, workspace_feats_general, workspace_feats_item, workspace_feats_race, workspace_inventory, workspace_inventory_attunement, workspace_inventory_attunmentitem, workspace_inventory_container, workspace_inventory_containeritem, workspace_inventory_equipment, workspace_inventory_extratabbutton, workspace_inventory_otherpossessions, workspace_spells_item, workspace_spells_table
 	},
 	frontend_functions::ability_score_to_modifier,
 };
@@ -1526,5 +1523,21 @@ pub fn player_savingthrows_charisma_status() -> String {
 
 #[tauri::command]
 pub fn player_spells() -> String {
-	return workspace_spells_table();
+	let content = workspace_spells_item();
+	return workspace_spells_table(&content);
+}
+
+#[tauri::command]
+pub fn player_spells_modifier() -> String {
+	return 5.to_string();
+}
+
+#[tauri::command]
+pub fn player_spells_attack() -> String {
+	return 10.to_string();
+}
+
+#[tauri::command]
+pub fn player_spells_savedc() -> String {
+	return 18.to_string();
 }
