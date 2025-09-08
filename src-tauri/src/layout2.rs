@@ -1525,7 +1525,7 @@ pub fn player_spells(state: State<'_, Mutex<DAO>>) -> String {
 	// let content = workspace_spells_item();
 
 	let mut state = state.lock().unwrap();
-	let spell = state.spells.;
+	let spell = state.spells;
 
 	let content = String::from("hehehehaw");
 	return workspace_spells_table(&content);
