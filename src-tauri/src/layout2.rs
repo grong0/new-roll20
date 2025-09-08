@@ -1,12 +1,11 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Mutex};
 
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Manager, State};
 
 use crate::{
 	components::{
 		class_badge, proficiency_expertise, proficiency_halfproficient, proficiency_proficient, proficiency_untrained, workspace_actions, workspace_actions_action, workspace_actions_bonusaction, workspace_actions_item, workspace_actions_limiteduse, workspace_actions_other, workspace_actions_reaction, workspace_feats, workspace_feats_class, workspace_feats_classheader, workspace_feats_general, workspace_feats_item, workspace_feats_race, workspace_inventory, workspace_inventory_attunement, workspace_inventory_attunmentitem, workspace_inventory_container, workspace_inventory_containeritem, workspace_inventory_equipment, workspace_inventory_extratabbutton, workspace_inventory_otherpossessions, workspace_spells_item, workspace_spells_table
-	},
-	frontend_functions::ability_score_to_modifier,
+	}, dao::DAO, frontend_functions::ability_score_to_modifier
 };
 
 #[tauri::command]
@@ -1522,8 +1521,13 @@ pub fn player_savingthrows_charisma_status() -> String {
 }
 
 #[tauri::command]
-pub fn player_spells() -> String {
-	let content = workspace_spells_item();
+pub fn player_spells(state: State<'_, Mutex<DAO>>) -> String {
+	// let content = workspace_spells_item();
+
+	let mut state = state.lock().unwrap();
+	let spell = state.spells.;
+
+	let content = String::from("hehehehaw");
 	return workspace_spells_table(&content);
 }
 

@@ -1,14 +1,23 @@
 mod components;
-// mod dao;
+mod dao;
 mod frontend_functions;
 mod layout2;
 mod serde_utils;
 
+use tauri::Manager;
+
 use crate::layout2::*;
+use crate::dao::DAO;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+	let dao = DAO::new();
+
 	tauri::Builder::default()
+		.setup(|app| {
+			app.manage(dao);
+			Ok(())
+		})
 		.plugin(tauri_plugin_opener::init())
 		.invoke_handler(tauri::generate_handler![
 			player_name,

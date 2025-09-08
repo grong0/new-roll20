@@ -340,7 +340,42 @@ pub fn workspace_spells_table(content: &String) -> String {
 	return file;
 }
 
-pub fn workspace_spells_item() -> String {
-	let file = read_to_string("components/workspace/spells/item.html").unwrap_or(String::new());
+// 20 ft.
+// <span
+// 	><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18.06" class="h-4 inline-block">
+// 		<path fill="#b0b7bd" d="M9,1A8,8,0,1,1,1,9,8,8,0,0,1,9,1M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z"></path>
+// 		<path
+// 			fill="#b0b7bd"
+// 			d="M9,18.06a.5.5,0,0,1,0-1c2,0,3.65-3.68,3.65-8S11,1,9,1A.5.5,0,0,1,9,0c2.61,0,4.65,4,4.65,9S11.61,18.06,9,18.06Z"
+// 		></path>
+// 		<path
+// 			fill="#b0b7bd"
+// 			d="M9.48,11.44A18.11,18.11,0,0,1,.28,8.84.5.5,0,0,1,.78,8c9,5.25,16.37.49,16.44.44a.5.5,0,0,1,.56.83A16.25,16.25,0,0,1,9.48,11.44Z"
+// 		></path>
+// 	</svg> </span
+// >, V/S/M
+
+pub fn workspace_spells_item(
+	name: &String,
+	source: &String,
+	casting_time: &String,
+	range: &String,
+	range_unit: &String,
+	save_unit: &String,
+	save_dc: &String,
+	damage_die: &String,
+	notes: &String,
+) -> String {
+	let file = read_to_string("components/workspace/spells/item.html")
+		.unwrap_or(String::new())
+		.replace("{name}", name)
+		.replace("{source}", source)
+		.replace("{casting_time}", casting_time)
+		.replace("{range}", range)
+		.replace("{range_unit}", range_unit)
+		.replace("{save_unit}", save_unit)
+		.replace("{save_dc}", save_dc)
+		.replace("{damage_die}", damage_die)
+		.replace("{notes}", notes);
 	return file;
 }
