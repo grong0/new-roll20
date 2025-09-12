@@ -73,7 +73,9 @@ impl Spell {
 			time: Time::new(object.get("time")),
 			range: Range::new(object.get("range")),
 			components: Components::new(object.get("components")),
+			// TODO: not working
 			duration: Duration::new(object.get("duration")),
+			// TODO: not working
 			entries: serde_as_array(object.get("entries")).iter().map(|i| Entry::new(i)).collect(),
 			scaling_level_dice,
 			damage_inflict: serde_as_array_mapping(object.get("damageInflict"), serde_as_string, "N/A".to_string()),

@@ -15,10 +15,10 @@ pub fn form_key(name: &String, source: &String) -> String {
 
 #[derive(Debug)]
 pub struct Speed {
-	walk: u64,
-	fly: u64,
-	swim: u64,
-	climb: u64,
+	pub walk: u64,
+	pub fly: u64,
+	pub swim: u64,
+	pub climb: u64,
 }
 
 impl Speed {
@@ -63,8 +63,8 @@ impl Speed {
 
 #[derive(Debug)]
 pub struct ChooseAbility {
-	count: u64,
-	abilities: Vec<String>,
+	pub count: u64,
+	pub abilities: Vec<String>,
 }
 
 impl ChooseAbility {
@@ -112,13 +112,13 @@ pub enum Abilities {
 
 #[derive(Debug)]
 pub struct Ability {
-	strength: i64,
-	dexterity: i64,
-	constitution: i64,
-	intelligence: i64,
-	wisdom: i64,
-	charisma: i64,
-	choose: ChooseAbility,
+	pub strength: i64,
+	pub dexterity: i64,
+	pub constitution: i64,
+	pub intelligence: i64,
+	pub wisdom: i64,
+	pub charisma: i64,
+	pub choose: ChooseAbility,
 }
 
 impl Ability {
@@ -169,10 +169,10 @@ impl Source {
 
 #[derive(Debug)]
 pub struct HeightAndWeight {
-	base_height: u64,
-	height_mod: String,
-	base_weight: u64,
-	weight_mod: String,
+	pub base_height: u64,
+	pub height_mod: String,
+	pub base_weight: u64,
+	pub weight_mod: String,
 }
 
 impl HeightAndWeight {
@@ -196,8 +196,8 @@ impl HeightAndWeight {
 
 #[derive(Debug)]
 pub struct Age {
-	mature: u64,
-	max: u64,
+	pub mature: u64,
+	pub max: u64,
 }
 
 impl Age {
@@ -217,10 +217,10 @@ impl Age {
 
 #[derive(Debug)]
 pub struct SkillProficiencies {
-	skills: Vec<String>,
-	any: u64,
-	choose_skills: Vec<String>,
-	choose_count: u64,
+	pub skills: Vec<String>,
+	pub any: u64,
+	pub choose_skills: Vec<String>,
+	pub choose_count: u64,
 }
 
 impl SkillProficiencies {
@@ -259,10 +259,10 @@ impl SkillProficiencies {
 
 #[derive(Debug)]
 pub struct LanguageProficiencies {
-	languages: Vec<String>,
-	any_standard: u64,
-	choose_languages: Vec<String>,
-	choose_count: u64,
+	pub languages: Vec<String>,
+	pub any_standard: u64,
+	pub choose_languages: Vec<String>,
+	pub choose_count: u64,
 }
 
 // TODO: add support for getting the 'other' language from entries
@@ -309,8 +309,8 @@ impl LanguageProficiencies {
 
 #[derive(Debug)]
 pub struct ToolProficiencies {
-	tools: Vec<String>,
-	choose_any_amount: u64,
+	pub tools: Vec<String>,
+	pub choose_any_amount: u64,
 }
 
 impl ToolProficiencies {
@@ -350,9 +350,9 @@ impl ToolProficiencies {
 
 #[derive(Debug)]
 pub struct WeaponProficiencies {
-	weapons: Vec<String>,
-	choose_filter: String, // Only from one race: Hobgoblin|VGM
-	choose_amount: u64,
+	pub weapons: Vec<String>,
+	pub choose_filter: String, // Only from one race: Hobgoblin|VGM
+	pub choose_amount: u64,
 }
 
 impl WeaponProficiencies {
@@ -413,7 +413,7 @@ impl WeaponProficiencies {
 
 #[derive(Debug)]
 pub struct ArmorProficiencies {
-	armor: Vec<String>,
+	pub armor: Vec<String>,
 }
 
 impl ArmorProficiencies {
@@ -446,8 +446,8 @@ impl ArmorProficiencies {
 
 #[derive(Debug)]
 pub struct Resist {
-	resistances: Vec<String>,
-	choose_from: Vec<String>,
+	pub resistances: Vec<String>,
+	pub choose_from: Vec<String>,
 }
 
 impl Resist {
@@ -518,11 +518,11 @@ impl AdditionalSpellCategory {
 
 #[derive(Debug)]
 pub struct AdditionalSpell {
-	filter: String,
-	count: u64,
-	aquired_at: String,
-	recharge: Recharge,
-	category: AdditionalSpellCategory,
+	pub filter: String,
+	pub count: u64,
+	pub aquired_at: String,
+	pub recharge: Recharge,
+	pub category: AdditionalSpellCategory,
 }
 
 impl AdditionalSpell {
@@ -617,13 +617,13 @@ impl AdditionalSpell {
 /// TODO: Finish this
 #[derive(Debug)]
 pub struct AdditionalSpells {
-	name: String,
-	ability_choices: Vec<String>,
-	resource_name: String,
-	innate: Vec<AdditionalSpell>,
-	known: Vec<AdditionalSpell>,
-	prepared: Vec<AdditionalSpell>,
-	expanded: Vec<AdditionalSpell>,
+	pub name: String,
+	pub ability_choices: Vec<String>,
+	pub resource_name: String,
+	pub innate: Vec<AdditionalSpell>,
+	pub known: Vec<AdditionalSpell>,
+	pub prepared: Vec<AdditionalSpell>,
+	pub expanded: Vec<AdditionalSpell>,
 }
 
 impl AdditionalSpells {
@@ -659,22 +659,25 @@ impl AdditionalSpells {
 
 #[derive(Debug)]
 pub struct Time {
-	quantity: u64,
-	unit: String,
+	pub quantity: u64,
+	pub unit: String,
 }
 
 impl Time {
-	pub fn new(object: Option<&Value>) -> Time {
-		let p_object = serde_as_object_from_option(object, Map::new());
-		return Time { quantity: serde_as_u64(p_object.get("number"), 0), unit: serde_as_string(p_object.get("unit"), "N/A".to_string()) };
+	pub fn new(value: Option<&Value>) -> Time {
+		// TODO: make sure that there is only ever 1 value in the list
+		let array = serde_as_array_mapping(value, serde_as_object_from_option, Map::new());
+		let default_value = Map::new();
+		let object = array.get(0).unwrap_or(&default_value);
+		return Time { quantity: serde_as_u64(object.get("number"), 0), unit: serde_as_string(object.get("unit"), "N/A".to_string()) };
 	}
 }
 
 #[derive(Debug)]
 pub struct Range {
-	typer: String,
-	unit: String,
-	amount: u64,
+	pub range_type: String,
+	pub unit: String,
+	pub amount: u64,
 }
 
 impl Range {
@@ -683,7 +686,7 @@ impl Range {
 		let distance = serde_as_object_from_option(object.get("distance"), Map::new());
 
 		return Range {
-			typer: serde_as_string(object.get("type"), "N/A".to_string()),
+			range_type: serde_as_string(object.get("type"), "N/A".to_string()),
 			unit: distance.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
 			amount: distance.get("amount").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0),
 		};
@@ -692,10 +695,10 @@ impl Range {
 
 #[derive(Debug)]
 pub struct Components {
-	v: bool,
-	s: bool,
-	m: String,
-	r: String,
+	pub v: bool,
+	pub s: bool,
+	pub m: String,
+	pub r: String,
 }
 
 impl Components {
@@ -713,11 +716,11 @@ impl Components {
 
 #[derive(Debug)]
 pub struct Duration {
-	typed: String,
-	unit: String,
-	amount: u64,
-	concentration: bool,
-	ends: Vec<String>,
+	pub typed: String,
+	pub unit: String,
+	pub amount: u64,
+	pub concentration: bool,
+	pub ends: Vec<String>,
 }
 
 impl Duration {
@@ -752,14 +755,14 @@ impl Duration {
 
 #[derive(Debug)]
 pub struct LevelDie {
-	level: String,
-	die: String,
+	pub level: String,
+	pub die: String,
 }
 
 #[derive(Debug)]
 pub struct ScalingLevelDice {
-	label: String,
-	scaling: Vec<LevelDie>,
+	pub label: String,
+	pub scaling: Vec<LevelDie>,
 }
 
 impl ScalingLevelDice {
@@ -784,9 +787,9 @@ impl ScalingLevelDice {
 
 #[derive(Debug)]
 pub struct PackItem {
-	name: String,
-	quantity: u64,
-	special: bool,
+	pub name: String,
+	pub quantity: u64,
+	pub special: bool,
 }
 
 impl PackItem {
@@ -856,8 +859,8 @@ impl ItemType {
 
 #[derive(Debug)]
 pub struct ValidContainerSlotItem {
-	name: String,
-	quantity: u64,
+	pub name: String,
+	pub quantity: u64,
 }
 
 impl ValidContainerSlotItem {
@@ -868,8 +871,8 @@ impl ValidContainerSlotItem {
 
 #[derive(Debug)]
 pub struct ContainerSlot {
-	weight_limit: u64,
-	valid_items: Vec<ValidContainerSlotItem>,
+	pub weight_limit: u64,
+	pub valid_items: Vec<ValidContainerSlotItem>,
 }
 
 impl ContainerSlot {
@@ -885,8 +888,8 @@ impl ContainerSlot {
 
 #[derive(Debug)]
 pub struct ContainerCapacity {
-	slots: Vec<ContainerSlot>,
-	weightless: bool,
+	pub slots: Vec<ContainerSlot>,
+	pub weightless: bool,
 }
 
 impl ContainerCapacity {
@@ -930,15 +933,15 @@ impl ContainerCapacity {
 
 #[derive(Debug)]
 pub struct StartingItem {
-	name: String,
-	quantity: u64,
-	value: u64,
-	contains_value: u64,
-	display_name: String,
-	is_pouch: bool,
-	is_special: bool,
-	is_equipment_type: bool,
-	is_money: bool,
+	pub name: String,
+	pub quantity: u64,
+	pub value: u64,
+	pub contains_value: u64,
+	pub display_name: String,
+	pub is_pouch: bool,
+	pub is_special: bool,
+	pub is_equipment_type: bool,
+	pub is_money: bool,
 }
 
 impl StartingItem {
@@ -998,8 +1001,8 @@ impl StartingItem {
 
 #[derive(Debug)]
 pub struct StartingEquipment {
-	items: Vec<StartingItem>,
-	choose_between: Vec<Vec<StartingItem>>,
+	pub items: Vec<StartingItem>,
+	pub choose_between: Vec<Vec<StartingItem>>,
 }
 
 impl StartingEquipment {
@@ -1036,9 +1039,9 @@ impl StartingEquipment {
 
 #[derive(Debug)]
 pub struct ClassPrerequisite {
-	name: String,
-	level: u64,
-	visible: bool,
+	pub name: String,
+	pub level: u64,
+	pub visible: bool,
 }
 
 impl ClassPrerequisite {
@@ -1057,10 +1060,10 @@ impl ClassPrerequisite {
 #[derive(Debug)]
 pub struct Prerequisite {
 	// TODO: add support for choice from, just level, ability, summaries?, feats, other
-	campaign_requirement: Vec<String>,
-	requires_campaign: bool,
-	class_requirement: Vec<ClassPrerequisite>,
-	requires_class: bool,
+	pub campaign_requirement: Vec<String>,
+	pub requires_campaign: bool,
+	pub class_requirement: Vec<ClassPrerequisite>,
+	pub requires_class: bool,
 }
 
 impl Prerequisite {
@@ -1090,8 +1093,8 @@ impl Prerequisite {
 
 #[derive(Debug)]
 pub struct SkillToolLanguageChoice {
-	language_amount: u64,
-	tool_amount: u64, // global_count: u64
+	pub language_amount: u64,
+	pub tool_amount: u64, // global_count: u64
 }
 
 impl SkillToolLanguageChoice {
@@ -1117,7 +1120,7 @@ impl SkillToolLanguageChoice {
 
 #[derive(Debug)]
 pub struct SkillToolLanguageProficiencies {
-	options: Vec<SkillToolLanguageChoice>,
+	pub options: Vec<SkillToolLanguageChoice>,
 }
 
 impl SkillToolLanguageProficiencies {
@@ -1137,9 +1140,9 @@ impl SkillToolLanguageProficiencies {
 /// '*' as a key in progression is represented as 0 in the HashMap
 #[derive(Debug)]
 pub struct OptionalFeatureProgression {
-	name: String,
-	freature_type: Vec<String>,
-	progression: HashMap<u64, u64>,
+	pub name: String,
+	pub freature_type: Vec<String>,
+	pub progression: HashMap<u64, u64>,
 }
 
 impl OptionalFeatureProgression {
@@ -1184,8 +1187,8 @@ impl OptionalFeatureProgression {
  */
 #[derive(Debug)]
 pub struct SavingThrowProficiencies {
-	options: Vec<String>,
-	amount: u64,
+	pub options: Vec<String>,
+	pub amount: u64,
 }
 
 impl SavingThrowProficiencies {
@@ -1210,9 +1213,9 @@ impl SavingThrowProficiencies {
  */
 #[derive(Debug)]
 pub struct Expertise {
-	skill: String,
-	can_choose: bool,
-	amount: u64,
+	pub skill: String,
+	pub can_choose: bool,
+	pub amount: u64,
 }
 
 impl Expertise {
@@ -1234,27 +1237,46 @@ impl Expertise {
 
 #[derive(Debug, Clone)]
 pub struct Entry {
-	name: String,
-	entry_type: String,
-	content: Vec<String>,
+	pub name: String,
+	pub entry_type: String,
+	pub content: Vec<String>,
 }
 
 impl Entry {
-	pub fn new(object: &Value) -> Entry {
-		let parsed_object = serde_as_object(object, Map::new());
-
-		return Entry {
-			name: parsed_object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
-			entry_type: parsed_object.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
-			content: parsed_object
+	pub fn new(value: &Value) -> Entry {
+		// TODO: make sure this works for everything and make smaller
+		let name: String;
+		let entry_type: String;
+		let content: Vec<String>;
+		if value.is_string() {
+			let string = serde_as_string(Some(value), String::from("N/A"));
+			name = String::from("N/A");
+			entry_type = String::from("N/A");
+			content = vec![string];
+		} else if value.is_object() {
+			let object = serde_as_object(value, Map::new());
+			name = object.get("name").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
+			entry_type = object.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
+			content = object
 				.get("entries")
 				.unwrap_or(&to_value::<Vec<Value>>(vec![]).unwrap())
 				.as_array()
 				.unwrap_or(&vec![])
 				.iter()
 				.map(|i| i.as_str().unwrap_or("N/A").to_string())
-				.collect(),
-		};
+				.collect();
+		} else {
+			println!("Entry was something other than a string or an object.");
+			name = String::from("N/A");
+			entry_type = String::from("N/A");
+			content = vec![];
+		}
+
+		return Entry {
+			name,
+			entry_type,
+			content
+		}
 	}
 
 	pub fn default() -> Entry {
@@ -1457,8 +1479,8 @@ impl ClassTableGroup {
 
 #[derive(Debug)]
 pub struct File {
-	file_type: String,
-	path: String,
+	pub file_type: String,
+	pub path: String,
 }
 
 impl File {
@@ -1475,9 +1497,9 @@ impl File {
 // TODO: look into why this is a list and if there's occurances of where it gives the player options
 #[derive(Debug)]
 pub struct AdditionalFeats {
-	choose_from: String,
-	choose_amount: u64,
-	list: Vec<String>,
+	pub choose_from: String,
+	pub choose_amount: u64,
+	pub list: Vec<String>,
 }
 
 impl AdditionalFeats {

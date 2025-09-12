@@ -358,7 +358,8 @@ pub fn workspace_spells_table(content: &String) -> String {
 pub fn workspace_spells_item(
 	name: &String,
 	source: &String,
-	casting_time: &String,
+	time_amount: &String,
+	time_unit: &String,
 	range: &String,
 	range_unit: &String,
 	save_unit: &String,
@@ -370,7 +371,8 @@ pub fn workspace_spells_item(
 		.unwrap_or(String::new())
 		.replace("{name}", name)
 		.replace("{source}", source)
-		.replace("{casting_time}", casting_time)
+		.replace("{time_amount}", time_amount)
+		.replace("{time_unit}", time_unit)
 		.replace("{range}", range)
 		.replace("{range_unit}", range_unit)
 		.replace("{save_unit}", save_unit)
