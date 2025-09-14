@@ -4,15 +4,15 @@ use tauri::State;
 
 use crate::{
 	components::{
-		class_badge, proficiency_expertise, proficiency_halfproficient, proficiency_proficient, proficiency_untrained, workspace_actions,
-		workspace_actions_action, workspace_actions_bonusaction, workspace_actions_item, workspace_actions_limiteduse,
+		class_badge, get_svg, proficiency_expertise, proficiency_halfproficient, proficiency_proficient, proficiency_untrained,
+		workspace_actions, workspace_actions_action, workspace_actions_bonusaction, workspace_actions_item, workspace_actions_limiteduse,
 		workspace_actions_other, workspace_actions_reaction, workspace_feats, workspace_feats_class, workspace_feats_classheader,
 		workspace_feats_general, workspace_feats_item, workspace_feats_race, workspace_inventory, workspace_inventory_attunement,
 		workspace_inventory_attunmentitem, workspace_inventory_container, workspace_inventory_containeritem, workspace_inventory_equipment,
 		workspace_inventory_extratabbutton, workspace_inventory_otherpossessions, workspace_spells_item, workspace_spells_table,
 	},
 	dao::DAO,
-	frontend_functions::ability_score_to_modifier,
+	frontend_functions::{abbreviate_spell_casting_time, ability_score_to_modifier},
 };
 
 #[tauri::command]
@@ -1529,28 +1529,38 @@ pub fn player_savingthrows_charisma_status() -> String {
 
 #[tauri::command]
 pub fn player_spells(dao: State<'_, DAO>) -> String {
-	println!("\n\nfortnite\n\n");
-
 	// let content = workspace_spells_item();
 	let spells = vec![
 		dao.spells.get("fireball|phb").unwrap(),
 		dao.spells.get("ray_of_frost|phb").unwrap(),
 		dao.spells.get("melf's_minute_meteors|xge").unwrap(),
+		dao.spells.get("fly|phb").unwrap(),
+		dao.spells.get("comprehend_languages|phb").unwrap(),
 	];
 	println!("{:#?}", spells);
 
 	let mut content = String::new();
 	for spell in spells {
+		let mut extra_icons = String::new();
+		if spell.ritual {
+			extra_icons += get_svg("spell_attributes/ritual").as_str();
+		}
+		if spell.duration.concentration {
+			extra_icons += get_svg("spell_attributes/concentration").as_str();
+		}
 		content += workspace_spells_item(
 			&spell.name,
 			&spell.source.name,
+			&extra_icons,
 			&spell.time.quantity.to_string(),
 			&spell.time.unit,
+			&abbreviate_spell_casting_time(&spell.time.unit),
 			&spell.range.amount.to_string(),
 			&spell.range.unit,
 			&spell.saving_throw,
 			&spell.saving_throw,
 			&spell.damage_inflict.join(", "),
+			&String::new(),
 			&spell.entries[0].content.join(", "),
 		)
 		.as_str();

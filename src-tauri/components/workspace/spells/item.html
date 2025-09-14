@@ -1,28 +1,41 @@
 <tr>
 	<td>
-		<input type="checkbox" class="checkbox" />
-	</td>
-	<td>
-		<div class="flex flex-col justify-start">
-			<h3 class="text-lg font-bold">{name}</h3>
-			<p class="text-sm text-base-content/60">{source}</p>
+		<div class="flex flex-row justify-center">
+			<input type="checkbox" class="checkbox checkbox-xs" />
 		</div>
 	</td>
 	<td>
-		<p class="text-lg font-bold"><span>{time_amount}</span> <span>{time_unit}</span></p>
+		<div class="collapse">
+			<input type="checkbox" class="p-1!" />
+			<div class="collapse-title p-1!">
+				<p>
+					<span class="font-bold">{name}</span> <span class="text-base-content/60">{source}</span>
+					<span>{extra_icons}</span>
+				</p>
+			</div>
+			<div class="collapse-content pl-1! pr-1!">
+				<article class="prose text-xs">{entries}</article>
+			</div>
+		</div>
 	</td>
 	<td>
-		<p class="text-lg">
-			<span class="font-bold">{range}</span> <span class="text-sm text-base-content/60">{range_unit}</span>
+		<p>
+			<span class="font-bold">{time_amount}</span
+			><span class="tooltip" data-tip="{time_unit_full}">
+				<span class="text-base-content/60">{time_unit_abbreviated}</span>
+			</span>
 		</p>
 	</td>
 	<td>
-		<p class="text-lg">
-			<span class="text-sm text-base-content/60">{save_unit}</span> <span class="font-bold">{save_dc}</span>
-		</p>
+		<p><span class="font-bold">{range}</span> <span class="text-base-content/60">{range_unit}</span></p>
 	</td>
-	<td><div class="kbd kbd-md">{damage_die}</div></td>
 	<td>
+		<p><span class="text-base-content/60">{save_unit}</span> <span class="font-bold">{save_dc}</span></p>
+	</td>
+	<!-- <td>
 		<p class="text-md text-base-content/60">{notes}</p>
+	</td> -->
+	<td>
+		<p></p>
 	</td>
 </tr>

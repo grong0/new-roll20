@@ -2298,6 +2298,10 @@
     padding: 0.375rem;
     --size: calc(var(--size-selector, 0.25rem) * 8);
   }
+  .checkbox-xs {
+    padding: 0.125rem;
+    --size: calc(var(--size-selector, 0.25rem) * 4);
+  }
   .p-1 {
     padding: calc(var(--spacing) * 1);
   }
@@ -2455,9 +2459,6 @@
   .btn-success {
     --btn-color: var(--color-success);
     --btn-fg: var(--color-success-content);
-  }
-  .range-sm {
-    --range-thumb-size: calc(var(--size-selector, 0.25rem) * 5);
   }
 }
 .common {
