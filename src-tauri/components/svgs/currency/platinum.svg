@@ -1,5 +1,5 @@
 <!-- TODO: make unique -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="3 2 18 20">
+<svg class="w-{width} h-{height}" xmlns="http://www.w3.org/2000/svg" viewBox="3 2 18 20">
 	<path fill="#b5b5b5"
 		d="M9.96 3.3c.17-.19.4-.3.67-.3h2.74c.26 0 .5.11.67.3l5.74 6.65a.9.9 0 0 1 .22.59v2.92a.9.9 0 0 1-.22.6l-5.74 6.63c-.17.2-.4.31-.67.31h-2.74a.88.88 0 0 1-.67-.3l-5.74-6.65a.9.9 0 0 1-.22-.59v-2.92a.9.9 0 0 1 .22-.6z" />
 	<path fill="#a3a3a3"

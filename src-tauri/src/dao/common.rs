@@ -693,12 +693,14 @@ impl Range {
 	}
 }
 
+// TODO: figure out how 5etools is getting the royalty value
+// as its just a bool in the data
 #[derive(Debug)]
 pub struct Components {
 	pub v: bool,
 	pub s: bool,
 	pub m: String,
-	pub r: String,
+	pub r: bool,
 }
 
 impl Components {
@@ -709,8 +711,33 @@ impl Components {
 			v: serde_as_bool(parsed_object.get("v"), false),
 			s: serde_as_bool(parsed_object.get("s"), false),
 			m: serde_as_string(parsed_object.get("m"), "N/A".to_string()),
-			r: serde_as_string(parsed_object.get("r"), "N/A".to_string()),
+			r: serde_as_bool(parsed_object.get("r"), false),
 		};
+	}
+
+	pub fn to_string(&self, include_ingredients: bool) -> String {
+		let mut arr = Vec::new();
+		if self.v {
+			arr.push(String::from("V"));
+		}
+		if self.s {
+			arr.push(String::from("S"))
+		}
+		if self.m != "N/A" {
+			if include_ingredients {
+				arr.push(format!("M ({})", self.m));
+			} else {
+				arr.push(String::from("M"));
+			}
+		}
+		if self.r {
+			if include_ingredients {
+				arr.push(format!("R ({})", "something"));
+			} else {
+				arr.push(String::from("R"));
+			}
+		}
+		return arr.join(", ");
 	}
 }
 
@@ -724,18 +751,22 @@ pub struct Duration {
 }
 
 impl Duration {
-	pub fn new(object: Option<&Value>) -> Duration {
-		let parsed_object = serde_as_object_from_option(object, Map::new());
-		let mut ends = vec![];
+	pub fn new(value: Option<&Value>) -> Duration {
+		// TODO: make sure this is an array everywhere
+		let array = serde_as_array_mapping(value, serde_as_object_from_option, Map::new());
+		let default_value = Map::new();
+		// TODO: make sure that theres only one value in the array everywhere
+		let object = array.get(0).unwrap_or(&default_value);
 
-		for end in serde_as_array(parsed_object.get("ends")) {
+		let mut ends = vec![];
+		for end in serde_as_array(object.get("ends")) {
 			ends.push(end.as_str().unwrap_or("N/A").to_string());
 		}
 
 		let mut unit: String = "N/A".to_string();
 		let mut amount: u64 = 0;
 
-		match parsed_object.get("duration") {
+		match object.get("duration") {
 			Some(duration) => {
 				unit = duration.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string();
 				amount = duration.get("amount").unwrap_or(&to_value(0).unwrap()).as_u64().unwrap_or(0);
@@ -744,10 +775,10 @@ impl Duration {
 		}
 
 		return Duration {
-			typed: parsed_object.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
+			typed: object.get("type").unwrap_or(&to_value("N/A").unwrap()).as_str().unwrap_or("N/A").to_string(),
 			unit,
 			amount,
-			concentration: parsed_object.get("concentration").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
+			concentration: object.get("concentration").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
 			ends,
 		};
 	}
@@ -1272,11 +1303,7 @@ impl Entry {
 			content = vec![];
 		}
 
-		return Entry {
-			name,
-			entry_type,
-			content
-		}
+		return Entry { name, entry_type, content };
 	}
 
 	pub fn default() -> Entry {

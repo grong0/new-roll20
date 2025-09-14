@@ -359,6 +359,7 @@ pub fn workspace_spells_item(
 	name: &String,
 	source: &String,
 	extra_icons: &String,
+	entries: &String,
 	time_amount: &String,
 	time_unit_full: &String,
 	time_unit_abbreviated: &String,
@@ -367,14 +368,18 @@ pub fn workspace_spells_item(
 	save_unit: &String,
 	save_dc: &String,
 	damage_die: &String,
+	components: &String,
+	duration_amount: &String,
+	duration_unit_full: &String,
+	duration_unit_abbreviated: &String,
 	notes: &String,
-	entries: &String,
 ) -> String {
 	let file = read_to_string("components/workspace/spells/item.html")
 		.unwrap_or(String::new())
 		.replace("{name}", name)
 		.replace("{source}", source)
 		.replace("{extra_icons}", extra_icons)
+		.replace("{entries}", entries)
 		.replace("{time_amount}", time_amount)
 		.replace("{time_unit_full}", time_unit_full)
 		.replace("{time_unit_abbreviated}", time_unit_abbreviated)
@@ -383,12 +388,26 @@ pub fn workspace_spells_item(
 		.replace("{save_unit}", save_unit)
 		.replace("{save_dc}", save_dc)
 		.replace("{damage_die}", damage_die)
-		.replace("{notes}", notes)
-		.replace("{entries}", entries);
+		.replace("{components}", components)
+		.replace("{duration_amount}", duration_amount)
+		.replace("{duration_unit_full}", duration_unit_full)
+		.replace("{duration_unit_abbreviated}", duration_unit_abbreviated)
+		.replace("{notes}", notes);
 	return file;
 }
 
-pub fn get_svg(path: &str) -> String {
-	println!("components/svgs/{}.svg", path);
-	return read_to_string(format!("components/svgs/{}.svg", path)).unwrap_or(String::new());
+// TODO: look into changing svgs to prefer either w or h based on their shape
+pub fn get_svg(path: &str, width: &str, height: &str) -> String {
+	return read_to_string(format!("components/svgs/{}.svg", path))
+		.unwrap_or(String::new())
+		.replace("{width}", width)
+		.replace("{height}", height);
+}
+
+pub fn tooltip(content: &String, tooltip: &String, direction: &String) -> String {
+	return read_to_string(format!("components/tooltip.html"))
+		.unwrap_or(String::new())
+		.replace("{content}", content)
+		.replace("{tooltip}", tooltip)
+		.replace("{direction}", direction);
 }

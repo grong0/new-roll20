@@ -8,9 +8,8 @@
 		<div class="collapse">
 			<input type="checkbox" class="p-1!" />
 			<div class="collapse-title p-1!">
-				<p>
-					<span class="font-bold">{name}</span> <span class="text-base-content/60">{source}</span>
-					<span>{extra_icons}</span>
+				<p class="flex flex-row gap-1 justify-start">
+					<span class="font-bold">{name}</span> <span class="text-base-content/60">{source}</span> {extra_icons}
 				</p>
 			</div>
 			<div class="collapse-content pl-1! pr-1!">
@@ -36,6 +35,14 @@
 		<p class="text-md text-base-content/60">{notes}</p>
 	</td> -->
 	<td>
-		<p></p>
+		<p>{components}</p>
+	</td>
+	<td>
+		<p>
+			<span class="font-bold">{duration_amount}</span
+			><span class="tooltip" data-tip="{duration_unit_full}">
+				<span class="text-base-content/60">{duration_unit_abbreviated}</span>
+			</span>
+		</p>
 	</td>
 </tr>

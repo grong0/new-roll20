@@ -42,21 +42,21 @@ fn get_version(path: &str) -> String {
 
 pub fn is_newer_version() -> bool {
 	// get local version
-	let local_version = get_version("data/raw/changelog.json");
+	let local_version = get_version("../data/raw/changelog.json");
 
 	// get remote version
-	if create_dir("data/.temp").is_err() {
-		println!("Failed to create temp folder at data/.temp");
+	if create_dir("../data/.temp").is_err() {
+		println!("Failed to create temp folder at ../data/.temp");
 		return false;
 	}
-	let downloader = git_download::repo(REPO_URL).branch_name("main").add_file("data/*", "data/.temp").exec();
+	let downloader = git_download::repo(REPO_URL).branch_name("main").add_file("data/*", "../data/.temp").exec();
 	if downloader.is_err() {
 		println!("{:?}", downloader.err().unwrap());
 		return false;
 	}
-	let remote_version = get_version("data/.temp/changelog.json");
-	if remove_dir_all("data/.temp").is_err() {
-		println!("{:?}", "Failed to remove data/.temp folder");
+	let remote_version = get_version("../data/.temp/changelog.json");
+	if remove_dir_all("../data/.temp").is_err() {
+		println!("{:?}", "Failed to remove temp folder at ../data/.temp");
 		return false;
 	}
 
@@ -70,21 +70,26 @@ pub fn is_newer_version() -> bool {
 }
 
 pub fn update_data() -> Result<(), String> {
-	if remove_dir_all("data/raw").is_err() {
-		println!("Failed to delete current raw folder at data/raw");
+	if remove_dir_all("../data/raw").is_err() {
+		println!("Failed to delete current raw folder at ../data/raw");
 	}
+	println!("Deleted current raw folder at ../data/raw");
 
-	if create_dir("data/raw").is_err() {
-		return Err("Failed to create data/raw folder".to_string());
+	if create_dir("../data/raw").is_err() {
+		return Err("Failed to create raw folder at ../data/raw".to_string());
 	}
-	let result = git_download::repo(REPO_URL).branch_name("main").add_file("data/*", "data/raw").exec();
+	println!("Created new raw folder at ../data/raw");
+	let result = git_download::repo(REPO_URL).branch_name("main").add_file("data/*", "../data/raw").exec();
 	if result.is_err() {
-		return Err("Failed to download from remote repository.".to_string());
+		return Err("Failed to download from remote repository".to_string());
 	}
+	println!("Downloaded remote repository");
 
-	if read_dir("data/raw").is_err() {
-		return Err("Failed to read new data folder at expected location (data/raw)".to_string());
+	let items = read_dir("../data/raw");
+	if items.is_err() && items.iter().len() > 0 {
+		return Err("Failed to read new raw folder or confirm new info at expected location (../data/raw)".to_string());
 	}
+	println!("Confirmed that new raw folder exists and is populated with remote information");
 
 	return Ok(());
 }

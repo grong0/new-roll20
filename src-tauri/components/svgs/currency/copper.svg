@@ -1,5 +1,5 @@
 <!-- TODO: make unique -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="3 3 18 18">
+<svg class="w-{width} h-{height}" xmlns="http://www.w3.org/2000/svg" viewBox="3 3 18 18">
 	<path fill="#ab6e57" fill-rule="evenodd"
 		d="M6.414 3a1 1 0 0 0-.707.293L3.293 5.707A1 1 0 0 0 3 6.414v11.172a1 1 0 0 0 .293.707l2.414 2.414a1 1 0 0 0 .707.293h11.172a1 1 0 0 0 .707-.293l2.414-2.414a1 1 0 0 0 .293-.707V6.414a1 1 0 0 0-.293-.707l-2.414-2.414A1 1 0 0 0 17.586 3zM12 13.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"
 		clip-rule="evenodd" />

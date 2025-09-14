@@ -21,13 +21,16 @@ pub fn get_class_color(class: &String) -> String {
 	}
 }
 
-pub fn abbreviate_spell_casting_time(casting_time: &String) -> String {
+pub fn abbreviated_time_unit(casting_time: &String) -> String {
 	// TODO: double check that this covers all units
 	match casting_time.as_str() {
 		"action" => String::from("A"),
 		"bonus_action" => String::from("B"),
 		"reaction" => String::from("R"),
+		"hour" => String::from("h"),
 		"minute" => String::from("m"),
+		// TODO: check if this even exists
+		"seconds" => String::from("s"),
 		_ => String::from("?"),
 	}
 }

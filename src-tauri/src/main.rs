@@ -15,6 +15,7 @@ fn main() {
 			println!("{:?}", result.err());
 		};
 	}
+	println!();
 
 	new_roll20_lib::run()
 }

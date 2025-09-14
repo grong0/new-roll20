@@ -84,7 +84,8 @@ impl Spell {
 			area_tags: serde_as_array_mapping(object.get("areaTags"), serde_as_string, "N/A".to_string()),
 			other_sources: serde_as_array_mapping(object.get("otherSources"), serde_as_string, "N/A".to_string()),
 			entries_higher_level,
-			ritual: serde_as_bool(object.get("ritual"), false),
+			// TODO: wasn't working, but check to see if it works for every book
+			ritual: serde_as_bool(serde_as_object_from_option(object.get("meta"), Map::new()).get("ritual"), false),
 			condition_inflict: serde_as_array_mapping(object.get("conditionInflict"), serde_as_string, "N/A".to_string()),
 			affects_creature_type: serde_as_array_mapping(object.get("affectCreatureType"), serde_as_string, "N/A".to_string()),
 			damage_resist: serde_as_array_mapping(object.get("damageResist"), serde_as_string, "N/A".to_string()),
