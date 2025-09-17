@@ -1573,10 +1573,7 @@ pub fn player_spells(dao: State<'_, DAO>) -> String {
 			&spell.saving_throw,
 			&spell.saving_throw,
 			&spell.damage_inflict.join(", "),
-			&spell
-				.components
-				.to_string(false)
-				.replace("M", &tooltip(&String::from("M"), &spell.components.m, &String::from("top"))),
+			&spell.components.to_string(false).replace("M", &tooltip(&String::from("M"), &spell.components.m, &String::from("left"))),
 			&spell.duration.amount.to_string(),
 			&spell.duration.unit,
 			&abbreviated_time_unit(&spell.duration.unit),

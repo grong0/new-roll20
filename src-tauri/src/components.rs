@@ -165,6 +165,14 @@ pub fn workspace_feats_classheader(name: &String) -> String {
 	return file;
 }
 
+pub fn checkbox(size: &str, checked: &bool) -> String {
+	let file = read_to_string("components/checkbox.html")
+		.unwrap_or(String::new())
+		.replace("{size}", size)
+		.replace("{checked}", &checked.to_string());
+	return file;
+}
+
 pub fn workspace_inventory(
 	num_of_equipment_items: &u64,
 	equipment_weight: &u64,
@@ -230,8 +238,8 @@ pub fn workspace_inventory_container(
 	content: &String,
 ) -> String {
 	let active_element = match &active {
-		Active::ACTIVE => String::from("<input type='checkbox' class='checkbox' checked />"),
-		Active::INACTIVE => String::from("<input type='checkbox' class='checkbox' />"),
+		Active::ACTIVE => checkbox("xs", &true),
+		Active::INACTIVE => checkbox("xs", &false),
 		Active::NONE => String::new(),
 	};
 	let file = read_to_string("components/workspace/inventory/container.html")
@@ -257,8 +265,8 @@ pub fn workspace_inventory_containeritem(
 ) -> String {
 	// TODO: make active into a component
 	let active_element = match &active {
-		Active::ACTIVE => String::from("<input type='checkbox' class='checkbox' checked />"),
-		Active::INACTIVE => String::from("<input type='checkbox' class='checkbox' />"),
+		Active::ACTIVE => checkbox("xs", &true),
+		Active::INACTIVE => checkbox("xs", &false),
 		Active::NONE => String::from("-"),
 	};
 	let tag_content = tags.join(" • ");
@@ -314,8 +322,8 @@ pub fn workspace_inventory_attunement(
 pub fn workspace_inventory_attunmentitem(active: &Active, rarity: &Rarity, name: &String, tags: &Vec<String>) -> String {
 	// TODO: make active into a component
 	let active_element = match &active {
-		Active::ACTIVE => String::from("<input type='checkbox' class='checkbox' checked />"),
-		Active::INACTIVE => String::from("<input type='checkbox' class='checkbox' />"),
+		Active::ACTIVE => checkbox("xs", &true),
+		Active::INACTIVE => checkbox("xs", &false),
 		Active::NONE => String::from("-"),
 	};
 	let tag_content = tags.join(" • ");
