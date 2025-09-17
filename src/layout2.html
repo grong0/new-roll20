@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="retro">
 	<head>
 		<meta charset="UTF-8" />
@@ -493,7 +493,7 @@
 					</div>
 				</div>
 				<!-- Skills -->
-				 <!-- TODO: get north facing tool tips to work, they are currently being clipped by overflow-hidden -->
+				<!-- TODO: get north facing tool tips to work, they are currently being clipped by overflow-hidden -->
 				<div
 					class="w-full h-full flex flex-col p-4 bg-base-100 rounded-box gap-2 shadow-md overflow-hidden row-start-2 row-end-6 col-start-5 col-end-8"
 				>
@@ -506,10 +506,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_acrobatics_status" hx-trigger="load once" hx-swap="">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -523,10 +529,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_animalhandling_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -540,10 +552,16 @@
 								<tr>
 									<td>
 										<div tauri-invoke="player_skills_arcana_status" hx-trigger="load once">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</div>
 									</td>
@@ -557,10 +575,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_athletics_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -574,10 +598,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_deception_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -591,10 +621,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_history_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -608,10 +644,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_insight_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -625,10 +667,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_intimidation_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -642,10 +690,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_investigation_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -659,10 +713,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_medicine_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -676,10 +736,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_nature_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -693,10 +759,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_perception_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -710,10 +782,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_performance_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -727,10 +805,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_persuasion_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -744,10 +828,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_religion_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -761,10 +851,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_slightofhand_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -778,10 +874,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_stealth_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
@@ -795,10 +897,16 @@
 								<tr>
 									<td>
 										<span tauri-invoke="player_skills_survival_status" hx-trigger="load once" hx-swap="outerHTML">
-											<div class="tooltip tooltip-right flex justify-center items-center" data-tip="Untrained">
-												<div
-													class="bg-base-content/30 border-base-content/60 border-dotted border-2 rounded-full aspect-square w-4"
-												></div>
+											<div
+												class="tooltip tooltip-{tooltip_direction} flex justify-center items-center"
+												data-tip="Untrained"
+											>
+												<div class="w-4 aspect-square relative">
+													<div class="w-full h-full absolute bg-base-100 rounded-full"></div>
+													<div
+														class="w-full h-full absolute bg-base-content/30 border-dotted border-2 rounded-full"
+													></div>
+												</div>
 											</div>
 										</span>
 									</td>
