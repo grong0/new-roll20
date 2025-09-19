@@ -117,8 +117,8 @@ pub struct Character {
 	key: String,
 	classes: HashMap<String, u64>,
 	xp: u64,
-	background: Background,
-	race: String, // a race key
+	background: String, // a background key
+	race: String,       // a race key
 	details: Details,
 	inspiration: bool,
 	ability_scores: AbilityScores,
@@ -135,25 +135,27 @@ pub struct Character {
 	jack_of_all_trades: bool,
 	reliable_talent: bool,
 	extra_weapon_proficiencies: Vec<String>, // list of keys
-	extra_armor_proficiencies: Vec<String>, // list of keys
+	extra_armor_proficiencies: Vec<String>,  // list of keys
 	items: Vec<CharacterItem>,
 	skills: HashMap<String, SkillExperience>, // skill_key key to struct value
 	senses: Senses,
 	conditions: Vec<String>, // list of keys
-	diseases: Vec<String>, // list of keys
-	status: Vec<String>, // list of keys
+	diseases: Vec<String>,   // list of keys
+	status: Vec<String>,     // list of keys
 
-	global_magic_attack_modifier: i64,
-	carrying_capacity_modifer: i64,
-	global_saving_throw_modifier: i64,
-	passive_perception_modifier: i64,
-	proficiency_bonus_modifier: i64,
-	armor_class_modifier: i64,
-	speed_modifier: i64,
-	initiative_modifier: i64,
-	spell_casting_ability_modifier: i64,
-	spell_save_dc_modifier: i64,
-	spell_attack_bnus_modifier: i64,
+	// TODO: create modifiers and overrides
+	// for more customization and to keep the original data
+	// global_magic_attack_modifier: i64,
+	// carrying_capacity_modifer: i64,
+	// global_saving_throw_modifier: i64,
+	// passive_perception_modifier: i64,
+	// proficiency_bonus_modifier: i64,
+	// armor_class_modifier: i64,
+	// speed_modifier: i64,
+	// initiative_modifier: i64,
+	// spell_casting_ability_modifier: i64,
+	// spell_save_dc_modifier: i64,
+	// spell_attack_bnus_modifier: i64,
 }
 
 impl Character {
