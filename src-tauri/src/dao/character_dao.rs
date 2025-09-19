@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use crate::dao::common::{ArmorProficiencies, WeaponProficiencies};
+
 use super::{
 	backgrounds_dao::Background,
 	common::{Abilities, CharacterItem, Currency, Details, Die},
@@ -91,28 +93,20 @@ pub struct Attack {
 pub struct SpellSlot {
 	pub total: u64,
 	pub current: u64,
+	pub modifier: i64,
 }
 
 #[derive(Debug)]
 pub struct SpellSlots {
 	pub level_1: SpellSlot,
-	pub level_1_mod: i64,
 	pub level_2: SpellSlot,
-	pub level_2_mod: i64,
 	pub level_3: SpellSlot,
-	pub level_3_mod: i64,
 	pub level_4: SpellSlot,
-	pub level_4_mod: i64,
 	pub level_5: SpellSlot,
-	pub level_5_mod: i64,
 	pub level_6: SpellSlot,
-	pub level_6_mod: i64,
 	pub level_7: SpellSlot,
-	pub level_7_mod: i64,
 	pub level_8: SpellSlot,
-	pub level_8_mod: i64,
 	pub level_9: SpellSlot,
-	pub level_9_mod: i64,
 }
 
 /// Speed could be gotten as a function that takes in from different places because you could have items that give you more speed
@@ -123,54 +117,47 @@ pub struct Character {
 	key: String,
 	classes: HashMap<String, u64>,
 	xp: u64,
-	level: u64,
 	background: Background,
-	race: Race,
+	race: String, // a race key
 	details: Details,
 	inspiration: bool,
 	ability_scores: AbilityScores,
-	proficiency_bonus: i64,
-	armor_class: u64,
-	initiative: i64,
-	speed: u64,
 	hit_point: HitPoint,
-	hit_die: Vec<Die>,
 	death_save: DeathSave,
 	exhastion_level: u64,
 	attacks: Vec<Attack>,
 	currency: Currency,
 	inventory: Vec<String>,           // TODO: actually implement
-	tool_proficiencies: Vec<String>,  // TODO: actually implement
-	other_proficiencies: Vec<String>, // TODO: actually implement
+	tool_proficiencies: Vec<String>,  // list of keys
+	other_proficiencies: Vec<String>, // list of keys
 	feats_and_traits: Vec<String>,    // a list of feat and traits' keys
-	spell_casting_ability: i64,
-	spell_save_dc: i64,
-	spell_attack_bonus: i64,
-	spells: Vec<String>, // a list of spell keys
-	spell_slots: SpellSlots,
-	carrying_capacity_modifer: i64,
-	global_magic_attack_modifier: i64,
-	magic_caster_level: u64,
-	spell_save_dc_modifier: i64,
-	initiative_modifier: i64,
-	death_save_modifier: i64,
-	global_saving_throw_modifier: i64,
+	spells: Vec<String>,              // a list of spell keys
 	jack_of_all_trades: bool,
 	reliable_talent: bool,
-	passive_perception_modifier: i64,
-
-	extra_weapon_proficiencies: Vec<String>,
-	extra_armor_proficiencies: Vec<String>,
+	extra_weapon_proficiencies: Vec<String>, // list of keys
+	extra_armor_proficiencies: Vec<String>, // list of keys
 	items: Vec<CharacterItem>,
-	skills: HashMap<Skill, SkillExperience>,
+	skills: HashMap<String, SkillExperience>, // skill_key key to struct value
 	senses: Senses,
-	conditions: Vec<Condition>,
-	diseases: Vec<Disease>,
-	status: Vec<Status>,
+	conditions: Vec<String>, // list of keys
+	diseases: Vec<String>, // list of keys
+	status: Vec<String>, // list of keys
+
+	global_magic_attack_modifier: i64,
+	carrying_capacity_modifer: i64,
+	global_saving_throw_modifier: i64,
+	passive_perception_modifier: i64,
+	proficiency_bonus_modifier: i64,
+	armor_class_modifier: i64,
+	speed_modifier: i64,
+	initiative_modifier: i64,
+	spell_casting_ability_modifier: i64,
+	spell_save_dc_modifier: i64,
+	spell_attack_bnus_modifier: i64,
 }
 
 impl Character {
-	pub fn compile_hit_die(self, dao: &DAO) -> Vec<Die> {
+	pub fn get_hit_die(self, dao: &DAO) -> Vec<Die> {
 		let mut hit_dice: Vec<Die> = vec![];
 		for (key, value) in self.classes {
 			if !dao.classes.contains_key(&key) {
@@ -180,5 +167,63 @@ impl Character {
 			hit_dice.push(Die { number: value.clone(), faces: dao.classes.get(&key).unwrap().hit_die.faces.clone() });
 		}
 		return hit_dice;
+	}
+
+	pub fn get_level(&self) -> u8 {
+		return 0;
+	}
+
+	pub fn get_magic_caster_level(&self) -> u8 {
+		return 0;
+	}
+
+	pub fn get_proficiency_bonus(&self) -> u8 {
+		return 0;
+	}
+
+	pub fn get_armor_class(&self) -> u64 {
+		return 0;
+	}
+
+	pub fn get_speed(&self) -> u64 {
+		return 0;
+	}
+
+	pub fn get_initiative(&self) -> u64 {
+		return 0;
+	}
+
+	pub fn get_spell_casting_ability(&self) -> u64 {
+		return 0;
+	}
+
+	pub fn get_spell_save_dc(&self) -> u64 {
+		return 0;
+	}
+
+	pub fn get_spell_attack_bonus(&self) -> u64 {
+		return 0;
+	}
+
+	pub fn get_spell_slots(&self) -> SpellSlots {
+		return SpellSlots {
+			level_1: SpellSlot { total: 1, current: 1, modifier: 0 },
+			level_2: SpellSlot { total: 1, current: 1, modifier: 0 },
+			level_3: SpellSlot { total: 1, current: 1, modifier: 0 },
+			level_4: SpellSlot { total: 1, current: 1, modifier: 0 },
+			level_5: SpellSlot { total: 1, current: 1, modifier: 0 },
+			level_6: SpellSlot { total: 1, current: 1, modifier: 0 },
+			level_7: SpellSlot { total: 1, current: 1, modifier: 0 },
+			level_8: SpellSlot { total: 1, current: 1, modifier: 0 },
+			level_9: SpellSlot { total: 1, current: 1, modifier: 0 },
+		};
+	}
+
+	pub fn get_weapon_proficiencies(&self) -> Vec<WeaponProficiencies> {
+		return vec![];
+	}
+
+	pub fn get_armor_proficiencies(&self) -> Vec<ArmorProficiencies> {
+		return vec![];
 	}
 }
