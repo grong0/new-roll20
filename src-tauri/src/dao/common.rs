@@ -1334,11 +1334,8 @@ pub struct Details {
 
 #[derive(Debug)]
 pub struct CharacterItem {
-	pub name: String,
 	pub quantity: u64,
-	pub description: String,
 	pub equipped: bool,
-	pub item: Item,
 }
 
 #[derive(Debug)]

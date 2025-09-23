@@ -3,12 +3,7 @@ use std::collections::HashMap;
 use crate::dao::common::{ArmorProficiencies, WeaponProficiencies};
 
 use super::{
-	backgrounds_dao::Background,
-	common::{Abilities, CharacterItem, Currency, Details, Die},
-	conditionsdiseases_dao::{Condition, Disease, Status},
-	races_dao::Race,
-	skills_dao::Skill,
-	DAO,
+	backgrounds_dao::Background, common::{Abilities, CharacterItem, Currency, Details, Die}, conditionsdiseases_dao::{Condition, Disease, Status}, races_dao::Race, skills_dao::Skill, spells_dao::Spell, DAO
 };
 
 #[derive(Debug)]
@@ -33,13 +28,6 @@ pub struct AbilityScores {
 	pub intelligence: i64,
 	pub wisdom: i64,
 	pub charisma: i64,
-}
-
-#[derive(Debug)]
-pub struct HitPoint {
-	pub max: u64,
-	pub current: i64,
-	pub current_temp_point: u64,
 }
 
 #[derive(Debug)]
@@ -109,8 +97,9 @@ pub struct SpellSlots {
 	pub level_9: SpellSlot,
 }
 
-/// Speed could be gotten as a function that takes in from different places because you could have items that give you more speed
-/// Verify all fields to make sure they work in all circumstances
+/// TODO: Verify all fields to make sure they work in all circumstances.
+/// TODO: Figure out a way to represent the timeline of choices that a
+/// player can make to have that timeline functionality.
 #[derive(Debug)]
 pub struct Character {
 	name: String,
@@ -122,22 +111,23 @@ pub struct Character {
 	details: Details,
 	inspiration: bool,
 	ability_scores: AbilityScores,
-	hit_point: HitPoint,
+	current_hit_points: u64,
+	current_temp_hit_points: u64,
 	death_save: DeathSave,
 	exhastion_level: u64,
 	attacks: Vec<Attack>,
 	currency: Currency,
-	inventory: Vec<String>,           // TODO: actually implement
-	tool_proficiencies: Vec<String>,  // list of keys
-	other_proficiencies: Vec<String>, // list of keys
-	feats_and_traits: Vec<String>,    // a list of feat and traits' keys
-	spells: Vec<String>,              // a list of spell keys
+	inventory: HashMap<String, CharacterItem>, // key item_key to value struct
+	tool_proficiencies: Vec<String>,           // list of keys
+	other_proficiencies: Vec<String>,          // list of keys
+	feats_and_traits: Vec<String>,             // a list of feat and traits' keys
+	spells: Vec<String>,                       // a list of spell keys
 	jack_of_all_trades: bool,
 	reliable_talent: bool,
 	extra_weapon_proficiencies: Vec<String>, // list of keys
 	extra_armor_proficiencies: Vec<String>,  // list of keys
 	items: Vec<CharacterItem>,
-	skills: HashMap<String, SkillExperience>, // skill_key key to struct value
+	skills: HashMap<String, SkillExperience>, // key skill_key to value struct
 	senses: Senses,
 	conditions: Vec<String>, // list of keys
 	diseases: Vec<String>,   // list of keys
@@ -159,28 +149,56 @@ pub struct Character {
 }
 
 impl Character {
-	pub fn get_hit_die(self, dao: &DAO) -> Vec<Die> {
+	pub fn get_hit_points(&self) -> u64 {
+		return 0;
+	}
+	
+	pub fn get_hit_die(&self, dao: &DAO) -> Vec<Die> {
 		let mut hit_dice: Vec<Die> = vec![];
+		for (key, value) in self.classes {
+			match dao.classes.get(&key) {
+				Some(class) => {
+					hit_dice.push(Die { number: value.clone(), faces: dao.classes.get(&key).unwrap().hit_die.faces.clone() });
+				}
+				None => {
+					println!("key of '{}' not in dao classes", key);
+					continue;
+				}
+			}
+		}
+		return hit_dice;
+	}
+
+	pub fn get_level(&self, dao: &DAO) -> u8 {
+		let mut level: u8 = 0;
 		for (key, value) in self.classes {
 			if !dao.classes.contains_key(&key) {
 				println!("key of '{}' not in dao classes", key);
 				continue;
 			}
-			hit_dice.push(Die { number: value.clone(), faces: dao.classes.get(&key).unwrap().hit_die.faces.clone() });
+			level += value;
 		}
-		return hit_dice;
+		return level;
 	}
 
-	pub fn get_level(&self) -> u8 {
-		return 0;
+	pub fn get_magic_caster_level(&self, dao: &DAO) -> u8 {
+		let mut level: f8 = 0;
+		for (key, value) in self.classes {
+			match dao.classes.get(&key) {
+				Some(class) => {
+					level += class.get_caster_progression_to_value();
+				}
+				None => {
+					println!("key of '{}' not in dao classes", key);
+					continue;
+				}
+			}
+		}
+		return level;
 	}
 
-	pub fn get_magic_caster_level(&self) -> u8 {
-		return 0;
-	}
-
-	pub fn get_proficiency_bonus(&self) -> u8 {
-		return 0;
+	pub fn get_proficiency_bonus(&self, dao: &DAO) -> u8 {
+		return floorf16((self.get_level(dao) - 1) / 4) + 2;
 	}
 
 	pub fn get_armor_class(&self) -> u64 {
@@ -219,6 +237,10 @@ impl Character {
 			level_8: SpellSlot { total: 1, current: 1, modifier: 0 },
 			level_9: SpellSlot { total: 1, current: 1, modifier: 0 },
 		};
+	}
+	
+	pub fn get_spells(&self, level: u8) -> Vec<Spell> {
+		return vec![];
 	}
 
 	pub fn get_weapon_proficiencies(&self) -> Vec<WeaponProficiencies> {
