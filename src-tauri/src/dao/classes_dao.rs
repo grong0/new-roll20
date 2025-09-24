@@ -75,8 +75,6 @@ impl Class {
 		return match (self.caster_progression.as_str()) {
 			"full" => 1,
 			"1/2" => 0.5,
-			"1/3" => 0.3,
-			"pact" => 0.5,
 			"artificer" => 0.5,
 			_ => 0
 		}

@@ -1,9 +1,18 @@
-use std::collections::HashMap;
+use std::{
+	collections::HashMap,
+	intrinsics::{ceilf16, floorf16},
+};
 
 use crate::dao::common::{ArmorProficiencies, WeaponProficiencies};
 
 use super::{
-	backgrounds_dao::Background, common::{Abilities, CharacterItem, Currency, Details, Die}, conditionsdiseases_dao::{Condition, Disease, Status}, races_dao::Race, skills_dao::Skill, spells_dao::Spell, DAO
+	backgrounds_dao::Background,
+	common::{Abilities, CharacterItem, Currency, Details, Die},
+	conditionsdiseases_dao::{Condition, Disease, Status},
+	races_dao::Race,
+	skills_dao::Skill,
+	spells_dao::Spell,
+	DAO,
 };
 
 #[derive(Debug)]
@@ -97,41 +106,58 @@ pub struct SpellSlots {
 	pub level_9: SpellSlot,
 }
 
+#[derive(Debug)]
+pub struct LevelChoice {
+	pub class: String,
+	/// 0: neither
+	/// 1: attribute
+	/// 2: feat
+	/// 4: average
+	/// 8: roll
+	pub choice: u8,
+	pub ability: Abilities,
+	pub feat: String, // feat key
+	pub hit_point_result: u8,
+}
+
 /// TODO: Verify all fields to make sure they work in all circumstances.
 /// TODO: Figure out a way to represent the timeline of choices that a
 /// player can make to have that timeline functionality.
 #[derive(Debug)]
 pub struct Character {
-	name: String,
-	key: String,
-	classes: HashMap<String, u64>,
-	xp: u64,
-	background: String, // a background key
-	race: String,       // a race key
-	details: Details,
-	inspiration: bool,
-	ability_scores: AbilityScores,
-	current_hit_points: u64,
-	current_temp_hit_points: u64,
-	death_save: DeathSave,
-	exhastion_level: u64,
-	attacks: Vec<Attack>,
-	currency: Currency,
-	inventory: HashMap<String, CharacterItem>, // key item_key to value struct
-	tool_proficiencies: Vec<String>,           // list of keys
-	other_proficiencies: Vec<String>,          // list of keys
-	feats_and_traits: Vec<String>,             // a list of feat and traits' keys
-	spells: Vec<String>,                       // a list of spell keys
-	jack_of_all_trades: bool,
-	reliable_talent: bool,
-	extra_weapon_proficiencies: Vec<String>, // list of keys
-	extra_armor_proficiencies: Vec<String>,  // list of keys
-	items: Vec<CharacterItem>,
-	skills: HashMap<String, SkillExperience>, // key skill_key to value struct
-	senses: Senses,
-	conditions: Vec<String>, // list of keys
-	diseases: Vec<String>,   // list of keys
-	status: Vec<String>,     // list of keys
+	pub name: String,
+	pub key: String,
+	pub classes: HashMap<String, u64>,
+	pub xp: u64,
+	pub level: u8,
+	pub level_choices: Vec<LevelChoice>,
+	pub background: String, // a background key
+	pub race: String,       // a race key
+	pub details: Details,
+	pub inspiration: bool,
+	pub ability_scores: AbilityScores,
+	pub current_hit_points: u64,
+	pub current_temp_hit_points: u64,
+	pub death_save: DeathSave,
+	pub exhastion_level: u64,
+	pub attacks: Vec<Attack>,
+	pub currency: Currency,
+	pub inventory: HashMap<String, CharacterItem>, // key item_key to value struct
+	pub other_possessions: Vec<String>,
+	pub tool_proficiencies: Vec<String>,           // list of keys
+	pub other_proficiencies: Vec<String>,          // list of keys
+	pub feats_and_traits: Vec<String>,             // a list of feat and traits' keys
+	pub spells: Vec<String>,                       // a list of spell keys
+	pub jack_of_all_trades: bool,
+	pub reliable_talent: bool,
+	pub extra_weapon_proficiencies: Vec<String>, // list of keys
+	pub extra_armor_proficiencies: Vec<String>,  // list of keys
+	pub items: Vec<CharacterItem>,
+	pub skills: HashMap<String, SkillExperience>, // key skill_key to value struct
+	pub senses: Senses,
+	pub conditions: Vec<String>, // list of keys
+	pub diseases: Vec<String>,   // list of keys
+	pub status: Vec<String>,     // list of keys
 
 	// TODO: create modifiers and overrides
 	// for more customization and to keep the original data
@@ -153,6 +179,26 @@ impl Character {
 		return 0;
 	}
 	
+	pub fn get_classes_and_levels(&self, dao: &DAO) -> HashMap<String, u8> {
+		let mut classes = HashMap::<String, u8>::new();
+		for choice in self.level_choices {
+			match dao.classes.get(&choice.class) {
+				Some(class) => {
+					if !classes.contains_key(&choice) {
+						classes.insert(choice, 1);
+					} else {
+						classes.get(&choice) += 1;
+					}
+				}
+				None => {
+					println!("key of '{}' not in dao classes", key);
+					continue;
+				}
+			}
+		}
+		return classes;
+	}
+
 	pub fn get_hit_die(&self, dao: &DAO) -> Vec<Die> {
 		let mut hit_dice: Vec<Die> = vec![];
 		for (key, value) in self.classes {
@@ -169,24 +215,36 @@ impl Character {
 		return hit_dice;
 	}
 
-	pub fn get_level(&self, dao: &DAO) -> u8 {
-		let mut level: u8 = 0;
-		for (key, value) in self.classes {
-			if !dao.classes.contains_key(&key) {
-				println!("key of '{}' not in dao classes", key);
-				continue;
-			}
-			level += value;
-		}
-		return level;
-	}
-
-	pub fn get_magic_caster_level(&self, dao: &DAO) -> u8 {
-		let mut level: f8 = 0;
+	pub fn is_multiclass_spellcaster(&self, dao: &DAO) -> bool {
+		let mut num_of_spellcasting_classes: f16 = 0;
 		for (key, value) in self.classes {
 			match dao.classes.get(&key) {
 				Some(class) => {
-					level += class.get_caster_progression_to_value();
+					if vec!["full", "1/2", "artificer"].contains(class.caster_progression) {
+						num_of_spellcasting_classes += 1;
+					}
+					num_of_spellcasting_classes += class.get_caster_progression_to_value();
+				}
+				None => {
+					println!("key of '{}' not in dao classes", key);
+					continue;
+				}
+			}
+		}
+		return num_of_spellcasting_classes > 1;
+	}
+
+	pub fn get_magic_caster_level(&self, dao: &DAO) -> u8 {
+		let mut level: u8 = 0;
+		for (key, value) in self.classes {
+			match dao.classes.get(&key) {
+				Some(class) => {
+					level += match (class.caster_progression.as_str()) {
+						"full" => value,
+						"1/2" => ((value / 2) as f32).floor(),
+						"artificer" => ((value / 2) as f32).ceil(),
+						_ => 0,
+					} as u8;
 				}
 				None => {
 					println!("key of '{}' not in dao classes", key);
@@ -198,7 +256,7 @@ impl Character {
 	}
 
 	pub fn get_proficiency_bonus(&self, dao: &DAO) -> u8 {
-		return floorf16((self.get_level(dao) - 1) / 4) + 2;
+		return (((self.get_level(dao) - 1) / 4) as f32).floor() + 2;
 	}
 
 	pub fn get_armor_class(&self) -> u64 {
@@ -238,7 +296,7 @@ impl Character {
 			level_9: SpellSlot { total: 1, current: 1, modifier: 0 },
 		};
 	}
-	
+
 	pub fn get_spells(&self, level: u8) -> Vec<Spell> {
 		return vec![];
 	}
