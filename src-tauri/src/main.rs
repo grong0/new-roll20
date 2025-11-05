@@ -24,5 +24,5 @@ fn main() {
 
 	println!("{:#?}", dao.characters);
 
-	// new_roll20_lib::run()
+	new_roll20_lib::run()
 }
