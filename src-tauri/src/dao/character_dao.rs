@@ -1,17 +1,9 @@
-use std::{
-	collections::HashMap,
-	intrinsics::{ceilf16, floorf16},
-};
+use std::collections::HashMap;
 
 use crate::dao::common::{ArmorProficiencies, WeaponProficiencies};
 
 use super::{
-	backgrounds_dao::Background,
 	common::{Abilities, CharacterItem, Currency, Details, Die},
-	conditionsdiseases_dao::{Condition, Disease, Status},
-	races_dao::Race,
-	skills_dao::Skill,
-	spells_dao::Spell,
 	DAO,
 };
 
@@ -144,10 +136,10 @@ pub struct Character {
 	pub currency: Currency,
 	pub inventory: HashMap<String, CharacterItem>, // key item_key to value struct
 	pub other_possessions: Vec<String>,
-	pub tool_proficiencies: Vec<String>,           // list of keys
-	pub other_proficiencies: Vec<String>,          // list of keys
-	pub feats_and_traits: Vec<String>,             // a list of feat and traits' keys
-	pub spells: Vec<String>,                       // a list of spell keys
+	pub tool_proficiencies: Vec<String>,  // list of keys
+	pub other_proficiencies: Vec<String>, // list of keys
+	pub feats_and_traits: Vec<String>,    // a list of feat and traits' keys
+	pub spells: Vec<String>,              // a list of spell keys
 	pub jack_of_all_trades: bool,
 	pub reliable_talent: bool,
 	pub extra_weapon_proficiencies: Vec<String>, // list of keys
@@ -178,20 +170,22 @@ impl Character {
 	pub fn get_hit_points(&self) -> u64 {
 		return 0;
 	}
-	
+
 	pub fn get_classes_and_levels(&self, dao: &DAO) -> HashMap<String, u8> {
 		let mut classes = HashMap::<String, u8>::new();
-		for choice in self.level_choices {
+		for choice in &self.level_choices {
 			match dao.classes.get(&choice.class) {
-				Some(class) => {
-					if !classes.contains_key(&choice) {
-						classes.insert(choice, 1);
+				Some(_) => {
+					// TODO: redo this mess
+					if !classes.contains_key(&choice.class) {
+						classes.insert(choice.class.clone(), 1);
 					} else {
-						classes.get(&choice) += 1;
+						let previous_value = classes.get(&choice.class).unwrap();
+						classes.insert(choice.class.clone(), *previous_value + 1);
 					}
 				}
 				None => {
-					println!("key of '{}' not in dao classes", key);
+					println!("key of '{}' not in dao classes", choice.class);
 					continue;
 				}
 			}
@@ -199,12 +193,20 @@ impl Character {
 		return classes;
 	}
 
+	pub fn get_total_level(&self, dao: &DAO) -> u8 {
+		let mut total_level = 0;
+		for (_, value) in self.get_classes_and_levels(dao) {
+			total_level += value;
+		}
+		return total_level;
+	}
+
 	pub fn get_hit_die(&self, dao: &DAO) -> Vec<Die> {
 		let mut hit_dice: Vec<Die> = vec![];
-		for (key, value) in self.classes {
-			match dao.classes.get(&key) {
-				Some(class) => {
-					hit_dice.push(Die { number: value.clone(), faces: dao.classes.get(&key).unwrap().hit_die.faces.clone() });
+		for (key, value) in &self.classes {
+			match dao.classes.get(key) {
+				Some(_) => {
+					hit_dice.push(Die { number: value.clone(), faces: dao.classes.get(key).unwrap().hit_die.faces.clone() });
 				}
 				None => {
 					println!("key of '{}' not in dao classes", key);
@@ -216,12 +218,12 @@ impl Character {
 	}
 
 	pub fn is_multiclass_spellcaster(&self, dao: &DAO) -> bool {
-		let mut num_of_spellcasting_classes: f16 = 0;
-		for (key, value) in self.classes {
-			match dao.classes.get(&key) {
+		let mut num_of_spellcasting_classes: f32 = 0f32;
+		for (key, _) in &self.classes {
+			match dao.classes.get(key) {
 				Some(class) => {
-					if vec!["full", "1/2", "artificer"].contains(class.caster_progression) {
-						num_of_spellcasting_classes += 1;
+					if vec!["full", "1/2", "artificer"].contains(&class.caster_progression.as_str()) {
+						num_of_spellcasting_classes += 1f32;
 					}
 					num_of_spellcasting_classes += class.get_caster_progression_to_value();
 				}
@@ -231,18 +233,18 @@ impl Character {
 				}
 			}
 		}
-		return num_of_spellcasting_classes > 1;
+		return num_of_spellcasting_classes > 1f32;
 	}
 
 	pub fn get_magic_caster_level(&self, dao: &DAO) -> u8 {
 		let mut level: u8 = 0;
-		for (key, value) in self.classes {
-			match dao.classes.get(&key) {
+		for (key, value) in &self.classes {
+			match dao.classes.get(key) {
 				Some(class) => {
-					level += match (class.caster_progression.as_str()) {
-						"full" => value,
-						"1/2" => ((value / 2) as f32).floor(),
-						"artificer" => ((value / 2) as f32).ceil(),
+					level += match class.caster_progression.as_str() {
+						"full" => value.clone(),
+						"1/2" => ((value / 2) as f32).floor() as u64,
+						"artificer" => ((value / 2) as f32).ceil() as u64,
 						_ => 0,
 					} as u8;
 				}
@@ -256,7 +258,7 @@ impl Character {
 	}
 
 	pub fn get_proficiency_bonus(&self, dao: &DAO) -> u8 {
-		return (((self.get_level(dao) - 1) / 4) as f32).floor() + 2;
+		return (((self.get_total_level(dao) - 1) / 4) as f32).floor() as u8 + 2;
 	}
 
 	pub fn get_armor_class(&self) -> u64 {
@@ -297,8 +299,15 @@ impl Character {
 		};
 	}
 
-	pub fn get_spells(&self, level: u8) -> Vec<Spell> {
-		return vec![];
+	pub fn get_spells(&self, dao: &DAO, level: u8) -> Vec<String> {
+		// TODO: maybe convert this to a filter
+		let mut spells: Vec<String> = vec![];
+		for spell in &self.spells {
+			if dao.spells.contains_key(spell) && dao.spells.get(spell).unwrap().level == level as u64 {
+				spells.push(spell.clone());
+			}
+		}
+		return spells;
 	}
 
 	pub fn get_weapon_proficiencies(&self) -> Vec<WeaponProficiencies> {

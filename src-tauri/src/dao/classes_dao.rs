@@ -70,13 +70,13 @@ impl Class {
 			has_fluff_images: serde_as_bool(object.get("hasFluffImages"), false),
 		};
 	}
-	
-	pub fn get_caster_progression_to_value(&self) -> f8 {
-		return match (self.caster_progression.as_str()) {
-			"full" => 1,
-			"1/2" => 0.5,
-			"artificer" => 0.5,
-			_ => 0
+
+	pub fn get_caster_progression_to_value(&self) -> f32 {
+		return match self.caster_progression.as_str() {
+			"full" => 1f32,
+			"1/2" => 0.5f32,
+			"artificer" => 0.5f32,
+			_ => 0f32
 		}
 	}
 }
