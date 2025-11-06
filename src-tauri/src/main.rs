@@ -29,111 +29,119 @@ fn main() {
 		key: String::from("test_character"),
 		classes: HashMap::from([(String::from("wizard"), 8), (String::from("fighter"), 5)]),
 		xp: 0,
-		level: 5,
+		level: 14,
 		level_choices: vec![
 			LevelChoice{
 				class: String::from("wizard"),
-				// ability_feat_choice: AbilityScoreImprovement::ATTRIBUTE,
-				ability: Abilities::INTELLIGENCE,
-				feat: String::from(""),
-				hit_point_choice: HitPointChoice::AVERAGE,
-				hit_point_result: 0
+				choice: 0b000,
+				ability_score_improvement: vec![],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
 			},
 			LevelChoice{
 				class: String::from("wizard"),
-				// ability_feat_choice: AbilityScoreImprovement::ATTRIBUTE,
-				ability: Abilities::INTELLIGENCE,
-				feat: String::from(""),
-				hit_point_choice: HitPointChoice::AVERAGE,
-				hit_point_result: 0
+				choice: 0b000,
+				ability_score_improvement: vec![],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
 			},
 			LevelChoice{
 				class: String::from("wizard"),
-				// ability_feat_choice: AbilityScoreImprovement::ATTRIBUTE,
-				ability: Abilities::INTELLIGENCE,
-				feat: String::from(""),
-				hit_point_choice: HitPointChoice::AVERAGE,
-				hit_point_result: 0
+				choice: 0b000,
+				ability_score_improvement: vec![],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
 			},
 			LevelChoice{
 				class: String::from("wizard"),
-				// ability_feat_choice: AbilityScoreImprovement::ATTRIBUTE,
-				ability: Abilities::INTELLIGENCE,
-				feat: String::from(""),
-				hit_point_choice: HitPointChoice::AVERAGE,
-				hit_point_result: 0
+				choice: 0b010,
+				ability_score_improvement: vec![Abilities::INTELLIGENCE, Abilities::INTELLIGENCE],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
 			},
 			LevelChoice{
 				class: String::from("wizard"),
-				// ability_feat_choice: AbilityScoreImprovement::ATTRIBUTE,
-				ability: Abilities::INTELLIGENCE,
-				feat: String::from(""),
-				hit_point_choice: HitPointChoice::AVERAGE,
-				hit_point_result: 0
+				choice: 0b000,
+				ability_score_improvement: vec![],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
 			},
 			LevelChoice{
 				class: String::from("wizard"),
-				// ability_feat_choice: AbilityScoreImprovement::ATTRIBUTE,
-				ability: Abilities::INTELLIGENCE,
-				feat: String::from(""),
-				hit_point_choice: HitPointChoice::AVERAGE,
-				hit_point_result: 0
+				choice: 0b000,
+				ability_score_improvement: vec![],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
 			},
 			LevelChoice{
 				class: String::from("wizard"),
-				// ability_feat_choice: AbilityScoreImprovement::ATTRIBUTE,
-				ability: Abilities::INTELLIGENCE,
-				feat: String::from(""),
-				hit_point_choice: HitPointChoice::AVERAGE,
-				hit_point_result: 0
+				choice: 0b000,
+				ability_score_improvement: vec![],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
 			},
 			LevelChoice{
 				class: String::from("wizard"),
-				// ability_feat_choice: AbilityScoreImprovement::ATTRIBUTE,
-				ability: Abilities::INTELLIGENCE,
-				feat: String::from(""),
-				hit_point_choice: HitPointChoice::AVERAGE,
-				hit_point_result: 0
+				choice: 0b010,
+				ability_score_improvement: vec![Abilities::INTELLIGENCE, Abilities::INTELLIGENCE],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
 			},
 			LevelChoice{
 				class: String::from("fighter"),
-				// ability_feat_choice: AbilityScoreImprovement::ATTRIBUTE,
-				ability: Abilities::INTELLIGENCE,
-				feat: String::from(""),
-				hit_point_choice: HitPointChoice::AVERAGE,
-				hit_point_result: 0
+				choice: 0b000,
+				ability_score_improvement: vec![],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
 			},
 			LevelChoice{
 				class: String::from("fighter"),
-				// ability_feat_choice: AbilityScoreImprovement::ATTRIBUTE,
-				ability: Abilities::INTELLIGENCE,
-				feat: String::from(""),
-				hit_point_choice: HitPointChoice::AVERAGE,
-				hit_point_result: 0
+				choice: 0b000,
+				ability_score_improvement: vec![],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
 			},
 			LevelChoice{
 				class: String::from("fighter"),
-				// ability_feat_choice: AbilityScoreImprovement::ATTRIBUTE,
-				ability: Abilities::INTELLIGENCE,
-				feat: String::from(""),
-				hit_point_choice: HitPointChoice::AVERAGE,
-				hit_point_result: 0
+				choice: 0b000,
+				ability_score_improvement: vec![],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
 			},
 			LevelChoice{
 				class: String::from("fighter"),
-				// ability_feat_choice: AbilityScoreImprovement::ATTRIBUTE,
-				ability: Abilities::INTELLIGENCE,
-				feat: String::from(""),
-				hit_point_choice: HitPointChoice::AVERAGE,
-				hit_point_result: 0
+				choice: 0b010,
+				ability_score_improvement: vec![Abilities::INTELLIGENCE, Abilities::DEXTERITY],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
 			},
 			LevelChoice{
 				class: String::from("fighter"),
-				// ability_feat_choice: AbilityScoreImprovement::ATTRIBUTE,
-				ability: Abilities::INTELLIGENCE,
-				feat: String::from(""),
-				hit_point_choice: HitPointChoice::AVERAGE,
-				hit_point_result: 0
+				choice: 0b000,
+				ability_score_improvement: vec![],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
+			},
+			LevelChoice{
+				class: String::from("fighter"),
+				choice: 0b010,
+				ability_score_improvement: vec![Abilities::DEXTERITY, Abilities::DEXTERITY],
+				feat_aquired: String::from(""),
+				took_average: true,
+				roll_result: 0
 			},
 		],
 		background: String::from("acolyte|phb"),

@@ -111,21 +111,19 @@ pub enum HitPointChoice {
 }
 
 // TODO: maybe make levelchoice a list of choices that was made per level or is going to make
-
 #[derive(Debug)]
 pub struct LevelChoice {
 	pub class: String,
-	// / 0: neither
-	// / 1: attribute
-	// / 2: feat
-	// / 4: average
-	// / 8: roll
-	// pub choice: u8,
-	// pub ability_feat_choice: AbilityFeatChoice,
-	pub ability: Abilities,
-	pub feat: String, // feat key
-	pub hit_point_choice: HitPointChoice,
-	pub hit_point_result: u8,
+	/// 0: average
+	/// 1: roll
+	/// 2: ability
+	/// 4: feat
+	/// 0b011
+	pub choice: u8,
+	pub ability_score_improvement: Vec<Abilities>,
+	pub feat_aquired: String, // feat key
+	pub took_average: bool,
+	pub roll_result: u8,
 }
 
 /// TODO: Verify all fields to make sure they work in all circumstances.
