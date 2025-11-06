@@ -3,7 +3,7 @@ use std::{collections::HashMap, fs::read_to_string};
 use serde_json::{from_str, to_value, Map, Value};
 
 use crate::serde_utils::{
-	serde_as_array, serde_as_array_mapping, serde_as_object, serde_as_object_from_option, serde_as_string, serde_as_u64,
+	serde_as_array, serde_as_array_mapping, serde_as_object, serde_as_object_from_option, serde_as_string,
 };
 
 use super::common::{form_key, File};

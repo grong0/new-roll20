@@ -7,7 +7,6 @@ use crate::serde_utils::{
 	serde_as_u64,
 };
 
-use super::items_dao::Item;
 
 pub fn form_key(name: &String, source: &String) -> String {
 	return name.to_ascii_lowercase().replace(" ", "_") + "|" + source.to_ascii_lowercase().as_str();

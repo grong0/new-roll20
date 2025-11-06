@@ -1,4 +1,4 @@
-use std::{fmt::format, fs::read_to_string, mem::replace};
+use std::fs::read_to_string;
 
 use crate::layout2::{Active, Rarity};
 

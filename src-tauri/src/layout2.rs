@@ -11,7 +11,7 @@ use crate::{
 		workspace_inventory_attunmentitem, workspace_inventory_container, workspace_inventory_containeritem, workspace_inventory_equipment,
 		workspace_inventory_extratabbutton, workspace_inventory_otherpossessions, workspace_spells_item, workspace_spells_table,
 	},
-	dao::DAO,
+	dao::{spells_dao::Spell, DAO},
 	frontend_functions::{abbreviated_time_unit, ability_score_to_modifier},
 };
 
@@ -1529,7 +1529,6 @@ pub fn player_savingthrows_charisma_status() -> String {
 
 #[tauri::command]
 pub fn player_spells(dao: State<'_, DAO>) -> String {
-	// let content = workspace_spells_item();
 	let spells = vec![
 		dao.spells.get("acid_splash|phb").unwrap(),
 		dao.spells.get("create_bonfire|xge").unwrap(),
