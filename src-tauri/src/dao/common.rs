@@ -1552,3 +1552,10 @@ impl AdditionalFeats {
 		return AdditionalFeats { choose_from, choose_amount, list };
 	}
 }
+
+fn parse_operation_rec(values: Vec<String>, constants: Vec<)
+
+pub fn parse_operation(formula: &String) {
+	// <$level$> / 2 + <$int_mod$>
+	let
+}

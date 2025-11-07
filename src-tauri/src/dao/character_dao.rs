@@ -114,16 +114,29 @@ pub enum HitPointChoice {
 #[derive(Debug)]
 pub struct LevelChoice {
 	pub class: String,
-	/// 0: average
-	/// 1: roll
-	/// 2: ability
-	/// 4: feat
-	/// 0b011
+	/// 1: ability
+	/// 2: feat
+	/// 0b10 -> new feat
 	pub choice: u8,
 	pub ability_score_improvement: Vec<Abilities>,
 	pub feat_aquired: String, // feat key
 	pub took_average: bool,
 	pub roll_result: u8,
+	pub new_spells: Vec<String>
+}
+
+impl LevelChoice {
+	pub fn improved_ability_score(&self) {
+		return self.choice & 0b1 == 0b1;
+	}
+
+	pub fn gained_feat(&self) {
+		return (self.choice >> 1) & 0b1 == 0b1;
+	}
+
+	pub fn gained_spells(&self) {
+		return (self.choice >> 2) & 0b1 == 0b1;
+	}
 }
 
 /// TODO: Verify all fields to make sure they work in all circumstances.
