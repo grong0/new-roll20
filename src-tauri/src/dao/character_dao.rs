@@ -126,15 +126,15 @@ pub struct LevelChoice {
 }
 
 impl LevelChoice {
-	pub fn improved_ability_score(&self) {
+	pub fn improved_ability_score(&self) -> bool {
 		return self.choice & 0b1 == 0b1;
 	}
 
-	pub fn gained_feat(&self) {
+	pub fn gained_feat(&self) -> bool {
 		return (self.choice >> 1) & 0b1 == 0b1;
 	}
 
-	pub fn gained_spells(&self) {
+	pub fn gained_spells(&self) -> bool {
 		return (self.choice >> 2) & 0b1 == 0b1;
 	}
 }
