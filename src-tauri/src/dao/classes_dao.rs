@@ -1,8 +1,11 @@
 use serde_json::{Map, Value};
 
-use crate::{dao::common::parse_operation, serde_utils::{
-	serde_as_array, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string, serde_as_u64,
-}};
+use crate::{
+	dao::common::parse_operation,
+	serde_utils::{
+		serde_as_array, serde_as_array_mapping, serde_as_bool, serde_as_object, serde_as_object_from_option, serde_as_string, serde_as_u64,
+	},
+};
 
 use super::common::{
 	form_key, AdditionalSpells, ClassStartingEquipment, ClassTableGroup, Die, Entry, Multiclassing, OptionalFeatureProgression,
@@ -76,16 +79,24 @@ impl Class {
 			"full" => 1f32,
 			"1/2" => 0.5f32,
 			"artificer" => 0.5f32,
-			_ => 0f32
-		}
+			_ => 0f32,
+		};
 	}
 
-	pub fn get_num_of_prepared_spells(&self, level: &u8, int_mod: &u8) -> {
+	/**
+	 * TODO: verify
+	 */
+	pub fn get_num_of_prepared_spells(&self, level: &u8, int_mod: &u8) -> u64 {
 		// <$level$> / 2 + <$int_mod$>
 		if self.preparsed_spells_formula != String::from("N/A") {
-			return parse_operation(self.preparsed_spells_formula.replace("<$level$>", level).replace("<$int_mod$>", int_mod));
+			return parse_operation(
+				&self
+					.preparsed_spells_formula
+					.replace("<$level$>", &level.to_string().as_str())
+					.replace("<$int_mod$>", &int_mod.to_string().as_str()),
+			) as u64;
 		}
-		return self.spells
+		return 0;
 	}
 }
 

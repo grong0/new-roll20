@@ -119,7 +119,7 @@ pub struct LevelChoice {
 	/// 0b10 -> new feat
 	pub choice: u8,
 	pub ability_score_improvement: Vec<Abilities>,
-	pub feat_aquired: String, // feat key
+	pub feat_acquired: String, // feat key
 	pub took_average: bool,
 	pub roll_result: u8,
 	pub new_spells: Vec<String>

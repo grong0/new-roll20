@@ -1,4 +1,4 @@
-use std::{collections::HashMap, iter::zip};
+use std::{collections::HashMap, iter::zip, ops::Index};
 
 use serde_json::{to_value, Map, Value};
 
@@ -1553,9 +1553,29 @@ impl AdditionalFeats {
 	}
 }
 
-fn parse_operation_rec(values: Vec<String>, constants: Vec<)
+// fn parse_operation_rec(values: Vec<String>, constants: Vec<>) -> {
 
-pub fn parse_operation(formula: &String) {
+// }
+
+pub fn parse_operation(formula: &String) -> i64 {
 	// <$level$> / 2 + <$int_mod$>
-	let
+	let mut tokens: Vec<&str> = formula.split(" ").collect();
+	let mut ind;
+	let mut val;
+	while tokens.len() == 0 {
+		if tokens.contains(&String::from("/").as_str()) {
+			ind = tokens.iter().position(|&r| r == "/").unwrap();
+		} else if tokens.contains(&String::from("+").as_str()) {
+			ind = tokens.iter().position(|&r| r == "+").unwrap();
+		} else {
+			println!("parse operation loop went wrong");
+			break;
+		}
+		val = (tokens[ind - 1].parse::<i64>().unwrap() / tokens[ind + 1].parse::<i64>().unwrap()).to_string();
+		// tokens[ind] = &val.as_str().to_owned();
+		tokens[ind] = &"";
+		tokens.remove(ind - 1);
+		tokens.remove(ind);
+	}
+	return tokens[0].parse::<i64>().unwrap();
 }
