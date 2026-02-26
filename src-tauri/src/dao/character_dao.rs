@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::dao::common::{ArmorProficiencies, WeaponProficiencies};
+use crate::dao::common::{ArmorProficiencies, Proficiencies, WeaponProficiencies};
 
 use super::{
 	common::{Abilities, CharacterItem, Currency, Details, Die},
@@ -243,7 +243,7 @@ impl Character {
 		let mut multiclassed_classes = vec![];
 		match self.get_first_class(dao) {
 			Some(first_class) => {
-				for (class_key, level) in self.get_classes_and_levels(dao) {
+				for (class_key, _) in self.get_classes_and_levels(dao) {
 					if class_key != first_class {
 						multiclassed_classes.push(class_key);
 					}
@@ -405,7 +405,29 @@ impl Character {
 		// return self.get_all_spells(dao).iter().filter(|spell_key| dao.spells.get(spell_key.to_owned()).unwrap().level == level as u64).collect();
 	}
 
+	pub fn get_proficiencies_from_multiclassed_classes(&self, dao: &DAO) -> Vec<Proficiencies> {
+		let mut proficiencies = vec![];
+		for class_key in &self.get_multiclassed_classes(dao) {
+			match dao.classes.get(class_key) {
+				Some(class) => {
+					proficiencies.push(class.multiclassing.proficiencies_gained.clone());
+				}
+				None => {
+					println!("key of '{}' not in dao classes", class_key);
+					continue;
+				}
+			}
+		}
+		return proficiencies;
+	}
+
 	pub fn get_weapon_proficiencies(&self) -> Vec<WeaponProficiencies> {
+		/**
+		 * Is affected by:
+		 * class?
+		 * multiclasses?
+		 * race?
+		 */
 		return vec![];
 	}
 

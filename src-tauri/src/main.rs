@@ -254,6 +254,7 @@ fn main() {
 	println!("{:#?}", character.get_spells_from_level(&dao, 1));
 	println!("{:#?}", character.get_spells_from_level(&dao, 2));
 	println!("{:#?}", character.get_spells_from_level(&dao, 3));
+	println!("{:#?}", character.get_proficiencies_from_multiclassed_classes(&dao));
 
 	// new_roll20_lib::run()
 }

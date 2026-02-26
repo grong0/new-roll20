@@ -214,7 +214,7 @@ impl Age {
 	}
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SkillProficiencies {
 	pub skills: Vec<String>,
 	pub any: u64,
@@ -306,7 +306,7 @@ impl LanguageProficiencies {
 	}
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ToolProficiencies {
 	pub tools: Vec<String>,
 	pub choose_any_amount: u64,
@@ -410,7 +410,7 @@ impl WeaponProficiencies {
 	}
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ArmorProficiencies {
 	pub armor: Vec<String>,
 }
@@ -1360,7 +1360,7 @@ impl Die {
 	}
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ClassWeaponProficiencies {
 	pub weapons: Vec<String>,
 	pub optional_weapons: Vec<String>,
@@ -1390,7 +1390,7 @@ impl ClassWeaponProficiencies {
 	}
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Proficiencies {
 	pub armor: ArmorProficiencies, // TODO: check to see if this is valid for the data
 	pub weapons: ClassWeaponProficiencies,

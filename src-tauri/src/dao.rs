@@ -33,6 +33,10 @@ use spells_dao::Spell;
 
 use crate::serde_utils::serde_as_array;
 
+/**
+ * !!! BIG TODO: look into saving choice decisions at the source; save decisions every choice struct.
+ */
+
 fn get_actions(path: &str) -> HashMap<String, Action> {
 	let file = read_to_string(path);
 	if file.is_err() {
