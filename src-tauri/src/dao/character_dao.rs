@@ -146,7 +146,6 @@ impl LevelChoice {
 pub struct Character {
 	pub name: String,
 	pub key: String,
-	pub classes: HashMap<String, u64>,
 	pub xp: u64,
 	pub level: u8,
 	pub level_choices: Vec<LevelChoice>,
@@ -158,7 +157,7 @@ pub struct Character {
 	pub current_hit_points: u64,
 	pub current_temp_hit_points: u64,
 	pub death_save: DeathSave,
-	pub exhastion_level: u64,
+	pub exhaustion_level: u64,
 	pub attacks: Vec<Attack>,
 	pub currency: Currency,
 	pub inventory: HashMap<String, CharacterItem>, // key item_key to value struct
@@ -198,6 +197,15 @@ impl Character {
 		return 0;
 	}
 
+	// pub fn get_unplanned_levels(&self) -> Vec<u8> {
+	// 	let discrepancy = self.level_choices.len() - self.level;
+	// 	println!("test: {}", self.level_choices.len()..self.level as usize);
+	// 	if discrepancy <= 0 {
+	// 		return vec![];
+	// 	}
+	// 	return vec![](self.level_choices.len()..self.level as usize).into_iter();
+	// }
+
 	pub fn get_classes_and_levels(&self, dao: &DAO) -> HashMap<String, u8> {
 		let mut classes = HashMap::<String, u8>::new();
 		for choice in &self.level_choices {
@@ -220,23 +228,49 @@ impl Character {
 		return classes;
 	}
 
+	pub fn get_first_class(&self, dao: &DAO) -> Option<String> {
+		if self.level_choices.len() == 0 {
+			return None;
+		}
+		let class = self.level_choices.get(0).unwrap().class.clone();
+		if !dao.classes.contains_key(&class) {
+			return None;
+		}
+		return Some(class);
+	}
+
+	pub fn get_multiclassed_classes(&self, dao: &DAO) -> Vec<String> {
+		let mut multiclassed_classes = vec![];
+		match self.get_first_class(dao) {
+			Some(first_class) => {
+				for (class_key, level) in self.get_classes_and_levels(dao) {
+					if class_key != first_class {
+						multiclassed_classes.push(class_key);
+					}
+				}
+			}
+			None => {}
+		}
+		return multiclassed_classes;
+	}
+
 	pub fn get_total_level(&self, dao: &DAO) -> u8 {
 		let mut total_level = 0;
-		for (_, value) in self.get_classes_and_levels(dao) {
-			total_level += value;
+		for (_, level) in self.get_classes_and_levels(dao) {
+			total_level += level;
 		}
 		return total_level;
 	}
 
 	pub fn get_hit_die(&self, dao: &DAO) -> Vec<Die> {
 		let mut hit_dice: Vec<Die> = vec![];
-		for (key, value) in &self.classes {
-			match dao.classes.get(key) {
-				Some(_) => {
-					hit_dice.push(Die { number: value.clone(), faces: dao.classes.get(key).unwrap().hit_die.faces.clone() });
+		for (class_key, level) in &self.get_classes_and_levels(dao) {
+			match dao.classes.get(class_key) {
+				Some(class) => {
+					hit_dice.push(Die { number: level.clone() as u64, faces: class.hit_die.faces.clone() });
 				}
 				None => {
-					println!("key of '{}' not in dao classes", key);
+					println!("key of '{}' not in dao classes", class_key);
 					continue;
 				}
 			}
@@ -246,8 +280,8 @@ impl Character {
 
 	pub fn is_multiclass_spellcaster(&self, dao: &DAO) -> bool {
 		let mut num_of_spellcasting_classes: f32 = 0f32;
-		for (key, _) in &self.classes {
-			match dao.classes.get(key) {
+		for (class_key, _) in &self.get_classes_and_levels(dao) {
+			match dao.classes.get(class_key) {
 				Some(class) => {
 					if vec!["full", "1/2", "artificer"].contains(&class.caster_progression.as_str()) {
 						num_of_spellcasting_classes += 1f32;
@@ -255,7 +289,7 @@ impl Character {
 					num_of_spellcasting_classes += class.get_caster_progression_to_value();
 				}
 				None => {
-					println!("key of '{}' not in dao classes", key);
+					println!("key of '{}' not in dao classes", class_key);
 					continue;
 				}
 			}
@@ -264,24 +298,24 @@ impl Character {
 	}
 
 	pub fn get_magic_caster_level(&self, dao: &DAO) -> u8 {
-		let mut level: u8 = 0;
-		for (key, value) in &self.classes {
-			match dao.classes.get(key) {
+		let mut magic_caster_level: u8 = 0;
+		for (class_key, level) in &self.get_classes_and_levels(dao) {
+			match dao.classes.get(class_key) {
 				Some(class) => {
-					level += match class.caster_progression.as_str() {
-						"full" => value.clone(),
-						"1/2" => ((value / 2) as f32).floor() as u64,
-						"artificer" => ((value / 2) as f32).ceil() as u64,
+					magic_caster_level += match class.caster_progression.as_str() {
+						"full" => level.clone(),
+						"1/2" => ((level / 2) as f32).floor() as u8,
+						"artificer" => ((level / 2) as f32).ceil() as u8,
 						_ => 0,
 					} as u8;
 				}
 				None => {
-					println!("key of '{}' not in dao classes", key);
+					println!("key of '{}' not in dao classes", class_key);
 					continue;
 				}
 			}
 		}
-		return level;
+		return magic_caster_level;
 	}
 
 	pub fn get_proficiency_bonus(&self, dao: &DAO) -> u8 {
@@ -289,14 +323,38 @@ impl Character {
 	}
 
 	pub fn get_armor_class(&self) -> u64 {
+		/**
+		 * Is affected by
+		 * conditions?
+		 * items?
+		 * race?
+		 * class?
+		 * feats?
+		 */
 		return 0;
 	}
 
 	pub fn get_speed(&self) -> u64 {
+		/**
+		 * Is affected by
+		 * conditions?
+		 * items?
+		 * race?
+		 * class?
+		 * feats?
+		 */
 		return 0;
 	}
 
 	pub fn get_initiative(&self) -> u64 {
+		/**
+		 * Is affected by
+		 * conditions?
+		 * items?
+		 * race?
+		 * class?
+		 * feats?
+		 */
 		return 0;
 	}
 
@@ -326,15 +384,25 @@ impl Character {
 		};
 	}
 
-	pub fn get_spells(&self, dao: &DAO, level: u8) -> Vec<String> {
+	pub fn get_all_spells(&self, dao: &DAO) -> Vec<&String> {
 		// TODO: maybe convert this to a filter
-		let mut spells: Vec<String> = vec![];
-		for spell in &self.spells {
-			if dao.spells.contains_key(spell) && dao.spells.get(spell).unwrap().level == level as u64 {
-				spells.push(spell.clone());
+		let mut spells: Vec<&String> = vec![];
+		for choice in &self.level_choices {
+			spells.extend(choice.new_spells.iter().filter(|spell_key| dao.spells.contains_key(spell_key.to_owned())));
+		}
+		return spells;
+	}
+
+	pub fn get_spells_from_level(&self, dao: &DAO, level: u8) -> Vec<&String> {
+		// TODO: maybe convert this to a filter
+		let mut spells: Vec<&String> = vec![];
+		for spell_key in self.get_all_spells(dao) {
+			if dao.spells.contains_key(spell_key) && dao.spells.get(spell_key).unwrap().level == level as u64 {
+				spells.push(spell_key);
 			}
 		}
 		return spells;
+		// return self.get_all_spells(dao).iter().filter(|spell_key| dao.spells.get(spell_key.to_owned()).unwrap().level == level as u64).collect();
 	}
 
 	pub fn get_weapon_proficiencies(&self) -> Vec<WeaponProficiencies> {
