@@ -1,22 +1,52 @@
 use std::{
-	fs::{File, ReadDir, copy, create_dir, create_dir_all, read_dir, read_to_string, remove_dir_all},
-	io::{Read, Seek},
+	fs::{copy, create_dir, create_dir_all, read_dir, remove_dir_all, File},
+	io::Read,
 	iter::zip,
 	path::Path,
 };
 
 use serde_json::{from_str, Map, Value};
-use zip::{ZipArchive, read::root_dir_common_filter, unstable::LittleEndianReadExt};
+use zip::{ZipArchive, read::ZipFile};
 
 use crate::serde_utils::{serde_as_object_from_option, serde_as_string};
 
-const REPO_URL: &str = "https://github.com/5etools-mirror-3/5etools-2014-src";
 const REPO_URL_ZIP: &str = "https://github.com/5etools-mirror-3/5etools-2014-src/archive/refs/heads/main.zip";
 
 const TEMP_DIRECTORY: &str = "../data/.temp";
 const ZIP_NAME: &str = "5etools-2014-src-main";
 
 const DATA_DIRECTORY: &str = "../data/raw";
+
+fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> std::io::Result<()> {
+	create_dir_all(&dst)?;
+	for entry in read_dir(src)? {
+		let entry = entry?;
+		let ty = entry.file_type()?;
+		if ty.is_dir() {
+			copy_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
+		} else {
+			copy(entry.path(), dst.as_ref().join(entry.file_name()))?;
+		}
+	}
+	Ok(())
+}
+
+fn create_dir_with_debug(path: &str) -> Result<(), String> {
+	let create_result = create_dir(path);
+	if create_result.is_err() {
+		return Err(format!("Failed to create directory at {}: {}", path, create_result.err().unwrap()));
+	}
+	println!("Created new data directory at {}", path);
+	Ok(())
+}
+
+fn remove_dir_with_debug_without_error(path: &str) -> String {
+	let remove_result = remove_dir_all(path);
+	if remove_result.is_err() {
+		return format!("Failed to remove dir at {}: {}", path, remove_result.err().unwrap());
+	}
+	return format!("Removed dir at {}", path);
+}
 
 /// returns 1 if version 1 is newer, 2 if version 2 is newer, and 0 if they're the same
 fn compare_versions(ver1: String, ver2: String) -> u8 {
@@ -35,104 +65,28 @@ fn compare_versions(ver1: String, ver2: String) -> u8 {
 	return 0;
 }
 
-fn get_version(path: &str) -> String {
-	let file = read_to_string(path);
-
-	if file.is_err() {
-		println!("Failed to read file at '{}'", path);
-		return "0.0.0".to_string();
-	}
-
-	let json: Value = from_str(file.unwrap().as_str()).unwrap();
-	let array = json.as_array().unwrap();
-
-	return serde_as_string(serde_as_object_from_option(array.get(array.len() - 1), Map::new()).get("ver"), "0.0.0".to_string());
-}
-
-pub fn is_newer_version() -> bool {
-	// get local version
-	let local_version = get_version("../data/raw/changelog.json");
-
-	// remove any existing temp folder
-	if remove_dir_all(TEMP_DIRECTORY).is_err() {
-		println!("No existing temp folder, proceeding...");
-	}
-
-	// get remote version
-	if create_dir(TEMP_DIRECTORY).is_err() {
-		println!("Failed to create temp folder at {}", TEMP_DIRECTORY);
-		return false;
-	}
-	let downloader = git_download::repo(REPO_URL).branch_name("main").add_file("data/*", TEMP_DIRECTORY).exec();
-	if downloader.is_err() {
-		println!("git_downloader had an error: {:?}", downloader.err().unwrap());
-		return false;
-	}
-	let remote_version = get_version(&format!("{}/changelog.json", TEMP_DIRECTORY));
-	if remove_dir_all(TEMP_DIRECTORY).is_err() {
-		println!("{:?}", "Failed to remove temp folder at .temp");
-		return false;
-	}
-
-	println!("local version: {}", local_version);
-	println!("remote version: {}", remote_version);
-
-	if compare_versions(local_version, remote_version) == 2 {
-		return true;
-	}
-	return false;
-}
-
-pub fn update_data() -> Result<(), String> {
-	if remove_dir_all("../data/raw").is_err() {
-		println!("Failed to delete current raw folder at ../data/raw");
-	}
-	println!("Deleted current raw folder at ../data/raw");
-
-	if create_dir("../data/raw").is_err() {
-		return Err("Failed to create raw folder at ../data/raw".to_string());
-	}
-	println!("Created new raw folder at ../data/raw");
-	let result = git_download::repo(REPO_URL).branch_name("main").add_file("data/*", "../data/raw").exec();
+fn get_version_from_file<R: Read>(file: &mut R) -> String {
+	let mut buf = String::new();
+	let result = file.read_to_string(&mut buf);
 	if result.is_err() {
-		return Err("Failed to download from remote repository".to_string());
+		println!("file failed to fill buffer: {}", result.err().unwrap());
 	}
-	println!("Downloaded remote repository");
 
-	let items = read_dir("../data/raw");
-	if items.is_err() && items.iter().len() > 0 {
-		return Err("Failed to read new raw folder or confirm new info at expected location (../data/raw)".to_string());
-	}
-	println!("Confirmed that new raw folder exists and is populated with remote information");
-
-	return Ok(());
-}
-
-fn get_version_from_file_string(file_str: &String) -> String {
-	let json: Value = from_str(file_str).unwrap();
+	let json: Value = from_str(&buf).unwrap();
 	let array = json.as_array().unwrap();
 
 	return serde_as_string(serde_as_object_from_option(array.get(array.len() - 1), Map::new()).get("ver"), "0.0.0".to_string());
 }
 
-pub fn download_zip_into_temp() -> Result<ZipArchive<File>, String> {
-	// remove any existing temp folder
-	if remove_dir_all(TEMP_DIRECTORY).is_err() {
-		println!("Failed to delete the temp directory at {}", TEMP_DIRECTORY);
-	} else {
-		println!("Deleted the temp directory at {}", TEMP_DIRECTORY);
-	}
-
-	// create temp folder
-	if create_dir(TEMP_DIRECTORY).is_err() {
-		return Err(format!("Failed to create temp folder at {}", TEMP_DIRECTORY));
-	}
-	println!("Created temp folder at {}", TEMP_DIRECTORY);
+fn download_zip_into_temp() -> Result<ZipArchive<File>, String> {
+	// remove any existing temp folder and create a new one
+	remove_dir_with_debug_without_error(TEMP_DIRECTORY);
+	create_dir_with_debug(TEMP_DIRECTORY)?;
 
 	// create download builder
 	let downloader = downloader::Downloader::builder().download_folder(Path::new(TEMP_DIRECTORY)).build();
 	if downloader.is_err() {
-		return Err(String::from("Failed to build the downloader"));
+		return Err(format!("Failed to build the downloader: {}", downloader.err().unwrap()));
 	}
 	println!("Created downloader");
 
@@ -142,73 +96,63 @@ pub fn download_zip_into_temp() -> Result<ZipArchive<File>, String> {
 	let download_result = downloader.unwrap().download(&[download]);
 	println!("Finished downloading");
 	if download_result.is_err() {
-		return Err(String::from("Downloader failed to download"));
+		return Err(format!("Downloader failed to download: {}", download_result.err().unwrap()));
 	}
 	let download_list = download_result.unwrap();
 	if download_list.get(0).is_none() {
 		return Err(String::from("Download list doesn't have download result"));
 	}
-	if download_list[0].is_err() {
-		return Err(String::from("Specific Download failed to download"));
+	if download_list[0].as_ref().is_err() {
+		return Err(format!("Specific Download failed to download: {}", download_list[0].as_ref().err().unwrap()));
 	}
 	let download_final = download_list[0].as_ref().unwrap();
 	if download_final.status[0].1 != 200 {
 		return Err(format!("Download had a non success status: {}", download_final.status[0].1));
 	}
-	let file = File::open(format!("{}/{}.zip", TEMP_DIRECTORY, ZIP_NAME));
+	let file_path = format!("{}/{}.zip", TEMP_DIRECTORY, ZIP_NAME);
+	let file = File::open(&file_path);
 	if file.is_err() {
-		return Err(format!("Failed to create zip file at {}/{}.zip", TEMP_DIRECTORY, ZIP_NAME));
+		return Err(format!("Failed to create zip file at {}: {}", &file_path, file.err().unwrap()));
 	}
 	println!("Created zip file struct");
 
 	// read zip file
 	let zip = ZipArchive::new(file.unwrap());
 	if zip.is_err() {
-		return Err(String::from("Failed to create zip archive from file"));
+		return Err(format!("Failed to create zip archive from file: {}", zip.err().unwrap()));
 	}
 	println!("Created zip archive from file");
 
 	return Ok(zip.unwrap());
 }
 
-pub fn is_newer_version_from_zip(zip: &mut ZipArchive<File>) -> bool {
-	let local_version = get_version("../data/raw/changelog.json");
+pub fn is_newer_version_from_zip(zip: &mut ZipArchive<File>) -> Result<bool, String> {
+	// get local version
+	let local_changelog = File::open(format!("{}/changelog.json", DATA_DIRECTORY));
+	if local_changelog.is_err() {
+		println!("Failed to open changelog in data directory: {}", local_changelog.as_ref().err().unwrap());
+		return Ok(true);
+	}
+	let local_version = get_version_from_file(local_changelog.unwrap().by_ref());
 	println!("local version: {}", local_version);
 
-	let changelog_file = zip.by_name(format!("{}/data/changelog.json", ZIP_NAME).as_str());
-	if changelog_file.is_err() {
-		println!("Failed to find changelog in zip archive");
-		return false;
+	// get remote version
+	let zip_changelog = zip.by_name(format!("{}/data/changelog.json", ZIP_NAME).as_str());
+	if zip_changelog.is_err() {
+		return Err(format!("Failed to find changelog in zip archive: {}", zip_changelog.err().unwrap()));
 	}
-
-	let mut changelog_string = String::new();
-	let _ = changelog_file.unwrap().read_to_string(&mut changelog_string);
-	let remote_version = get_version_from_file_string(&changelog_string);
+	let remote_version = get_version_from_file(zip_changelog.unwrap().by_ref());
 	println!("remote version: {}", remote_version);
 
-	let comparison = compare_versions(local_version, remote_version);
-	return comparison == 2;
-}
-
-fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> std::io::Result<()> {
-    create_dir_all(&dst)?;
-    for entry in read_dir(src)? {
-        let entry = entry?;
-        let ty = entry.file_type()?;
-        if ty.is_dir() {
-            copy_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
-        } else {
-            copy(entry.path(), dst.as_ref().join(entry.file_name()))?;
-        }
-    }
-    Ok(())
+	return Ok(compare_versions(local_version, remote_version) == 2);
 }
 
 pub fn update_data_from_zip() -> Result<bool, String> {
 	let mut zip = download_zip_into_temp()?;
 
-	if !is_newer_version_from_zip(&mut zip) {
+	if !is_newer_version_from_zip(&mut zip)? {
 		println!("Remote version was either outdated or the same version as the local version");
+		remove_dir_with_debug_without_error(TEMP_DIRECTORY);
 		return Ok(false);
 	}
 
@@ -226,14 +170,8 @@ pub fn update_data_from_zip() -> Result<bool, String> {
 	println!("Created file struct from extracted zip");
 
 	// empty current data directory
-	if remove_dir_all(DATA_DIRECTORY).is_err() {
-		println!("Failed to delete current raw folder at {}", DATA_DIRECTORY);
-	}
-	println!("Deleted current data directory folder at {}", DATA_DIRECTORY);
-	if create_dir(DATA_DIRECTORY).is_err() {
-		return Err(format!("Failed to create raw folder at {}", DATA_DIRECTORY));
-	}
-	println!("Created new data directory at {}", DATA_DIRECTORY);
+	remove_dir_with_debug_without_error(DATA_DIRECTORY);
+	create_dir_with_debug(DATA_DIRECTORY)?;
 	let local_data_directory = File::open(DATA_DIRECTORY);
 	if local_data_directory.is_err() {
 		return Err(format!("Failed to find the local data directory using path using: {}", DATA_DIRECTORY));
@@ -248,11 +186,7 @@ pub fn update_data_from_zip() -> Result<bool, String> {
 	println!("Copied contents from the zip data directory to the local data directory");
 
 	// remove temp directory
-	if remove_dir_all(TEMP_DIRECTORY).is_err() {
-		println!("Failed to delete the temp directory at {}", TEMP_DIRECTORY);
-	} else {
-		println!("Deleted the temp directory at {}", TEMP_DIRECTORY);
-	}
+	remove_dir_with_debug_without_error(TEMP_DIRECTORY);
 
 	return Ok(true);
 }
