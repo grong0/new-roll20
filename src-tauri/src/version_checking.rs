@@ -6,7 +6,7 @@ use std::{
 };
 
 use serde_json::{from_str, Map, Value};
-use zip::{ZipArchive, read::ZipFile};
+use zip::ZipArchive;
 
 use crate::serde_utils::{serde_as_object_from_option, serde_as_string};
 
