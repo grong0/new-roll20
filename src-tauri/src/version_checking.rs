@@ -1,13 +1,22 @@
 use std::{
-	fs::{create_dir, read_dir, read_to_string, remove_dir_all},
+	fs::{File, ReadDir, copy, create_dir, create_dir_all, read_dir, read_to_string, remove_dir_all},
+	io::{Read, Seek},
 	iter::zip,
+	path::Path,
 };
 
 use serde_json::{from_str, Map, Value};
+use zip::{ZipArchive, read::root_dir_common_filter, unstable::LittleEndianReadExt};
 
 use crate::serde_utils::{serde_as_object_from_option, serde_as_string};
 
 const REPO_URL: &str = "https://github.com/5etools-mirror-3/5etools-2014-src";
+const REPO_URL_ZIP: &str = "https://github.com/5etools-mirror-3/5etools-2014-src/archive/refs/heads/main.zip";
+
+const TEMP_DIRECTORY: &str = "../data/.temp";
+const ZIP_NAME: &str = "5etools-2014-src-main";
+
+const DATA_DIRECTORY: &str = "../data/raw";
 
 /// returns 1 if version 1 is newer, 2 if version 2 is newer, and 0 if they're the same
 fn compare_versions(ver1: String, ver2: String) -> u8 {
@@ -44,19 +53,24 @@ pub fn is_newer_version() -> bool {
 	// get local version
 	let local_version = get_version("../data/raw/changelog.json");
 
+	// remove any existing temp folder
+	if remove_dir_all(TEMP_DIRECTORY).is_err() {
+		println!("No existing temp folder, proceeding...");
+	}
+
 	// get remote version
-	if create_dir("../data/.temp").is_err() {
-		println!("Failed to create temp folder at ../data/.temp");
+	if create_dir(TEMP_DIRECTORY).is_err() {
+		println!("Failed to create temp folder at {}", TEMP_DIRECTORY);
 		return false;
 	}
-	let downloader = git_download::repo(REPO_URL).branch_name("main").add_file("data/*", "../data/.temp").exec();
+	let downloader = git_download::repo(REPO_URL).branch_name("main").add_file("data/*", TEMP_DIRECTORY).exec();
 	if downloader.is_err() {
-		println!("{:?}", downloader.err().unwrap());
+		println!("git_downloader had an error: {:?}", downloader.err().unwrap());
 		return false;
 	}
-	let remote_version = get_version("../data/.temp/changelog.json");
-	if remove_dir_all("../data/.temp").is_err() {
-		println!("{:?}", "Failed to remove temp folder at ../data/.temp");
+	let remote_version = get_version(&format!("{}/changelog.json", TEMP_DIRECTORY));
+	if remove_dir_all(TEMP_DIRECTORY).is_err() {
+		println!("{:?}", "Failed to remove temp folder at .temp");
 		return false;
 	}
 
@@ -92,4 +106,153 @@ pub fn update_data() -> Result<(), String> {
 	println!("Confirmed that new raw folder exists and is populated with remote information");
 
 	return Ok(());
+}
+
+fn get_version_from_file_string(file_str: &String) -> String {
+	let json: Value = from_str(file_str).unwrap();
+	let array = json.as_array().unwrap();
+
+	return serde_as_string(serde_as_object_from_option(array.get(array.len() - 1), Map::new()).get("ver"), "0.0.0".to_string());
+}
+
+pub fn download_zip_into_temp() -> Result<ZipArchive<File>, String> {
+	// remove any existing temp folder
+	if remove_dir_all(TEMP_DIRECTORY).is_err() {
+		println!("Failed to delete the temp directory at {}", TEMP_DIRECTORY);
+	} else {
+		println!("Deleted the temp directory at {}", TEMP_DIRECTORY);
+	}
+
+	// create temp folder
+	if create_dir(TEMP_DIRECTORY).is_err() {
+		return Err(format!("Failed to create temp folder at {}", TEMP_DIRECTORY));
+	}
+	println!("Created temp folder at {}", TEMP_DIRECTORY);
+
+	// create download builder
+	let downloader = downloader::Downloader::builder().download_folder(Path::new(TEMP_DIRECTORY)).build();
+	if downloader.is_err() {
+		return Err(String::from("Failed to build the downloader"));
+	}
+	println!("Created downloader");
+
+	// download the repo
+	let download = downloader::Download::new(REPO_URL_ZIP).file_name(Path::new(&format!("{}.zip", ZIP_NAME)));
+	println!("Downloading...");
+	let download_result = downloader.unwrap().download(&[download]);
+	println!("Finished downloading");
+	if download_result.is_err() {
+		return Err(String::from("Downloader failed to download"));
+	}
+	let download_list = download_result.unwrap();
+	if download_list.get(0).is_none() {
+		return Err(String::from("Download list doesn't have download result"));
+	}
+	if download_list[0].is_err() {
+		return Err(String::from("Specific Download failed to download"));
+	}
+	let download_final = download_list[0].as_ref().unwrap();
+	if download_final.status[0].1 != 200 {
+		return Err(format!("Download had a non success status: {}", download_final.status[0].1));
+	}
+	let file = File::open(format!("{}/{}.zip", TEMP_DIRECTORY, ZIP_NAME));
+	if file.is_err() {
+		return Err(format!("Failed to create zip file at {}/{}.zip", TEMP_DIRECTORY, ZIP_NAME));
+	}
+	println!("Created zip file struct");
+
+	// read zip file
+	let zip = ZipArchive::new(file.unwrap());
+	if zip.is_err() {
+		return Err(String::from("Failed to create zip archive from file"));
+	}
+	println!("Created zip archive from file");
+
+	return Ok(zip.unwrap());
+}
+
+pub fn is_newer_version_from_zip(zip: &mut ZipArchive<File>) -> bool {
+	let local_version = get_version("../data/raw/changelog.json");
+	println!("local version: {}", local_version);
+
+	let changelog_file = zip.by_name(format!("{}/data/changelog.json", ZIP_NAME).as_str());
+	if changelog_file.is_err() {
+		println!("Failed to find changelog in zip archive");
+		return false;
+	}
+
+	let mut changelog_string = String::new();
+	let _ = changelog_file.unwrap().read_to_string(&mut changelog_string);
+	let remote_version = get_version_from_file_string(&changelog_string);
+	println!("remote version: {}", remote_version);
+
+	let comparison = compare_versions(local_version, remote_version);
+	return comparison == 2;
+}
+
+fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> std::io::Result<()> {
+    create_dir_all(&dst)?;
+    for entry in read_dir(src)? {
+        let entry = entry?;
+        let ty = entry.file_type()?;
+        if ty.is_dir() {
+            copy_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        } else {
+            copy(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        }
+    }
+    Ok(())
+}
+
+pub fn update_data_from_zip() -> Result<bool, String> {
+	let mut zip = download_zip_into_temp()?;
+
+	if !is_newer_version_from_zip(&mut zip) {
+		println!("Remote version was either outdated or the same version as the local version");
+		return Ok(false);
+	}
+
+	// extract zip contents
+	let extraction_result = zip.extract(TEMP_DIRECTORY);
+	if extraction_result.is_err() {
+		return Err(format!("Failed to extract the zip archive into the temp directory: {}", extraction_result.err().unwrap()));
+	}
+	println!("Extracted the zip archive data directory into the local data directory");
+	let extracted_zip_data_path = format!("{}/{}/data/", TEMP_DIRECTORY, ZIP_NAME);
+	let extracted_zip = File::open(&extracted_zip_data_path);
+	if extracted_zip.is_err() {
+		return Err(format!("Failed to create a file struct from the extracted zip: {}", extracted_zip.err().unwrap()));
+	}
+	println!("Created file struct from extracted zip");
+
+	// empty current data directory
+	if remove_dir_all(DATA_DIRECTORY).is_err() {
+		println!("Failed to delete current raw folder at {}", DATA_DIRECTORY);
+	}
+	println!("Deleted current data directory folder at {}", DATA_DIRECTORY);
+	if create_dir(DATA_DIRECTORY).is_err() {
+		return Err(format!("Failed to create raw folder at {}", DATA_DIRECTORY));
+	}
+	println!("Created new data directory at {}", DATA_DIRECTORY);
+	let local_data_directory = File::open(DATA_DIRECTORY);
+	if local_data_directory.is_err() {
+		return Err(format!("Failed to find the local data directory using path using: {}", DATA_DIRECTORY));
+	}
+	println!("Created new local data directory File struct");
+
+	// copy contents from extracted data directory to local data directory
+	let copy_result = copy_dir_all(&extracted_zip_data_path, DATA_DIRECTORY);
+	if copy_result.is_err() {
+		return Err(String::from("Failed to copy from data directory from zip to the local data directory"));
+	}
+	println!("Copied contents from the zip data directory to the local data directory");
+
+	// remove temp directory
+	if remove_dir_all(TEMP_DIRECTORY).is_err() {
+		println!("Failed to delete the temp directory at {}", TEMP_DIRECTORY);
+	} else {
+		println!("Deleted the temp directory at {}", TEMP_DIRECTORY);
+	}
+
+	return Ok(true);
 }
