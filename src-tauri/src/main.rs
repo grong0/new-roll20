@@ -6,27 +6,26 @@ mod serde_utils;
 mod version_checking;
 
 use std::{
-	any::{type_name, type_name_of_val},
-	collections::HashMap,
+	any::{Any, type_name, type_name_of_val},
+	collections::HashMap, result,
 };
 
-use version_checking::{is_newer_version, update_data};
-
-use crate::dao::{
-	character_dao::{AbilityScoreImprovement, AbilityScores, Character, DeathSave, HitPointChoice, LevelChoice, Senses},
-	common::{Abilities, Currency, Details},
-	DAO,
-};
+use crate::{dao::{
+	DAO, character_dao::{AbilityScoreImprovement, AbilityScores, Character, DeathSave, HitPointChoice, LevelChoice, Senses}, common::{Abilities, Currency, Details}
+}, version_checking::{is_newer_version_from_zip, update_data_from_zip}};
 
 const UPDATE_DATA: bool = false;
 
 fn main() {
-	if UPDATE_DATA && is_newer_version() {
-		let result = update_data();
+	if UPDATE_DATA {
+		let result = update_data_from_zip();
 		if result.is_err() {
-			println!("{:?}", result.err());
-		};
+			println!("{}", result.err().unwrap());
+		} else {
+			println!("the data directory was updated: {}", result.unwrap());
+		}
 	}
+
 	println!();
 
 	let mut dao = DAO::new();
@@ -123,8 +122,8 @@ fn main() {
 				LevelChoice {
 					class: String::from("wizard|phb"),
 					choice: 0b01,
-					ability_score_improvement: vec![Abilities::INTELLIGENCE, Abilities::INTELLIGENCE],
-					feat_acquired: String::from(""),
+					ability_score_improvement: vec![],
+					feat_acquired: String::from("magic_initiate|phb"),
 					took_average: true,
 					roll_result: 0,
 					new_spells: vec![String::from("locate_creature|phb"), String::from("banishment|phb")],
@@ -163,8 +162,8 @@ fn main() {
 				LevelChoice {
 					class: String::from("fighter|phb"),
 					choice: 0b01,
-					ability_score_improvement: vec![Abilities::INTELLIGENCE, Abilities::DEXTERITY],
-					feat_acquired: String::from(""),
+					ability_score_improvement: vec![],
+					feat_acquired: String::from("elemental_adept|phb"),
 					took_average: true,
 					roll_result: 0,
 					new_spells: vec![],
@@ -183,13 +182,14 @@ fn main() {
 				LevelChoice {
 					class: String::from("fighter|phb"),
 					choice: 0b01,
-					ability_score_improvement: vec![Abilities::DEXTERITY, Abilities::DEXTERITY],
-					feat_acquired: String::from(""),
+					ability_score_improvement: vec![],
+					feat_acquired: String::from("elemental_adept|phb"),
 					took_average: true,
 					roll_result: 0,
 					new_spells: vec![],
 				},
 			],
+			// object_choices: HashMap<String, String>,
 			background: String::from("acolyte|phb"),
 			race: String::from("human|phb"),
 			details: Details {
@@ -238,7 +238,7 @@ fn main() {
 		},
 	);
 
-	let character = dao.characters.get("test_character").unwrap();
+	let character = &dao.characters.get("test_character").unwrap();
 
 	println!("{:#?}", character.get_classes_and_levels(&dao));
 	println!("{:#?}", character.get_first_class(&dao));

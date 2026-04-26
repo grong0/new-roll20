@@ -7,6 +7,11 @@ use super::{
 	DAO,
 };
 
+/**
+ * !!! BIG TODO: save choice decisions in a hashmap on characters where the key is
+ * !!! the struct's key and the value is the decision??
+ */
+
 #[derive(Debug)]
 pub enum SkillExperience {
 	UNTRAINED,
@@ -327,9 +332,8 @@ impl Character {
 		 * Is affected by
 		 * conditions?
 		 * items?
-		 * race?
-		 * class?
-		 * feats?
+		 * race? 
+		 * class? monk unarmored bonus
 		 */
 		return 0;
 	}
