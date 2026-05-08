@@ -58,7 +58,7 @@ impl Item {
 		let source = Source::new(object.get("source"), object.get("page"));
 
 		return Item {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/items")),
 			name,
 			source,
 			type_var: serde_as_string(object.get("type"), "N/A".to_string()),

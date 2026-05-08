@@ -43,7 +43,7 @@ impl Background {
 		let source = Source::new(p_object.get("source"), p_object.get("page"));
 
 		return Background {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/backgrounds")),
 			name,
 			source,
 			srd: serde_as_bool(p_object.get("srd"), false),

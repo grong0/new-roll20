@@ -39,7 +39,7 @@ impl Feat {
 		let source = Source::new(object.get("source"), object.get("page"));
 
 		return Feat {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/feats")),
 			name,
 			source,
 			srd: serde_as_bool(object.get("srd"), false),

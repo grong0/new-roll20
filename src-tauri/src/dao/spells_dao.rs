@@ -64,7 +64,7 @@ impl Spell {
 		}
 
 		return Spell {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/spells")),
 			name,
 			source,
 			srd: serde_as_bool(object.get("srd"), false),

@@ -45,7 +45,7 @@ impl Class {
 		let source = Source::new(object.get("source"), object.get("page"));
 
 		return Class {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/classes")),
 			name,
 			source,
 			other_sources: serde_as_array_mapping(object.get("otherSource"), serde_as_object_from_option, Map::new())
@@ -122,7 +122,7 @@ impl Subclass {
 		let source = Source::new(object.get("source"), object.get("page"));
 
 		return Subclass {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/subclasses")),
 			name,
 			source,
 			short_name: serde_as_string(object.get("shortName"), "N/A".to_string()),
@@ -160,7 +160,7 @@ impl ClassFeature {
 		let source = Source::new(object.get("source"), object.get("page"));
 
 		return ClassFeature {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/class_features")),
 			name,
 			source,
 			other_sources: serde_as_array_mapping(object.get("otherSource"), serde_as_object_from_option, Map::new())
@@ -201,7 +201,7 @@ impl SubclassFeature {
 		let source = Source::new(object.get("source"), object.get("page"));
 
 		return SubclassFeature {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/subclass_features")),
 			name,
 			source,
 			other_sources: serde_as_array_mapping(object.get("otherSource"), serde_as_object_from_option, Map::new())

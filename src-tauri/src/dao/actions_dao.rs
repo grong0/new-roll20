@@ -24,7 +24,7 @@ impl Action {
 		let source = Source::new(p_object.get("source"), p_object.get("page"));
 
 		return Action {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/actions")),
 			name,
 			source,
 			srd: serde_as_bool(p_object.get("srd"), false),

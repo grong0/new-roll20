@@ -8,8 +8,9 @@ use crate::serde_utils::{
 };
 
 
-pub fn form_key(name: &String, source: &String) -> String {
-	return name.to_ascii_lowercase().replace(" ", "_") + "|" + source.to_ascii_lowercase().as_str();
+pub fn form_key(name: &String, source: &String, location: &String) -> String {
+	// return location + "/" + name.to_ascii_lowercase().replace(" ", "_") + "|" + source.to_ascii_lowercase().as_str();
+	return format!("{}/{}|{}", location, name.to_ascii_lowercase().replace(" ", "_"), source.to_ascii_lowercase());
 }
 
 #[derive(Debug)]

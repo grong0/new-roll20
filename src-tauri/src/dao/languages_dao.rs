@@ -32,7 +32,7 @@ impl Language {
 		let source = Source::new(object.get("source"), object.get("page"));
 
 		return Language {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/languages")),
 			name,
 			source,
 			typical_speakers: serde_as_array_mapping(object.get("typicalSpeakers"), serde_as_string, "N/A".to_string()),

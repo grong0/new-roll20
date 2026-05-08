@@ -66,7 +66,7 @@ impl Book {
 		let source = serde_as_string(object.get("source"), "N/A".to_string());
 
 		return Book {
-			key: form_key(&name, &source),
+			key: form_key(&name, &source, &String::from("dao/books")),
 			name,
 			source,
 			id: serde_as_string(object.get("id"), "N/A".to_string()),

@@ -132,7 +132,7 @@ impl Race {
 		let source = Source::new(p_object.get("source"), p_object.get("page"));
 
 		return Race {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/races/races")),
 			name,
 			source,
 			srd: p_object.get("srd").unwrap_or(&to_value(false).unwrap()).as_bool().unwrap_or(false),
@@ -260,8 +260,8 @@ impl Subrace {
 		let race_source = serde_as_string(object.get("raceSource"), "N/A".to_string());
 
 		return Subrace {
-			key: form_key(&name, &source.name),
-			race_key: form_key(&race_name, &race_source),
+			key: form_key(&name, &source.name, &String::from("dao/races/subraces")),
+			race_key: form_key(&race_name, &race_source, &String::from("dao/races/races")),
 			name,
 			source,
 			race_name,
@@ -333,7 +333,7 @@ impl Races {
 			let object = serde_as_object(&value, Map::new());
 			let name = serde_as_string(object.get("name"), "N/A".to_string());
 			let source = Source::new(object.get("source"), object.get("page"));
-			let key = form_key(&name, &source.name);
+			let key = form_key(&name, &source.name, &String::from("dao/races/races"));
 			let subrace_keys: Vec<String> = subraces.iter().filter(|i| i.1.race_key == key).map(|i| i.0.to_owned()).collect();
 			let new_struct = Race::new(value, subrace_keys);
 			if !new_struct.key.contains("n/a") {

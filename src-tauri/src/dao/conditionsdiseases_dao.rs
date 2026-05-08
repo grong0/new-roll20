@@ -26,7 +26,7 @@ impl Condition {
 		let source = Source::new(object.get("source"), object.get("pageg"));
 
 		return Condition {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/conditions")),
 			name,
 			source,
 			srd: serde_as_bool(object.get("srd"), false),
@@ -58,7 +58,7 @@ impl Disease {
 		let source = Source::new(object.get("source"), object.get("pageg"));
 
 		return Disease {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/diseases")),
 			name,
 			source,
 			entries: serde_as_array(object.get("entries")).iter().map(|i| Entry::new(i)).collect(),
@@ -85,7 +85,7 @@ impl Status {
 		let source = Source::new(object.get("source"), object.get("pageg"));
 
 		return Status {
-			key: form_key(&name, &source.name),
+			key: form_key(&name, &source.name, &String::from("dao/statuses")),
 			name,
 			source,
 			srd: serde_as_bool(object.get("srd"), false),
