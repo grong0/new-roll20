@@ -20,9 +20,7 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
-serde_json = "1"
-zip = "8.1.0"
-downloader = "0.2.8"
+dnd5etools-lib = { path = "../dnd5etools-lib" }
 
 [profile.dev]
 incremental = true

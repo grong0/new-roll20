@@ -12,10 +12,10 @@ use crate::serde_utils::{serde_as_object_from_option, serde_as_string};
 
 const REPO_URL_ZIP: &str = "https://github.com/5etools-mirror-3/5etools-2014-src/archive/refs/heads/main.zip";
 
-const TEMP_DIRECTORY: &str = "../data/.temp";
+const TEMP_DIRECTORY: &str = "data/.temp";
 const ZIP_NAME: &str = "5etools-2014-src-main";
 
-const DATA_DIRECTORY: &str = "../data/raw";
+const DATA_DIRECTORY: &str = "data/raw";
 
 fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> std::io::Result<()> {
 	create_dir_all(&dst)?;
