@@ -18,6 +18,11 @@ pub mod races_dao;
 pub mod skills_dao;
 pub mod spells_dao;
 
+pub mod backgrounds_test_dao;
+pub mod utils;
+pub mod utils_edition;
+pub mod items_shared;
+
 use actions_dao::Action;
 use backgrounds_dao::Background;
 use books_dao::Books;
@@ -448,5 +453,9 @@ impl DAO {
 			subclasses,
 			subclass_features,
 		};
+	}
+
+	pub fn get_struct_from_id(id: &String) {
+
 	}
 }

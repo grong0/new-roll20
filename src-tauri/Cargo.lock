@@ -853,6 +853,7 @@ version = "0.1.0"
 dependencies = [
  "downloader",
  "field_accessor",
+ "serde",
  "serde_json",
  "zip",
 ]

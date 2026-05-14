@@ -332,7 +332,7 @@ impl Character {
 		 * Is affected by
 		 * conditions?
 		 * items?
-		 * race? 
+		 * race?
 		 * class? monk unarmored bonus
 		 */
 		return 0;
@@ -438,4 +438,8 @@ impl Character {
 	pub fn get_armor_proficiencies(&self) -> Vec<ArmorProficiencies> {
 		return vec![];
 	}
+
+	// pub fn get_choices(&self) {
+
+	// }
 }
