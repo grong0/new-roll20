@@ -1,4 +1,4 @@
-use crate::dao::{utils::{Page, Prerequisites, ReprintedAs, Source, deserialize_page, deserialize_reprinted_as}, utils_edition::Edition};
+use crate::dao::{utils::{Page, Prerequisite, ReprintedAs, Source, deserialize_page, deserialize_reprinted_as}, utils_edition::Edition};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -15,7 +15,7 @@ pub struct Background {
 	#[serde(default)]
 	pub edition: Edition,
 	#[serde(default)]
-	pub prerequisite: Prerequisites,
+	pub prerequisite: Vec<Prerequisite>,
 	// #[serde(default)]
 	// pub skill_proficiencies: SkillProficiencies,
 	// #[serde(default)]

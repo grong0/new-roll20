@@ -1,8 +1,9 @@
 use serde::{
-	Deserializer,
+	Deserialize, Deserializer,
 	de::{Visitor, value::Error},
 };
 
+#[derive(Debug, Default, Deserialize)]
 pub enum ItemType {
 	DS_DMG,
 	DSA_DMG,
@@ -70,6 +71,8 @@ pub enum ItemType {
 	VEH_XPHB,
 	WD_DMG,
 	WD_XDMG,
+	#[default]
+	None,
 }
 
 pub fn deserialize_item_type<'de, D>(deserializer: D) -> Result<ItemType, D::Error>
@@ -163,3 +166,90 @@ where
 
 	return deserializer.deserialize_str(ItemTypeVisitor);
 }
+
+#[derive(Debug, Default, Deserialize)]
+pub enum ItemProperty {
+	TWOH,
+	TWOH_XPHB,
+	A,
+	A_XPHB,
+	AF_DMG,
+	AF_XDMG,
+	BF_DMG,
+	BF_XDMG,
+	F,
+	F_XPHB,
+	H,
+	H_XPHB,
+	L,
+	L_XPHB,
+	LD,
+	LD_XPHB,
+	OTH,
+	R,
+	R_XPHB,
+	RLD,
+	RLD_XDMG,
+	S,
+	T,
+	T_XPHB,
+	V,
+	V_XPHB,
+	Vst_EGW,
+	#[default]
+	None,
+}
+
+pub fn deserialize_item_property<'de, D>(deserializer: D) -> Result<ItemProperty, D::Error>
+where
+	D: Deserializer<'de>,
+{
+	struct ItemPropertyVisitor;
+
+	impl<'de> Visitor<'de> for ItemPropertyVisitor {
+		type Value = ItemProperty;
+
+		fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+			return formatter.write_str("data");
+		}
+
+		fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+		where
+			E: serde::de::Error,
+		{
+			match v {
+				"2H" => Ok(ItemProperty::TWOH),
+				"2H|XPHB" => Ok(ItemProperty::TWOH_XPHB),
+				"A" => Ok(ItemProperty::A),
+				"A|XPHB" => Ok(ItemProperty::A_XPHB),
+				"AF|DMG" => Ok(ItemProperty::AF_DMG),
+				"AF|XDMG" => Ok(ItemProperty::AF_XDMG),
+				"BF|DMG" => Ok(ItemProperty::BF_DMG),
+				"BF|XDMG" => Ok(ItemProperty::BF_XDMG),
+				"F" => Ok(ItemProperty::F),
+				"F|XPHB" => Ok(ItemProperty::F_XPHB),
+				"H" => Ok(ItemProperty::H),
+				"H|XPHB" => Ok(ItemProperty::H_XPHB),
+				"L" => Ok(ItemProperty::L),
+				"L|XPHB" => Ok(ItemProperty::L_XPHB),
+				"LD" => Ok(ItemProperty::LD),
+				"LD|XPHB" => Ok(ItemProperty::LD_XPHB),
+				"OTH" => Ok(ItemProperty::OTH),
+				"R" => Ok(ItemProperty::R),
+				"R|XPHB" => Ok(ItemProperty::R_XPHB),
+				"RLD" => Ok(ItemProperty::RLD),
+				"RLD|XDMG" => Ok(ItemProperty::RLD_XDMG),
+				"S" => Ok(ItemProperty::S),
+				"T" => Ok(ItemProperty::T),
+				"T|XPHB" => Ok(ItemProperty::T_XPHB),
+				"V" => Ok(ItemProperty::V),
+				"V|XPHB" => Ok(ItemProperty::V_XPHB),
+				"Vst|EG" => Ok(ItemProperty::Vst_EGW),
+				_ => Err(E::custom("wasn't a valid item property")),
+			}
+		}
+	}
+	return deserializer.deserialize_str(ItemPropertyVisitor);
+}
+
+pub type ItemPropertyArray = Vec<ItemProperty>;
