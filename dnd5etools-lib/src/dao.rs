@@ -1,5 +1,4 @@
 use std::{
-	any::{type_name_of_val, Any},
 	collections::HashMap,
 	fs::{read_dir, read_to_string},
 };
@@ -19,9 +18,9 @@ pub mod skills_dao;
 pub mod spells_dao;
 
 pub mod backgrounds_test_dao;
+pub mod items_shared;
 pub mod utils;
 pub mod utils_edition;
-pub mod items_shared;
 
 use actions_dao::Action;
 use backgrounds_dao::Background;
@@ -33,7 +32,7 @@ use feats_dao::Feat;
 use items_dao::Item;
 use languages_dao::Language;
 use races_dao::Races;
-use serde_json::{from_str, to_value, Map, Value};
+use serde_json::{Map, Value, from_str, to_value};
 use skills_dao::Skill;
 use spells_dao::Spell;
 
@@ -99,7 +98,7 @@ fn get_characters(dir_path: &str) -> HashMap<String, Character> {
 		if file.is_err() {
 			continue;
 		}
-		let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
+		// let serde_file: Value = from_str(file.unwrap().as_str()).unwrap_or(to_value(Map::new()).unwrap());
 		// let new_struct = Character::new(serde_file);
 		// map.insert(new_struct.key, new_struct);
 	}
@@ -455,7 +454,5 @@ impl DAO {
 		};
 	}
 
-	pub fn get_struct_from_id(id: &String) {
-
-	}
+	pub fn get_struct_from_id(id: &String) {}
 }

@@ -1,12 +1,22 @@
+// TODO: remove at some point
+#![allow(dead_code)]
+
 mod dao;
 mod serde_utils;
 mod version_checking;
 
-use std::{
-	any::{Any, type_name, type_name_of_val}, collections::HashMap, fs::read_to_string, result
-};
+use std::{collections::HashMap, fs::read_to_string};
 
-use crate::{dao::{DAO, backgrounds_test_dao::Background, character_dao::{AbilityScores, Character, DeathSave, LevelChoice, Senses}, common::{Abilities, Currency, Details}}, serde_utils::serde_as_array, version_checking::update_data_from_zip};
+use crate::{
+	dao::{
+		DAO,
+		backgrounds_test_dao::Background,
+		character_dao::{AbilityScores, Character, DeathSave, LevelChoice, Senses},
+		common::{Abilities, Currency, Details},
+	},
+	serde_utils::serde_as_array,
+	version_checking::update_data_from_zip,
+};
 
 const UPDATE_DATA: bool = false;
 
@@ -22,18 +32,17 @@ fn main() {
 
 	println!();
 
-
 	let file_str = read_to_string("data/raw/backgrounds.json").unwrap();
 	let serde_file: serde_json::Value = serde_json::from_str(file_str.as_str()).unwrap();
 	let value_list: Vec<serde_json::Value> = serde_as_array(serde_file.get("background"));
 
-	let backgrounds: Vec<Background> = value_list.iter().map(|background_value: &serde_json::Value| serde_json::from_value(background_value.to_owned()).unwrap()).collect();
+	let backgrounds: Vec<Background> = value_list
+		.iter()
+		.map(|background_value: &serde_json::Value| serde_json::from_value(background_value.to_owned()).unwrap())
+		.filter(|background: &Background| background.name == "Planar Philosopher")
+		.collect();
 	let background = &backgrounds[0];
-	println!("{:#?}", background.name);
-	println!("{:#?}", background.source);
-	println!("{:#?}", background.page);
-	println!("{:#?}", background.reprinted_as);
-	println!("{:#?}", background.edition);
+	println!("{:#?}", background);
 
 	return;
 
