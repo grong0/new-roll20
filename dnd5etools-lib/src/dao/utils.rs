@@ -4,7 +4,7 @@ use serde::{
 };
 
 use crate::dao::{
-	items_shared::{ItemPropertyArray, ItemType, deserialize_item_property_array, deserialize_item_type_array},
+	items_shared::{ItemPropertyArray, ItemType},
 	utils_edition::Edition,
 };
 
@@ -280,7 +280,7 @@ where
 			return formatter.write_str("A UID, e.g. \"longsword|phb\", or a ReprintedAs object");
 		}
 
-		fn visit_bool<E>(self, v: bool) -> Result<Self::Value, E>
+		fn visit_bool<E>(self, _: bool) -> Result<Self::Value, E>
 		where
 			E: de::Error,
 		{

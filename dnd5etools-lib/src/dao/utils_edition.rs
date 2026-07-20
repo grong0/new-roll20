@@ -1,7 +1,4 @@
-use std::fmt;
-
 use serde::Deserialize;
-
 
 /**
  * A context-sensitive behavior hint. Generally, entities marked with `"edition": "one"`
@@ -19,10 +16,8 @@ pub enum Edition {
 	CLASSIC,
 	ONE,
 	#[default]
-	NONE
+	NONE,
 }
-
-
 
 // impl<'de> Visitor for Edition {
 // 	type Value = Edition;
