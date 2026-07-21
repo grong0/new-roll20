@@ -78,7 +78,34 @@ pub struct EntrySection {
 }
 
 #[derive(Debug, Default, Deserialize)]
-pub struct EntryEntries {}
+pub struct EntryEntries {
+	#[serde(default)]
+	name: String,
+	#[serde(default, rename = "type")]
+	entry_type: EntryType,
+	#[serde(default)]
+	source: Source,
+	#[serde(default)]
+	page: Page,
+	#[serde(default)]
+	data: EntryDataData,
+	#[serde(default)]
+	id: String,
+	#[serde(default = "default_srd_value", deserialize_with = "deserialize_srd")]
+	srd: SRD,
+	#[serde(default = "default_srd_value", deserialize_with = "deserialize_srd")]
+	srd52: SRD,
+	#[serde(default, rename = "basicRules")]
+	basic_rules: BasicRules,
+	#[serde(default, rename = "basicRules2024")]
+	basic_rules_2024: BasicRules,
+	#[serde(default)]
+	entries: Vec<Entry>,
+	#[serde(default)]
+	alias: Alias,
+	#[serde(default)]
+	style: String,
+}
 
 #[derive(Debug, Default, Deserialize)]
 pub struct EntryQuote {}

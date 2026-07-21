@@ -1,3 +1,6 @@
+// TODO: remove at some point
+#![allow(dead_code)]
+
 use std::{
 	collections::HashMap,
 	fs::{read_dir, read_to_string},
