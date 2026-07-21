@@ -605,7 +605,9 @@ pub enum LanguageNameLower {
 
 #[derive(Debug, Default, Deserialize)]
 pub struct LanguageProficiencyChoose {
+	#[serde(default)]
 	from: Vec<LanguageNameLower>,
+	#[serde(default)]
 	count: i64,
 }
 
@@ -1305,201 +1307,201 @@ pub struct SkillToolLanguageProficiencyChoose {
 
 #[derive(Debug, Default, Deserialize)]
 pub struct SkillToolLanguageProficiency {
-	#[serde(rename = "anyLanguage")]
+	#[serde(default, rename = "anyLanguage")]
 	any_language: i64,
-	#[serde(rename = "anyStandardLanguage")]
+	#[serde(default, rename = "anyStandardLanguage")]
 	any_standard_language: i64,
-	#[serde(rename = "anyExoticLanguage")]
+	#[serde(default, rename = "anyExoticLanguage")]
 	any_exotic_language: i64,
-	#[serde(rename = "anyRareLanguage")]
+	#[serde(default, rename = "anyRareLanguage")]
 	any_rare_language: i64,
-	#[serde(rename = "abyssal")]
+	#[serde(default)]
 	abyssal: bool,
-	#[serde(rename = "celestial")]
+	#[serde(default)]
 	celestial: bool,
-	#[serde(rename = "common")]
+	#[serde(default)]
 	common: bool,
-	#[serde(rename = "common sign language")]
+	#[serde(default, rename = "common sign language")]
 	common_sign_language: bool,
-	#[serde(rename = "deep speech")]
+	#[serde(default, rename = "deep speech")]
 	deep_speech: bool,
-	#[serde(rename = "draconic")]
+	#[serde(default)]
 	draconic: bool,
-	#[serde(rename = "infernal")]
+	#[serde(default)]
 	infernal: bool,
-	#[serde(rename = "gith")]
+	#[serde(default)]
 	gith: bool,
-	#[serde(rename = "gnomish")]
+	#[serde(default)]
 	gnomish: bool,
-	#[serde(rename = "goblin")]
+	#[serde(default)]
 	goblin: bool,
-	#[serde(rename = "halfling")]
+	#[serde(default)]
 	halfling: bool,
-	#[serde(rename = "orc")]
+	#[serde(default)]
 	orc: bool,
-	#[serde(rename = "primordial")]
+	#[serde(default)]
 	primordial: bool,
-	#[serde(rename = "aquan")]
+	#[serde(default)]
 	aquan: bool,
-	#[serde(rename = "auran")]
+	#[serde(default)]
 	auran: bool,
-	#[serde(rename = "ignan")]
+	#[serde(default)]
 	ignan: bool,
-	#[serde(rename = "terran")]
+	#[serde(default)]
 	terran: bool,
-	#[serde(rename = "sylvan")]
+	#[serde(default)]
 	sylvan: bool,
-	#[serde(rename = "undercommon")]
+	#[serde(default)]
 	undercommon: bool,
-	#[serde(rename = "dwarvish")]
+	#[serde(default)]
 	dwarvish: bool,
-	#[serde(rename = "elvish")]
+	#[serde(default)]
 	elvish: bool,
-	#[serde(rename = "giant")]
+	#[serde(default)]
 	giant: bool,
-	#[serde(rename = "other")]
+	#[serde(default)]
 	other: bool,
-	#[serde(rename = "druidic")]
+	#[serde(default)]
 	druidic: bool,
-	#[serde(rename = "thieves' cant")]
+	#[serde(default, rename = "thieves' cant")]
 	thieves_cant: bool,
-	#[serde(rename = "otherLanguage")]
+	#[serde(default, rename = "otherLanguage")]
 	other_language: bool,
-	#[serde(rename = "anyTool")]
+	#[serde(default, rename = "anyTool")]
 	any_tool: i64,
-	#[serde(rename = "anyArtisansTool")]
+	#[serde(default, rename = "anyArtisansTool")]
 	any_artisans_tool: i64,
-	#[serde(rename = "artisan's tools")]
+	#[serde(default, rename = "artisan's tools")]
 	artisans_tools: bool,
-	#[serde(rename = "alchemist's supplies")]
+	#[serde(default, rename = "alchemist's supplies")]
 	alchemists_supplies: bool,
-	#[serde(rename = "brewer's supplies")]
+	#[serde(default, rename = "brewer's supplies")]
 	brewers_supplies: bool,
-	#[serde(rename = "calligrapher's supplies")]
+	#[serde(default, rename = "calligrapher's supplies")]
 	calligraphers_supplies: bool,
-	#[serde(rename = "carpenter's tools")]
+	#[serde(default, rename = "carpenter's tools")]
 	carpenters_tools: bool,
-	#[serde(rename = "cartographer's tools")]
+	#[serde(default, rename = "cartographer's tools")]
 	cartographers_tools: bool,
-	#[serde(rename = "cobbler's tools")]
+	#[serde(default, rename = "cobbler's tools")]
 	cobblers_tools: bool,
-	#[serde(rename = "cook's utensils")]
+	#[serde(default, rename = "cook's utensils")]
 	cooks_utensils: bool,
-	#[serde(rename = "glassblower's tools")]
+	#[serde(default, rename = "glassblower's tools")]
 	glassblowers_tools: bool,
-	#[serde(rename = "jeweler's tools")]
+	#[serde(default, rename = "jeweler's tools")]
 	jewelers_tools: bool,
-	#[serde(rename = "leatherworker's tools")]
+	#[serde(default, rename = "leatherworker's tools")]
 	leatherworkers_tools: bool,
-	#[serde(rename = "mason's tools")]
+	#[serde(default, rename = "mason's tools")]
 	masons_tools: bool,
-	#[serde(rename = "painter's supplies")]
+	#[serde(default, rename = "painter's supplies")]
 	painters_supplies: bool,
-	#[serde(rename = "potter's tools")]
+	#[serde(default, rename = "potter's tools")]
 	potters_tools: bool,
-	#[serde(rename = "smith's tools")]
+	#[serde(default, rename = "smith's tools")]
 	smiths_tools: bool,
-	#[serde(rename = "tinker's tools")]
+	#[serde(default, rename = "tinker's tools")]
 	tinkers_tools: bool,
-	#[serde(rename = "weaver's tools")]
+	#[serde(default, rename = "weaver's tools")]
 	weavers_tools: bool,
-	#[serde(rename = "woodcarver's tools")]
+	#[serde(default, rename = "woodcarver's tools")]
 	woodcarvers_tools: bool,
-	#[serde(rename = "disguise kit")]
+	#[serde(default, rename = "disguise kit")]
 	disguise_kit: bool,
-	#[serde(rename = "forgery kit")]
+	#[serde(default, rename = "forgery kit")]
 	forgery_kit: bool,
-	#[serde(rename = "anyGamingSet")]
+	#[serde(default, rename = "anyGamingSet")]
 	any_gaming_set: i64,
-	#[serde(rename = "gaming set")]
+	#[serde(default, rename = "gaming set")]
 	gaming_set: bool,
-	#[serde(rename = "dragonchess set")]
+	#[serde(default, rename = "dragonchess set")]
 	dragonchess_set: bool,
-	#[serde(rename = "dice set")]
+	#[serde(default, rename = "dice set")]
 	dice_set: bool,
-	#[serde(rename = "three-dragon ante set")]
+	#[serde(default, rename = "three-dragon ante set")]
 	three_dragon_ante_set: bool,
-	#[serde(rename = "playing card set")]
+	#[serde(default, rename = "playing card set")]
 	playing_card_set: bool,
-	#[serde(rename = "herbalism kit")]
+	#[serde(default, rename = "herbalism kit")]
 	herbalism_kit: bool,
-	#[serde(rename = "anyMusicalInstrument")]
+	#[serde(default, rename = "anyMusicalInstrument")]
 	any_musical_instrument: i64,
-	#[serde(rename = "musical instrument")]
+	#[serde(default, rename = "musical instrument")]
 	musical_instrument: bool,
-	#[serde(rename = "bagpipes")]
+	#[serde(default)]
 	bagpipes: bool,
-	#[serde(rename = "drum")]
+	#[serde(default)]
 	drum: bool,
-	#[serde(rename = "dulcimer")]
+	#[serde(default)]
 	dulcimer: bool,
-	#[serde(rename = "flute")]
+	#[serde(default)]
 	flute: bool,
-	#[serde(rename = "horn")]
+	#[serde(default)]
 	horn: bool,
-	#[serde(rename = "lute")]
+	#[serde(default)]
 	lute: bool,
-	#[serde(rename = "lyre")]
+	#[serde(default)]
 	lyre: bool,
-	#[serde(rename = "pan flute")]
+	#[serde(default, rename = "pan flute")]
 	pan_flute: bool,
-	#[serde(rename = "shawm")]
+	#[serde(default)]
 	shawm: bool,
-	#[serde(rename = "viol")]
+	#[serde(default)]
 	viol: bool,
-	#[serde(rename = "navigator's tools")]
+	#[serde(default, rename = "navigator's tools")]
 	navigators_tools: bool,
-	#[serde(rename = "thieves' tools")]
+	#[serde(default, rename = "thieves' tools")]
 	thieves_tools: bool,
-	#[serde(rename = "poisoner's kit")]
+	#[serde(default, rename = "poisoner's kit")]
 	poisoners_kit: bool,
-	#[serde(rename = "vehicles")]
+	#[serde(default)]
 	vehicles: bool,
-	#[serde(rename = "vehicles (air)")]
+	#[serde(default, rename = "vehicles (air)")]
 	vehicles_air: bool,
-	#[serde(rename = "vehicles (land)")]
+	#[serde(default, rename = "vehicles (land)")]
 	vehicles_land: bool,
-	#[serde(rename = "vehicles (water)")]
+	#[serde(default, rename = "vehicles (water)")]
 	vehicles_water: bool,
-	#[serde(rename = "vehicles (space)")]
+	#[serde(default, rename = "vehicles (space)")]
 	vehicles_space: bool,
-	#[serde(rename = "anySkill")]
+	#[serde(default, rename = "anySkill")]
 	any_skill: i64,
-	#[serde(rename = "athletics")]
+	#[serde(default)]
 	athletics: bool,
-	#[serde(rename = "acrobatics")]
+	#[serde(default)]
 	acrobatics: bool,
-	#[serde(rename = "sleight of hand")]
+	#[serde(default, rename = "sleight of hand")]
 	sleight_of_hand: bool,
-	#[serde(rename = "stealth")]
+	#[serde(default)]
 	stealth: bool,
-	#[serde(rename = "arcana")]
+	#[serde(default)]
 	arcana: bool,
-	#[serde(rename = "history")]
+	#[serde(default)]
 	history: bool,
-	#[serde(rename = "investigation")]
+	#[serde(default)]
 	investigation: bool,
-	#[serde(rename = "nature")]
+	#[serde(default)]
 	nature: bool,
-	#[serde(rename = "religion")]
+	#[serde(default)]
 	religion: bool,
-	#[serde(rename = "animal handling")]
+	#[serde(default, rename = "animal handling")]
 	animal_handling: bool,
-	#[serde(rename = "insight")]
+	#[serde(default)]
 	insight: bool,
-	#[serde(rename = "medicine")]
+	#[serde(default)]
 	medicine: bool,
-	#[serde(rename = "perception")]
+	#[serde(default)]
 	perception: bool,
-	#[serde(rename = "survival")]
+	#[serde(default)]
 	survival: bool,
-	#[serde(rename = "deception")]
+	#[serde(default)]
 	deception: bool,
-	#[serde(rename = "intimidation")]
+	#[serde(default)]
 	intimidation: bool,
-	#[serde(rename = "performance")]
+	#[serde(default)]
 	performance: bool,
-	#[serde(rename = "persuasion")]
+	#[serde(default)]
 	persuasion: bool,
 	#[serde(default)]
 	choose: Vec<SkillToolLanguageProficiencyChoose>,
