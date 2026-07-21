@@ -53,10 +53,10 @@ pub struct Background {
 	// #[serde(default)]
 	// /* A lookup of other properties which should be tied to the "Feature: ..." entry. This is used when e.g. customizing a background during import to a VTT. */
 	// pub from_feature: FromFeature,
-	// #[serde(default = false)]
-	// pub has_fluff: bool,
-	// #[serde(default = false)]
-	// pub has_fluff_images: bool,
+	#[serde(default)]
+	pub has_fluff: bool,
+	#[serde(default)]
+	pub has_fluff_images: bool,
 	// #[serde(default)]
 	// pub srd: SRD,
 	// #[serde(default)]

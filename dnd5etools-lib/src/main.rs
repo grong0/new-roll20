@@ -39,7 +39,7 @@ fn main() {
 	let backgrounds: Vec<Background> = value_list
 		.iter()
 		.map(|background_value: &serde_json::Value| serde_json::from_value(background_value.to_owned()).unwrap())
-		.filter(|background: &Background| background.name == "Custom Background")
+		.filter(|background: &Background| background.name == "Feylost")
 		.collect();
 	let background = &backgrounds[0];
 	println!("{:#?}", background);
