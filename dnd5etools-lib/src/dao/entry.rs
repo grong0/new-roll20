@@ -1,4 +1,7 @@
-use serde::Deserialize;
+use serde::{
+	Deserialize, Deserializer,
+	de::{self, Visitor},
+};
 
 use crate::dao::utils::{Alias, BasicRules, Page, ReprintedAs, SRD, Source, default_srd_value, deserialize_srd};
 
@@ -45,6 +48,8 @@ pub enum EntryType {
 	Section,
 	#[serde(rename = "entries")]
 	Entries,
+	#[serde(rename = "quote")]
+	Quote,
 	#[default]
 	None,
 }
@@ -111,8 +116,77 @@ pub struct EntryEntries {
 	style: String,
 }
 
+type EntryQuoteBy = Vec<String>;
+
+fn deserialize_entry_quote_by<'de, D>(deserializer: D) -> Result<EntryQuoteBy, D::Error>
+where
+	D: Deserializer<'de>,
+{
+	struct EntryQuoteByVisitor;
+
+	impl<'de> Visitor<'de> for EntryQuoteByVisitor {
+		type Value = EntryQuoteBy;
+
+		fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+			return formatter.write_str("A UID, e.g. \"longsword|phb\", or a ReprintedAs object");
+		}
+
+		fn visit_string<E>(self, v: String) -> Result<Self::Value, E>
+		where
+			E: de::Error,
+		{
+			Ok(vec![v])
+		}
+	}
+
+	return deserializer.deserialize_any(EntryQuoteByVisitor);
+}
+
 #[derive(Debug, Default, Deserialize)]
-pub struct EntryQuote {}
+pub enum EntryQuoteStyle {
+	#[serde(rename = "quote-pull")]
+	QuotePull,
+	#[default]
+	None,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct EntryQuote {
+	#[serde(default)]
+	name: String,
+	// Always "quote"
+	#[serde(default, rename = "type")]
+	entry_type: EntryType,
+	#[serde(default)]
+	source: Source,
+	#[serde(default)]
+	page: Page,
+	#[serde(default)]
+	data: EntryDataData,
+	#[serde(default)]
+	id: String,
+	#[serde(default = "default_srd_value", deserialize_with = "deserialize_srd")]
+	srd: SRD,
+	#[serde(default = "default_srd_value", deserialize_with = "deserialize_srd")]
+	srd52: SRD,
+	#[serde(default, rename = "basicRules")]
+	basic_rules: BasicRules,
+	#[serde(default, rename = "basicRules2024")]
+	basic_rules_2024: BasicRules,
+	#[serde(default)]
+	entries: Vec<Entry>,
+	#[serde(default, deserialize_with = "deserialize_entry_quote_by")]
+	by: EntryQuoteBy,
+	#[serde(default)]
+	from: String,
+	// If the automatically-inserted quotation marks should be skipped.
+	#[serde(default, rename = "skipMarks")]
+	skip_marks: bool,
+	#[serde(default, rename = "skipItalics")]
+	skip_italics: bool,
+	#[serde(default)]
+	style: EntryQuoteStyle,
+}
 
 #[derive(Debug, Default, Deserialize)]
 pub struct EntryInlineEntries {}
