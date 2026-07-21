@@ -43,6 +43,8 @@ struct EntryDataData {
 pub enum EntryType {
 	#[serde(rename = "section")]
 	Section,
+	#[serde(rename = "entries")]
+	Entries,
 	#[default]
 	None,
 }
@@ -51,6 +53,7 @@ pub enum EntryType {
 pub struct EntrySection {
 	#[serde(default)]
 	name: String,
+	// Always "section"
 	#[serde(default, rename = "type")]
 	entry_type: EntryType,
 	#[serde(default)]
@@ -81,6 +84,7 @@ pub struct EntrySection {
 pub struct EntryEntries {
 	#[serde(default)]
 	name: String,
+	// Always "entries"
 	#[serde(default, rename = "type")]
 	entry_type: EntryType,
 	#[serde(default)]
