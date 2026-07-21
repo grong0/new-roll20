@@ -1,6 +1,6 @@
 use crate::dao::{
 	utils::{
-		AdditionalFeatsArray, ArmorProficiencies, LanguageProficiencies, Page, Prerequisite, ReprintedAs, SkillProficiencies, SkillToolLanguageProficiencies, Source, ToolProficiencies, WeaponProficiencies, deserialize_page, deserialize_reprinted_as
+		AdditionalFeatsArray, ArmorProficiencies, BasicRules, LanguageProficiencies, Page, Prerequisite, ReprintedAs, SRD, SkillProficiencies, SkillToolLanguageProficiencies, Source, ToolProficiencies, WeaponProficiencies, default_srd_value, deserialize_page, deserialize_reprinted_as, deserialize_srd
 	},
 	utils_edition::Edition,
 };
@@ -56,12 +56,12 @@ pub struct Background {
 	pub has_fluff: bool,
 	#[serde(default)]
 	pub has_fluff_images: bool,
-	// #[serde(default)]
-	// pub srd: SRD,
-	// #[serde(default)]
-	// pub srd_52: SRD,
-	// #[serde(default)]
-	// pub basic_rules: BasicRules,
-	// #[serde(default)]
-	// pub basic_rules_2024: BasicRules,
+	#[serde(default = "default_srd_value", deserialize_with = "deserialize_srd")]
+	pub srd: SRD,
+	#[serde(default)]
+	pub srd_52: SRD,
+	#[serde(default)]
+	pub basic_rules: BasicRules,
+	#[serde(default)]
+	pub basic_rules_2024: BasicRules,
 }

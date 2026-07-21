@@ -57,6 +57,8 @@ where
 	return deserializer.deserialize_any(PageVisitor);
 }
 
+pub type Alias = Vec<String>;
+
 #[derive(Debug, Default, Deserialize)]
 pub struct ReprintedAs {
 	/** A UID, e.g. \"longsword|phb\" */
@@ -1558,7 +1560,7 @@ pub struct ArmorProficiency {
 	#[serde(default)]
 	heavy: bool,
 	#[serde(default)]
-	shield: bool
+	shield: bool,
 }
 
 pub type ArmorProficiencies = Vec<ArmorProficiency>;
@@ -1568,7 +1570,7 @@ pub struct AdditionalFeatsArrayItemCategory {
 	#[serde(default)]
 	category: Vec<DataFeatCategory>,
 	#[serde(default)]
-	count: i64
+	count: i64,
 }
 
 /**
@@ -1608,3 +1610,35 @@ pub enum DataFeatCategory {
 	FSR,
 	EB,
 }
+
+pub type SRD = String;
+
+pub fn default_srd_value() -> String {
+	String::from("false")
+}
+
+pub fn deserialize_srd<'de, D>(deserializer: D) -> Result<SRD, D::Error>
+where
+	D: Deserializer<'de>,
+{
+	struct SRDVisitor;
+
+	impl<'de> Visitor<'de> for SRDVisitor {
+		type Value = SRD;
+
+		fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+			return formatter.write_str("");
+		}
+
+		fn visit_bool<E>(self, v: bool) -> Result<Self::Value, E>
+		where
+			E: de::Error,
+		{
+			Ok(v.to_string() as SRD)
+		}
+	}
+
+	return deserializer.deserialize_any(SRDVisitor);
+}
+
+pub type BasicRules = bool;
