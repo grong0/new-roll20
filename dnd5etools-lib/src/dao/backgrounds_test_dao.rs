@@ -1,4 +1,10 @@
-use crate::dao::{utils::{Page, Prerequisite, ReprintedAs, SkillProficiencies, Source, ToolProficiencies, deserialize_page, deserialize_reprinted_as}, utils_edition::Edition};
+use crate::dao::{
+	utils::{
+		ArmorProficiencies, LanguageProficiencies, Page, Prerequisite, ReprintedAs, SkillProficiencies, SkillToolLanguageProficiencies,
+		Source, ToolProficiencies, WeaponProficiencies, deserialize_page, deserialize_reprinted_as,
+	},
+	utils_edition::Edition,
+};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -20,14 +26,14 @@ pub struct Background {
 	pub skill_proficiencies: SkillProficiencies,
 	#[serde(default)]
 	pub tool_proficiencies: ToolProficiencies,
-	// #[serde(default)]
-	// pub language_proficiencies: LanguageProficiencies,
-	// #[serde(default)]
-	// pub skill_tool_language_proficiencies: SkillToolLanguageProficiencies,
-	// #[serde(default)]
-	// pub weapon_proficiencies: WeaponProficiencies,
-	// #[serde(default)]
-	// pub armor_proficiencies: ArmorProficiencies,
+	#[serde(default)]
+	pub language_proficiencies: LanguageProficiencies,
+	#[serde(default)]
+	pub skill_tool_language_proficiencies: SkillToolLanguageProficiencies,
+	#[serde(default)]
+	pub weapon_proficiencies: WeaponProficiencies,
+	#[serde(default)]
+	pub armor_proficiencies: ArmorProficiencies,
 	// #[serde(default)]
 	// pub feats: AdditionalFeatsArray,
 	// #[serde(default)]

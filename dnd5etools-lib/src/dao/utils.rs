@@ -550,6 +550,132 @@ enum Alignment {
 }
 
 #[derive(Debug, Deserialize)]
+pub enum LanguageNameLower {
+	#[serde(rename = "abyssal")]
+	Abyssal,
+	#[serde(rename = "aquan")]
+	Aquan,
+	#[serde(rename = "auran")]
+	Auran,
+	#[serde(rename = "celestial")]
+	Celestial,
+	#[serde(rename = "common")]
+	Common,
+	#[serde(rename = "common sign language")]
+	CommonSignLanguage,
+	#[serde(rename = "deep speech")]
+	DeepSpeech,
+	#[serde(rename = "draconic")]
+	Draconic,
+	#[serde(rename = "druidic")]
+	Druidic,
+	#[serde(rename = "dwarvish")]
+	Dwarvish,
+	#[serde(rename = "elvish")]
+	Elvish,
+	#[serde(rename = "giant")]
+	Giant,
+	#[serde(rename = "gith")]
+	Gith,
+	#[serde(rename = "gnomish")]
+	Gnomish,
+	#[serde(rename = "goblin")]
+	Goblin,
+	#[serde(rename = "halfling")]
+	Halfing,
+	#[serde(rename = "ignan")]
+	Ignan,
+	#[serde(rename = "infernal")]
+	Infernal,
+	#[serde(rename = "orc")]
+	Orc,
+	#[serde(rename = "other")]
+	Other,
+	#[serde(rename = "primordial")]
+	Primordial,
+	#[serde(rename = "sylvan")]
+	Sylvan,
+	#[serde(rename = "terran")]
+	Terran,
+	#[serde(rename = "thieves' cant")]
+	ThievesCant,
+	#[serde(rename = "undercommon")]
+	Undercommon,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct LanguageProficiencyChoose {
+	from: Vec<LanguageNameLower>,
+	count: i64,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct LanguageProficiency {
+	#[serde(default)]
+	any: i64,
+	#[serde(default, rename = "anyStandard")]
+	any_standard: i64,
+	#[serde(default, rename = "anyExotic")]
+	any_exoitic: i64,
+	#[serde(default, rename = "anyRare")]
+	any_rare: i64,
+	#[serde(default)]
+	abyssal: bool,
+	#[serde(default)]
+	celestial: bool,
+	#[serde(default)]
+	common: bool,
+	#[serde(default, rename = "common sign language")]
+	common_sign_language: bool,
+	#[serde(default, rename = "deep speech")]
+	deep_speech: bool,
+	#[serde(default)]
+	draconic: bool,
+	#[serde(default)]
+	infernal: bool,
+	#[serde(default)]
+	gith: bool,
+	#[serde(default)]
+	gnomish: bool,
+	#[serde(default)]
+	goblin: bool,
+	#[serde(default)]
+	halfling: bool,
+	#[serde(default)]
+	orc: bool,
+	#[serde(default)]
+	primordial: bool,
+	#[serde(default)]
+	aquan: bool,
+	#[serde(default)]
+	auran: bool,
+	#[serde(default)]
+	ignan: bool,
+	#[serde(default)]
+	terran: bool,
+	#[serde(default)]
+	sylvan: bool,
+	#[serde(default)]
+	undercommon: bool,
+	#[serde(default)]
+	dwarvish: bool,
+	#[serde(default)]
+	elvish: bool,
+	#[serde(default)]
+	giant: bool,
+	#[serde(default)]
+	other: bool,
+	#[serde(default)]
+	druidic: bool,
+	#[serde(default, rename = "thieves' cant")]
+	thieves_cant: bool,
+	#[serde(default)]
+	choose: LanguageProficiencyChoose,
+}
+
+pub type LanguageProficiencies = Vec<LanguageProficiency>;
+
+#[derive(Debug, Deserialize)]
 pub enum ToolNameLower {
 	#[serde(rename = "artisan's tools")]
 	ArtisansTools,
@@ -948,6 +1074,492 @@ pub struct SkillProficiency {
 }
 
 pub type SkillProficiencies = Vec<SkillProficiency>;
+
+#[derive(Debug, Deserialize)]
+pub enum SkillToolLanguageProficiencyChooseFrom {
+	#[serde(rename = "abyssal")]
+	Abyssal,
+	#[serde(rename = "aquan")]
+	Aquan,
+	#[serde(rename = "auran")]
+	Auran,
+	#[serde(rename = "celestial")]
+	Celestial,
+	#[serde(rename = "common")]
+	Common,
+	#[serde(rename = "common sign language")]
+	CommonSignLanguage,
+	#[serde(rename = "deep speech")]
+	DeepSpeech,
+	#[serde(rename = "draconic")]
+	Draconic,
+	#[serde(rename = "druidic")]
+	Druidic,
+	#[serde(rename = "dwarvish")]
+	Dwarvish,
+	#[serde(rename = "elvish")]
+	Elvish,
+	#[serde(rename = "giant")]
+	Giant,
+	#[serde(rename = "gith")]
+	Gith,
+	#[serde(rename = "gnomish")]
+	Gnomish,
+	#[serde(rename = "goblin")]
+	Goblin,
+	#[serde(rename = "halfling")]
+	Halfing,
+	#[serde(rename = "ignan")]
+	Ignan,
+	#[serde(rename = "infernal")]
+	Infernal,
+	#[serde(rename = "orc")]
+	Orc,
+	#[serde(rename = "other")]
+	Other,
+	#[serde(rename = "primordial")]
+	Primordial,
+	#[serde(rename = "sylvan")]
+	Sylvan,
+	#[serde(rename = "terran")]
+	Terran,
+	#[serde(rename = "thieves' cant")]
+	ThievesCant,
+	#[serde(rename = "undercommon")]
+	Undercommon,
+	#[serde(rename = "artisan's tools")]
+	ArtisansTools,
+	#[serde(rename = "alchemist's supplies")]
+	AlchemistsSupplies,
+	#[serde(rename = "brewer's supplies")]
+	BrewersSupplies,
+	#[serde(rename = "calligrapher's supplies")]
+	CalligraphersSupplies,
+	#[serde(rename = "carpenter's tools")]
+	CarpentersTools,
+	#[serde(rename = "cartographer's tools")]
+	CartographersTools,
+	#[serde(rename = "cobbler's tools")]
+	CobblersTools,
+	#[serde(rename = "cook's utensils")]
+	CooksUtensils,
+	#[serde(rename = "glassblower's tools")]
+	GlassblowersTools,
+	#[serde(rename = "jeweler's tools")]
+	JewelersTools,
+	#[serde(rename = "leatherworker's tools")]
+	LeatherWorkersTools,
+	#[serde(rename = "mason's tools")]
+	MasonsTools,
+	#[serde(rename = "painter's supplies")]
+	PaintersSupplies,
+	#[serde(rename = "potter's tools")]
+	PottersTools,
+	#[serde(rename = "smith's tools")]
+	SmithsTools,
+	#[serde(rename = "tinker's tools")]
+	TinkersTools,
+	#[serde(rename = "weaver's tools")]
+	WeaversTools,
+	#[serde(rename = "woodcarver's tools")]
+	WoodcarversTools,
+	#[serde(rename = "disguise kit")]
+	DisguiseKit,
+	#[serde(rename = "forgery kit")]
+	ForgeryKit,
+	#[serde(rename = "gaming set")]
+	GamingSet,
+	#[serde(rename = "dragonchess set")]
+	DragonChess,
+	#[serde(rename = "dice set")]
+	DiceSet,
+	#[serde(rename = "three-dragon ante set")]
+	ThreeDragonAnteSet,
+	#[serde(rename = "playing card set")]
+	PlayerCadSet,
+	#[serde(rename = "herbalism kit")]
+	HerbalismKit,
+	#[serde(rename = "musical instrument")]
+	MusicalInstrument,
+	#[serde(rename = "bagpipes")]
+	BagPipe,
+	#[serde(rename = "drum")]
+	Drum,
+	#[serde(rename = "dulcimer")]
+	Dulcimer,
+	#[serde(rename = "flute")]
+	Flute,
+	#[serde(rename = "horn")]
+	Horn,
+	#[serde(rename = "lute")]
+	Lute,
+	#[serde(rename = "lyre")]
+	Lyre,
+	#[serde(rename = "pan flute")]
+	PanFlute,
+	#[serde(rename = "shawm")]
+	Shawm,
+	#[serde(rename = "viol")]
+	Viol,
+	#[serde(rename = "navigator's tools")]
+	NavigatorsTools,
+	#[serde(rename = "thieves' tools")]
+	ThievesTools,
+	#[serde(rename = "poisoner's kit")]
+	PoisonersKit,
+	#[serde(rename = "vehicles")]
+	Vehicles,
+	#[serde(rename = "vehicles (air)")]
+	VehiclesAir,
+	#[serde(rename = "vehicles (land)")]
+	VehiclesLand,
+	#[serde(rename = "vehicles (water)")]
+	VehiclesWater,
+	#[serde(rename = "vehicles (space)")]
+	VehiclesSpace,
+	#[serde(rename = "athletics")]
+	Athletics,
+	#[serde(rename = "acrobatics")]
+	Acrobatics,
+	#[serde(rename = "sleight of hand")]
+	SleightOfHand,
+	#[serde(rename = "stealth")]
+	Stealth,
+	#[serde(rename = "arcana")]
+	Arcana,
+	#[serde(rename = "history")]
+	History,
+	#[serde(rename = "investigation")]
+	Investigation,
+	#[serde(rename = "nature")]
+	Nature,
+	#[serde(rename = "religion")]
+	Religion,
+	#[serde(rename = "animal handling")]
+	AnimalHandling,
+	#[serde(rename = "insight")]
+	Insight,
+	#[serde(rename = "medicine")]
+	Medicine,
+	#[serde(rename = "perception")]
+	Perception,
+	#[serde(rename = "survival")]
+	Survival,
+	#[serde(rename = "deception")]
+	Deception,
+	#[serde(rename = "intimidation")]
+	Intimidation,
+	#[serde(rename = "performance")]
+	Performance,
+	#[serde(rename = "persuasion")]
+	Persuasion,
+	#[serde(rename = "anySkill")]
+	AnySkill,
+	#[serde(rename = "anyTool")]
+	AnyTool,
+	#[serde(rename = "anyArtisansTool")]
+	AnyArtisansTool,
+	#[serde(rename = "anyMusicalInstrument")]
+	AnyMusicalInstrument,
+	#[serde(rename = "anyLanguage")]
+	AnyLanguage,
+	#[serde(rename = "anyStandardLanguage")]
+	AnyStandardLanguage,
+	#[serde(rename = "anyExoticLanguage")]
+	AnyExoticLanguage,
+	#[serde(rename = "anyRareLanguage")]
+	AnyRareLanguage,
+}
+
+// TODO: shouldn't have default
+#[derive(Debug, Default, Deserialize)]
+pub enum SkillToolLanguageProficiencyChooseType {
+	#[serde(rename = "weapon")]
+	Weapon,
+	#[serde(rename = "armor")]
+	Armor,
+	#[serde(rename = "skill")]
+	Skill,
+	#[serde(rename = "tool")]
+	Tool,
+	#[serde(rename = "language")]
+	Language,
+	#[serde(rename = "savingThrow")]
+	SavingThrow,
+	#[default]
+	None,
+}
+
+// is a combination of two different possible objects
+#[derive(Debug, Default, Deserialize)]
+pub struct SkillToolLanguageProficiencyChoose {
+	#[serde(default)]
+	from: Vec<SkillToolLanguageProficiencyChooseFrom>,
+	#[serde(default, rename = "fromFilter")]
+	from_filter: String,
+	#[serde(default)]
+	count: i64,
+	#[serde(default, rename = "type")]
+	from_filter_type: SkillToolLanguageProficiencyChooseType,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct SkillToolLanguageProficiency {
+	#[serde(rename = "anyLanguage")]
+	any_language: i64,
+	#[serde(rename = "anyStandardLanguage")]
+	any_standard_language: i64,
+	#[serde(rename = "anyExoticLanguage")]
+	any_exotic_language: i64,
+	#[serde(rename = "anyRareLanguage")]
+	any_rare_language: i64,
+	#[serde(rename = "abyssal")]
+	abyssal: bool,
+	#[serde(rename = "celestial")]
+	celestial: bool,
+	#[serde(rename = "common")]
+	common: bool,
+	#[serde(rename = "common sign language")]
+	common_sign_language: bool,
+	#[serde(rename = "deep speech")]
+	deep_speech: bool,
+	#[serde(rename = "draconic")]
+	draconic: bool,
+	#[serde(rename = "infernal")]
+	infernal: bool,
+	#[serde(rename = "gith")]
+	gith: bool,
+	#[serde(rename = "gnomish")]
+	gnomish: bool,
+	#[serde(rename = "goblin")]
+	goblin: bool,
+	#[serde(rename = "halfling")]
+	halfling: bool,
+	#[serde(rename = "orc")]
+	orc: bool,
+	#[serde(rename = "primordial")]
+	primordial: bool,
+	#[serde(rename = "aquan")]
+	aquan: bool,
+	#[serde(rename = "auran")]
+	auran: bool,
+	#[serde(rename = "ignan")]
+	ignan: bool,
+	#[serde(rename = "terran")]
+	terran: bool,
+	#[serde(rename = "sylvan")]
+	sylvan: bool,
+	#[serde(rename = "undercommon")]
+	undercommon: bool,
+	#[serde(rename = "dwarvish")]
+	dwarvish: bool,
+	#[serde(rename = "elvish")]
+	elvish: bool,
+	#[serde(rename = "giant")]
+	giant: bool,
+	#[serde(rename = "other")]
+	other: bool,
+	#[serde(rename = "druidic")]
+	druidic: bool,
+	#[serde(rename = "thieves' cant")]
+	thieves_cant: bool,
+	#[serde(rename = "otherLanguage")]
+	other_language: bool,
+	#[serde(rename = "anyTool")]
+	any_tool: i64,
+	#[serde(rename = "anyArtisansTool")]
+	any_artisans_tool: i64,
+	#[serde(rename = "artisan's tools")]
+	artisans_tools: bool,
+	#[serde(rename = "alchemist's supplies")]
+	alchemists_supplies: bool,
+	#[serde(rename = "brewer's supplies")]
+	brewers_supplies: bool,
+	#[serde(rename = "calligrapher's supplies")]
+	calligraphers_supplies: bool,
+	#[serde(rename = "carpenter's tools")]
+	carpenters_tools: bool,
+	#[serde(rename = "cartographer's tools")]
+	cartographers_tools: bool,
+	#[serde(rename = "cobbler's tools")]
+	cobblers_tools: bool,
+	#[serde(rename = "cook's utensils")]
+	cooks_utensils: bool,
+	#[serde(rename = "glassblower's tools")]
+	glassblowers_tools: bool,
+	#[serde(rename = "jeweler's tools")]
+	jewelers_tools: bool,
+	#[serde(rename = "leatherworker's tools")]
+	leatherworkers_tools: bool,
+	#[serde(rename = "mason's tools")]
+	masons_tools: bool,
+	#[serde(rename = "painter's supplies")]
+	painters_supplies: bool,
+	#[serde(rename = "potter's tools")]
+	potters_tools: bool,
+	#[serde(rename = "smith's tools")]
+	smiths_tools: bool,
+	#[serde(rename = "tinker's tools")]
+	tinkers_tools: bool,
+	#[serde(rename = "weaver's tools")]
+	weavers_tools: bool,
+	#[serde(rename = "woodcarver's tools")]
+	woodcarvers_tools: bool,
+	#[serde(rename = "disguise kit")]
+	disguise_kit: bool,
+	#[serde(rename = "forgery kit")]
+	forgery_kit: bool,
+	#[serde(rename = "anyGamingSet")]
+	any_gaming_set: i64,
+	#[serde(rename = "gaming set")]
+	gaming_set: bool,
+	#[serde(rename = "dragonchess set")]
+	dragonchess_set: bool,
+	#[serde(rename = "dice set")]
+	dice_set: bool,
+	#[serde(rename = "three-dragon ante set")]
+	three_dragon_ante_set: bool,
+	#[serde(rename = "playing card set")]
+	playing_card_set: bool,
+	#[serde(rename = "herbalism kit")]
+	herbalism_kit: bool,
+	#[serde(rename = "anyMusicalInstrument")]
+	any_musical_instrument: i64,
+	#[serde(rename = "musical instrument")]
+	musical_instrument: bool,
+	#[serde(rename = "bagpipes")]
+	bagpipes: bool,
+	#[serde(rename = "drum")]
+	drum: bool,
+	#[serde(rename = "dulcimer")]
+	dulcimer: bool,
+	#[serde(rename = "flute")]
+	flute: bool,
+	#[serde(rename = "horn")]
+	horn: bool,
+	#[serde(rename = "lute")]
+	lute: bool,
+	#[serde(rename = "lyre")]
+	lyre: bool,
+	#[serde(rename = "pan flute")]
+	pan_flute: bool,
+	#[serde(rename = "shawm")]
+	shawm: bool,
+	#[serde(rename = "viol")]
+	viol: bool,
+	#[serde(rename = "navigator's tools")]
+	navigators_tools: bool,
+	#[serde(rename = "thieves' tools")]
+	thieves_tools: bool,
+	#[serde(rename = "poisoner's kit")]
+	poisoners_kit: bool,
+	#[serde(rename = "vehicles")]
+	vehicles: bool,
+	#[serde(rename = "vehicles (air)")]
+	vehicles_air: bool,
+	#[serde(rename = "vehicles (land)")]
+	vehicles_land: bool,
+	#[serde(rename = "vehicles (water)")]
+	vehicles_water: bool,
+	#[serde(rename = "vehicles (space)")]
+	vehicles_space: bool,
+	#[serde(rename = "anySkill")]
+	any_skill: i64,
+	#[serde(rename = "athletics")]
+	athletics: bool,
+	#[serde(rename = "acrobatics")]
+	acrobatics: bool,
+	#[serde(rename = "sleight of hand")]
+	sleight_of_hand: bool,
+	#[serde(rename = "stealth")]
+	stealth: bool,
+	#[serde(rename = "arcana")]
+	arcana: bool,
+	#[serde(rename = "history")]
+	history: bool,
+	#[serde(rename = "investigation")]
+	investigation: bool,
+	#[serde(rename = "nature")]
+	nature: bool,
+	#[serde(rename = "religion")]
+	religion: bool,
+	#[serde(rename = "animal handling")]
+	animal_handling: bool,
+	#[serde(rename = "insight")]
+	insight: bool,
+	#[serde(rename = "medicine")]
+	medicine: bool,
+	#[serde(rename = "perception")]
+	perception: bool,
+	#[serde(rename = "survival")]
+	survival: bool,
+	#[serde(rename = "deception")]
+	deception: bool,
+	#[serde(rename = "intimidation")]
+	intimidation: bool,
+	#[serde(rename = "performance")]
+	performance: bool,
+	#[serde(rename = "persuasion")]
+	persuasion: bool,
+	#[serde(default)]
+	choose: Vec<SkillToolLanguageProficiencyChoose>,
+}
+
+pub type SkillToolLanguageProficiencies = Vec<SkillToolLanguageProficiency>;
+
+#[derive(Debug, Default, Deserialize)]
+pub struct WeaponProficiencyChoose {
+	#[serde(default, rename = "fromFilter")]
+	// A filter string, e.g. "type=martial weapon|miscellaneous=mundane"
+	from_filter: String,
+	#[serde(default)]
+	count: i64,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub struct WeaponProficiencyAll {
+	#[serde(default, rename = "fromFilter")]
+	// A filter string, e.g. "type=martial weapon|miscellaneous=mundane"
+	from_filter: String,
+}
+
+/**
+ * TODO: deal with dynamic properties
+ * "^[^|]+\\|.+$": {
+ *     "const": true
+ * }
+ */
+#[derive(Debug, Default, Deserialize)]
+pub struct WeaponProficiency {
+	#[serde(default)]
+	simple: bool,
+	#[serde(default)]
+	martial: bool,
+	#[serde(default)]
+	firearms: bool,
+	#[serde(default)]
+	improvised: bool,
+	#[serde(default)]
+	choose: WeaponProficiencyChoose,
+	#[serde(default)]
+	all: WeaponProficiencyAll,
+}
+
+pub type WeaponProficiencies = Vec<WeaponProficiency>;
+
+#[derive(Debug, Default, Deserialize)]
+pub struct ArmorProficiency {
+	#[serde(default)]
+	light: bool,
+	#[serde(default)]
+	medium: bool,
+	#[serde(default)]
+	heavy: bool,
+	#[serde(default)]
+	shield: bool
+}
+
+pub type ArmorProficiencies = Vec<ArmorProficiency>;
 
 #[derive(Debug, Default, Deserialize)]
 pub struct DataFeatCategory {}
