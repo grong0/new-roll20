@@ -50,6 +50,10 @@ pub enum EntryType {
 	Entries,
 	#[serde(rename = "quote")]
 	Quote,
+	#[serde(rename = "inline")]
+	Inline,
+	#[serde(rename = "inlineBlock")]
+	InlineBlock,
 	#[default]
 	None,
 }
@@ -189,10 +193,58 @@ pub struct EntryQuote {
 }
 
 #[derive(Debug, Default, Deserialize)]
-pub struct EntryInlineEntries {}
+pub struct EntryInlineEntries {
+	#[serde(default)]
+	name: String,
+	// Always "inline"
+	#[serde(default, rename = "type")]
+	entry_type: EntryType,
+	#[serde(default)]
+	source: Source,
+	#[serde(default)]
+	page: Page,
+	#[serde(default)]
+	data: EntryDataData,
+	#[serde(default)]
+	id: String,
+	#[serde(default = "default_srd_value", deserialize_with = "deserialize_srd")]
+	srd: SRD,
+	#[serde(default = "default_srd_value", deserialize_with = "deserialize_srd")]
+	srd52: SRD,
+	#[serde(default, rename = "basicRules")]
+	basic_rules: BasicRules,
+	#[serde(default, rename = "basicRules2024")]
+	basic_rules_2024: BasicRules,
+	#[serde(default)]
+	entries: Vec<Entry>,
+}
 
 #[derive(Debug, Default, Deserialize)]
-pub struct EntryEntriesInlineEntries {}
+pub struct EntryEntriesInlineEntries {
+	#[serde(default)]
+	name: String,
+	// Always "inlineBlock"
+	#[serde(default, rename = "type")]
+	entry_type: EntryType,
+	#[serde(default)]
+	source: Source,
+	#[serde(default)]
+	page: Page,
+	#[serde(default)]
+	data: EntryDataData,
+	#[serde(default)]
+	id: String,
+	#[serde(default = "default_srd_value", deserialize_with = "deserialize_srd")]
+	srd: SRD,
+	#[serde(default = "default_srd_value", deserialize_with = "deserialize_srd")]
+	srd52: SRD,
+	#[serde(default, rename = "basicRules")]
+	basic_rules: BasicRules,
+	#[serde(default, rename = "basicRules2024")]
+	basic_rules_2024: BasicRules,
+	#[serde(default)]
+	entries: Vec<Entry>,
+}
 
 #[derive(Debug, Default, Deserialize)]
 pub struct EntryOptions {}
