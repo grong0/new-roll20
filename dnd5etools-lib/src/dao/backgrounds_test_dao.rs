@@ -1,7 +1,6 @@
 use crate::dao::{
 	utils::{
-		ArmorProficiencies, LanguageProficiencies, Page, Prerequisite, ReprintedAs, SkillProficiencies, SkillToolLanguageProficiencies,
-		Source, ToolProficiencies, WeaponProficiencies, deserialize_page, deserialize_reprinted_as,
+		AdditionalFeatsArray, ArmorProficiencies, LanguageProficiencies, Page, Prerequisite, ReprintedAs, SkillProficiencies, SkillToolLanguageProficiencies, Source, ToolProficiencies, WeaponProficiencies, deserialize_page, deserialize_reprinted_as
 	},
 	utils_edition::Edition,
 };
@@ -34,8 +33,8 @@ pub struct Background {
 	pub weapon_proficiencies: WeaponProficiencies,
 	#[serde(default)]
 	pub armor_proficiencies: ArmorProficiencies,
-	// #[serde(default)]
-	// pub feats: AdditionalFeatsArray,
+	#[serde(default)]
+	pub feats: AdditionalFeatsArray,
 	// #[serde(default)]
 	// pub entries: Vec<Entry>,
 	// #[serde(default)]

@@ -1564,4 +1564,47 @@ pub struct ArmorProficiency {
 pub type ArmorProficiencies = Vec<ArmorProficiency>;
 
 #[derive(Debug, Default, Deserialize)]
-pub struct DataFeatCategory {}
+pub struct AdditionalFeatsArrayItemCategory {
+	#[serde(default)]
+	category: Vec<DataFeatCategory>,
+	#[serde(default)]
+	count: i64
+}
+
+/**
+ * TODO: handle dynamic fields
+ * "^[^|]+\\|.+$": {
+ *     "const": true
+ * }
+ */
+#[derive(Debug, Default, Deserialize)]
+pub struct AdditionalFeatsArrayItem {
+	#[serde(default)]
+	any: i64,
+	#[serde(default, rename = "anyFromCategory")]
+	any_from_category: AdditionalFeatsArrayItemCategory,
+}
+
+pub type AdditionalFeatsArray = Vec<AdditionalFeatsArrayItem>;
+
+/**
+ * D: Dragonmark
+ * G: General
+ * O: Origin
+ * FS: Fighting Style
+ * FS:P: Fighting Style (Paladin)
+ * FS:R: Fighting Style (Ranger)
+ * EB: Epic Boon
+ */
+#[derive(Debug, Deserialize)]
+pub enum DataFeatCategory {
+	D,
+	G,
+	O,
+	FS,
+	#[serde(rename = "FS:P")]
+	FSP,
+	#[serde(rename = "FS:R")]
+	FSR,
+	EB,
+}
