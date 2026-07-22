@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use serde::{
 	Deserialize, Deserializer,
 	de::{self, Visitor},
@@ -7,6 +9,8 @@ use crate::dao::{
 	items_shared::{ItemPropertyArray, ItemType},
 	utils_edition::Edition,
 };
+
+pub type MetaDependenciesArray = HashSet<String>;
 
 /** "uri-reference" is unsuitable for brew, as it requires URL-encoding "'" (see: https://www.ietf.org/rfc/rfc3986.txt) */
 type SourceString = String;
@@ -91,6 +95,104 @@ where
 	}
 
 	return deserializer.deserialize_any(ReprintedAsVisitor);
+}
+
+/**
+ * Shouldn't have default
+ */
+#[derive(Debug, Default, Deserialize)]
+pub enum TagNameStats {
+	#[serde(rename = "spell")]
+	Spell,
+	#[serde(rename = "item")]
+	Item,
+	#[serde(rename = "itemMastery")]
+	ItemMastery,
+	#[serde(rename = "creature")]
+	Creature,
+	#[serde(rename = "condition")]
+	Condition,
+	#[serde(rename = "disease")]
+	Disease,
+	#[serde(rename = "status")]
+	Status,
+	#[serde(rename = "background")]
+	Background,
+	#[serde(rename = "race")]
+	Race,
+	#[serde(rename = "optfeature")]
+	Optfeature,
+	#[serde(rename = "reward")]
+	Reward,
+	#[serde(rename = "feat")]
+	Feat,
+	#[serde(rename = "psionic")]
+	Psionic,
+	#[serde(rename = "object")]
+	Object,
+	#[serde(rename = "cult")]
+	Cult,
+	#[serde(rename = "boon")]
+	Boon,
+	#[serde(rename = "trap")]
+	Trap,
+	#[serde(rename = "hazard")]
+	Hazard,
+	#[serde(rename = "variantrule")]
+	Variantrule,
+	#[serde(rename = "charoption")]
+	Charoption,
+	#[serde(rename = "vehicle")]
+	Vehicle,
+	#[serde(rename = "vehupgrade")]
+	Vehupgrade,
+	#[serde(rename = "class")]
+	Class,
+	#[serde(rename = "action")]
+	Action,
+	#[serde(rename = "language")]
+	Language,
+	#[serde(rename = "classFeature")]
+	ClassFeature,
+	#[serde(rename = "subclassFeature")]
+	SubclassFeature,
+	#[serde(rename = "table")]
+	Table,
+	#[serde(rename = "recipe")]
+	Recipe,
+	#[serde(rename = "skill")]
+	Skill,
+	#[serde(rename = "sense")]
+	Sense,
+	#[serde(rename = "legroup")]
+	Legroup,
+	#[serde(rename = "deck")]
+	Deck,
+	#[serde(rename = "facility")]
+	Facility,
+	#[default]
+	None,
+}
+
+/**
+ * Shouldn't have default
+ */
+#[derive(Debug, Default, Deserialize)]
+pub enum AbilityScoreAbbreviation {
+	#[serde(rename = "str")]
+	Str,
+	#[serde(rename = "dex")]
+	Dex,
+	#[serde(rename = "con")]
+	Con,
+	#[serde(rename = "int")]
+	Int,
+	#[serde(rename = "wis")]
+	Wis,
+	#[serde(rename = "cha")]
+	Cha,
+	#[default]
+	None
 }
 
 #[derive(Debug, Default, Deserialize)]

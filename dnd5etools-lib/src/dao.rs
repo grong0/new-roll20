@@ -25,6 +25,7 @@ pub mod items_shared;
 pub mod utils;
 pub mod utils_edition;
 pub mod entry;
+pub mod bestiary;
 
 use actions_dao::Action;
 use backgrounds_dao::Background;
