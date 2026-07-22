@@ -1,8 +1,7 @@
 use crate::dao::{
-	utils::{
-		AdditionalFeatsArray, ArmorProficiencies, BasicRules, LanguageProficiencies, Page, Prerequisite, ReprintedAs, SRD, SkillProficiencies, SkillToolLanguageProficiencies, Source, ToolProficiencies, WeaponProficiencies, default_srd_value, deserialize_page, deserialize_reprinted_as, deserialize_srd
-	},
-	utils_edition::Edition,
+	common::StartingEquipment, entry::Entry, utils::{
+		AdditionalFeatsArray, AdditionalSources, ArmorProficiencies, BasicRules, LanguageProficiencies, OtherSources, Page, Prerequisite, ReferenceSources, ReprintedAs, SRD, SkillProficiencies, SkillToolLanguageProficiencies, Source, ToolProficiencies, WeaponProficiencies, default_srd_value, deserialize_page, deserialize_reprinted_as, deserialize_srd
+	}, utils_edition::Edition
 };
 use serde::Deserialize;
 
@@ -35,22 +34,22 @@ pub struct Background {
 	pub armor_proficiencies: ArmorProficiencies,
 	#[serde(default)]
 	pub feats: AdditionalFeatsArray,
-	// #[serde(default)]
-	// pub entries: Vec<Entry>,
-	// #[serde(default)]
-	// pub additional_sources: AdditionalSources,
-	// #[serde(default)]
-	// pub other_sources: OtherSources,
-	// #[serde(default)]
-	// pub reference_sources: ReferenceSources,
+	#[serde(default)]
+	pub entries: Vec<Entry>,
+	#[serde(default)]
+	pub additional_sources: AdditionalSources,
+	#[serde(default)]
+	pub other_sources: OtherSources,
+	#[serde(default)]
+	pub reference_sources: ReferenceSources,
 	// #[serde(default)]
 	// pub starting_equipment: StartingEquipment,
 	// #[serde(default)]
 	// pub additional_spells: AdditionalSpellsArray,
 	// #[serde(default)]
 	// pub ability: AbilityScores,
+	/* A lookup of other properties which should be tied to the "Feature: ..." entry. This is used when e.g. customizing a background during import to a VTT. */
 	// #[serde(default)]
-	// /* A lookup of other properties which should be tied to the "Feature: ..." entry. This is used when e.g. customizing a background during import to a VTT. */
 	// pub from_feature: FromFeature,
 	#[serde(default)]
 	pub has_fluff: bool,
