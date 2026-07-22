@@ -82,7 +82,7 @@ struct EntryDataDataGenTables {
  * Keys prefixed with "rd-" should be added as "data-" HTML attributes when rendering to HTML.
  */
 #[derive(Debug, Default, Deserialize)]
-struct EntryDataData {
+pub struct EntryDataData {
 	#[serde(default, rename = "genTables")]
 	gen_tables: EntryDataDataGenTables,
 }

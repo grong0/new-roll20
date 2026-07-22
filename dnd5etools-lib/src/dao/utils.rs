@@ -61,7 +61,38 @@ where
 	return deserializer.deserialize_any(PageVisitor);
 }
 
+#[derive(Debug, Default, Deserialize)]
+pub struct OtherSource {
+	source: Source,
+	page: Page,
+}
+
+/**
+ * Other sources in which this entity is defined.
+ */
+pub type OtherSources = Vec<OtherSource>;
+
+/**
+ * Sources which reference this entity (e.g. in bold text).
+ */
+pub type ReferenceSources = Vec<Source>;
+
+#[derive(Debug, Default, Deserialize)]
+#[serde(default)]
+pub struct AdditionalSource {
+	source: Source,
+	page: Page
+}
+
+pub type AdditionalSources = Vec<AdditionalSource>;
+
 pub type Alias = Vec<String>;
+
+/**
+ * A group name, indexed by page search. E.g. searching \"Lycanthrope\" would otherwise fail to find anything.
+ * Only works on a given page, and not in Omnisearch.
+ */
+pub type Group = Vec<String>;
 
 #[derive(Debug, Default, Deserialize)]
 pub struct ReprintedAs {
@@ -98,77 +129,50 @@ where
 }
 
 /**
+ * Prefer \"reprintedAs\", where available.
+ * Always true.
+ */
+pub type IsReprinted = bool;
+
+/**
  * Shouldn't have default
  */
 #[derive(Debug, Default, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub enum TagNameStats {
-	#[serde(rename = "spell")]
 	Spell,
-	#[serde(rename = "item")]
 	Item,
-	#[serde(rename = "itemMastery")]
 	ItemMastery,
-	#[serde(rename = "creature")]
 	Creature,
-	#[serde(rename = "condition")]
 	Condition,
-	#[serde(rename = "disease")]
 	Disease,
-	#[serde(rename = "status")]
 	Status,
-	#[serde(rename = "background")]
 	Background,
-	#[serde(rename = "race")]
 	Race,
-	#[serde(rename = "optfeature")]
 	Optfeature,
-	#[serde(rename = "reward")]
 	Reward,
-	#[serde(rename = "feat")]
 	Feat,
-	#[serde(rename = "psionic")]
 	Psionic,
-	#[serde(rename = "object")]
 	Object,
-	#[serde(rename = "cult")]
 	Cult,
-	#[serde(rename = "boon")]
 	Boon,
-	#[serde(rename = "trap")]
 	Trap,
-	#[serde(rename = "hazard")]
 	Hazard,
-	#[serde(rename = "variantrule")]
 	Variantrule,
-	#[serde(rename = "charoption")]
 	Charoption,
-	#[serde(rename = "vehicle")]
 	Vehicle,
-	#[serde(rename = "vehupgrade")]
 	Vehupgrade,
-	#[serde(rename = "class")]
 	Class,
-	#[serde(rename = "action")]
 	Action,
-	#[serde(rename = "language")]
 	Language,
-	#[serde(rename = "classFeature")]
 	ClassFeature,
-	#[serde(rename = "subclassFeature")]
 	SubclassFeature,
-	#[serde(rename = "table")]
 	Table,
-	#[serde(rename = "recipe")]
 	Recipe,
-	#[serde(rename = "skill")]
 	Skill,
-	#[serde(rename = "sense")]
 	Sense,
-	#[serde(rename = "legroup")]
 	Legroup,
-	#[serde(rename = "deck")]
 	Deck,
-	#[serde(rename = "facility")]
 	Facility,
 	#[default]
 	None,
@@ -178,21 +182,16 @@ pub enum TagNameStats {
  * Shouldn't have default
  */
 #[derive(Debug, Default, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum AbilityScoreAbbreviation {
-	#[serde(rename = "str")]
 	Str,
-	#[serde(rename = "dex")]
 	Dex,
-	#[serde(rename = "con")]
 	Con,
-	#[serde(rename = "int")]
 	Int,
-	#[serde(rename = "wis")]
 	Wis,
-	#[serde(rename = "cha")]
 	Cha,
 	#[default]
-	None
+	None,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -231,7 +230,7 @@ struct PrerequisiteLevel {
 /**
  * TODO: Make sure this also deserializes the object.
  */
-pub fn deserialize_prerequisite_level<'de, D>(deserializer: D) -> Result<PrerequisiteLevel, D::Error>
+fn deserialize_prerequisite_level<'de, D>(deserializer: D) -> Result<PrerequisiteLevel, D::Error>
 where
 	D: Deserializer<'de>,
 {
@@ -293,7 +292,7 @@ struct PrerequisiteSpell {
 	entry_summary: String,
 }
 
-pub fn deserialize_prerequisite_spell<'de, D>(deserializer: D) -> Result<PrerequisiteSpell, D::Error>
+fn deserialize_prerequisite_spell<'de, D>(deserializer: D) -> Result<PrerequisiteSpell, D::Error>
 where
 	D: Deserializer<'de>,
 {
@@ -371,7 +370,7 @@ struct PrerequisiteSpellcastingFocus {
 	focus_tools: Vec<PrerequisiteSpellcastingFocusTool>,
 }
 
-pub fn deserialize_prerequisite_spellcasting_focus<'de, D>(deserializer: D) -> Result<PrerequisiteSpellcastingFocus, D::Error>
+fn deserialize_prerequisite_spellcasting_focus<'de, D>(deserializer: D) -> Result<PrerequisiteSpellcastingFocus, D::Error>
 where
 	D: Deserializer<'de>,
 {
@@ -472,7 +471,7 @@ enum PrerequisiteMembership {
 	None,
 }
 
-pub fn deserialize_prerequisite_membership<'de, D>(deserializer: D) -> Result<PrerequisiteMembership, D::Error>
+fn deserialize_prerequisite_membership<'de, D>(deserializer: D) -> Result<PrerequisiteMembership, D::Error>
 where
 	D: Deserializer<'de>,
 {
@@ -506,7 +505,7 @@ where
 	return deserializer.deserialize_str(PrerequisiteMembershipVisitor);
 }
 
-pub fn deserialize_prerequisite_membership_array<'de, D>(deserializer: D) -> Result<Vec<PrerequisiteMembership>, D::Error>
+fn deserialize_prerequisite_membership_array<'de, D>(deserializer: D) -> Result<Vec<PrerequisiteMembership>, D::Error>
 where
 	D: Deserializer<'de>,
 {
@@ -630,8 +629,45 @@ pub struct Prerequisite {
 	note: String,
 }
 
+/**
+ * Shouldn't have default
+ */
 #[derive(Debug, Default, Deserialize)]
-enum Alignment {
+pub enum CreatureType {
+	#[serde(rename = "aberration")]
+	Aberration,
+	#[serde(rename = "beast")]
+	Beast,
+	#[serde(rename = "celestial")]
+	Celestial,
+	#[serde(rename = "construct")]
+	Construct,
+	#[serde(rename = "dragon")]
+	Dragon,
+	#[serde(rename = "elemental")]
+	Elemental,
+	#[serde(rename = "fey")]
+	Fey,
+	#[serde(rename = "fiend")]
+	Fiend,
+	#[serde(rename = "giant")]
+	Giant,
+	#[serde(rename = "humanoid")]
+	Humanoid,
+	#[serde(rename = "monstrosity")]
+	Monstrosity,
+	#[serde(rename = "ooze")]
+	Ooze,
+	#[serde(rename = "plant")]
+	Plant,
+	#[serde(rename = "undead")]
+	Undead,
+	#[default]
+	None,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub enum Alignment {
 	/** Lawful */
 	L,
 	/** Neutral */
@@ -653,135 +689,187 @@ enum Alignment {
 	A,
 }
 
+/**
+ * Shouldn't have default
+ */
+#[derive(Debug, Default, Deserialize)]
+pub enum Size {
+	T,
+	S,
+	M,
+	L,
+	H,
+	G,
+	V,
+	#[default]
+	None,
+}
+
+/**
+ * Shouldn't have default
+ */
+#[derive(Debug, Default, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum DataCondition {
+	Blinded,
+	Charmed,
+	Deafened,
+	Exhaustion,
+	Frightened,
+	Grappled,
+	Incapacitated,
+	Invisible,
+	Paralyzed,
+	Petrified,
+	Poisoned,
+	Prone,
+	Restrained,
+	Stunned,
+	Unconscious,
+	Disease,
+	#[default]
+	None
+}
+
+/**
+ * Shouldn't have default
+ */
+#[derive(Debug, Default, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum DataDamageType {
+	Acid,
+	Bludgeoning,
+	Cold,
+	Fire,
+	Force,
+	Lightning,
+	Necrotic,
+	Piercing,
+	Poison,
+	Psychic,
+	Radiant,
+	Slashing,
+	Thunder,
+	#[default]
+	None
+}
+
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum TagsConditionsEnum {
+	Blinded,
+	Charmed,
+	Deafened,
+	Exhaustion,
+	Frightened,
+	Grappled,
+	Incapacitated,
+	Invisible,
+	Paralyzed,
+	Petrified,
+	Poisoned,
+	Prone,
+	Restrained,
+	Stunned,
+	Unconscious,
+}
+
+pub type TagsConditions = Vec<TagsConditionsEnum>;
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum TagsSavingThrowEnum {
+	Strength,
+	Constitution,
+	Dexterity,
+	Intelligence,
+	Wisdom,
+	Charisma
+}
+
+pub type TagsSavingThrow = Vec<TagsSavingThrowEnum>;
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum LanguageNameLower {
-	#[serde(rename = "abyssal")]
 	Abyssal,
-	#[serde(rename = "aquan")]
 	Aquan,
-	#[serde(rename = "auran")]
 	Auran,
-	#[serde(rename = "celestial")]
 	Celestial,
-	#[serde(rename = "common")]
 	Common,
 	#[serde(rename = "common sign language")]
 	CommonSignLanguage,
 	#[serde(rename = "deep speech")]
 	DeepSpeech,
-	#[serde(rename = "draconic")]
 	Draconic,
-	#[serde(rename = "druidic")]
 	Druidic,
-	#[serde(rename = "dwarvish")]
 	Dwarvish,
-	#[serde(rename = "elvish")]
 	Elvish,
-	#[serde(rename = "giant")]
 	Giant,
-	#[serde(rename = "gith")]
 	Gith,
-	#[serde(rename = "gnomish")]
 	Gnomish,
-	#[serde(rename = "goblin")]
 	Goblin,
-	#[serde(rename = "halfling")]
 	Halfing,
-	#[serde(rename = "ignan")]
 	Ignan,
-	#[serde(rename = "infernal")]
 	Infernal,
-	#[serde(rename = "orc")]
 	Orc,
-	#[serde(rename = "other")]
 	Other,
-	#[serde(rename = "primordial")]
 	Primordial,
-	#[serde(rename = "sylvan")]
 	Sylvan,
-	#[serde(rename = "terran")]
 	Terran,
 	#[serde(rename = "thieves' cant")]
 	ThievesCant,
-	#[serde(rename = "undercommon")]
 	Undercommon,
 }
 
 #[derive(Debug, Default, Deserialize)]
+#[serde(default)]
 pub struct LanguageProficiencyChoose {
-	#[serde(default)]
 	from: Vec<LanguageNameLower>,
-	#[serde(default)]
 	count: i64,
 }
 
 #[derive(Debug, Default, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
 pub struct LanguageProficiency {
-	#[serde(default)]
 	any: i64,
-	#[serde(default, rename = "anyStandard")]
 	any_standard: i64,
-	#[serde(default, rename = "anyExotic")]
 	any_exoitic: i64,
-	#[serde(default, rename = "anyRare")]
 	any_rare: i64,
-	#[serde(default)]
 	abyssal: bool,
-	#[serde(default)]
-	celestial: bool,
-	#[serde(default)]
 	common: bool,
-	#[serde(default, rename = "common sign language")]
+	#[serde(rename = "common sign language")]
 	common_sign_language: bool,
-	#[serde(default, rename = "deep speech")]
+	#[serde(rename = "deep speech")]
 	deep_speech: bool,
-	#[serde(default)]
 	draconic: bool,
-	#[serde(default)]
 	infernal: bool,
-	#[serde(default)]
 	gith: bool,
-	#[serde(default)]
 	gnomish: bool,
-	#[serde(default)]
 	goblin: bool,
-	#[serde(default)]
 	halfling: bool,
-	#[serde(default)]
 	orc: bool,
-	#[serde(default)]
 	primordial: bool,
-	#[serde(default)]
 	aquan: bool,
-	#[serde(default)]
 	auran: bool,
-	#[serde(default)]
 	ignan: bool,
-	#[serde(default)]
 	terran: bool,
-	#[serde(default)]
 	sylvan: bool,
-	#[serde(default)]
 	undercommon: bool,
-	#[serde(default)]
 	dwarvish: bool,
-	#[serde(default)]
 	elvish: bool,
-	#[serde(default)]
 	giant: bool,
-	#[serde(default)]
 	other: bool,
-	#[serde(default)]
 	druidic: bool,
-	#[serde(default, rename = "thieves' cant")]
+	#[serde(rename = "thieves' cant")]
 	thieves_cant: bool,
-	#[serde(default)]
 	choose: LanguageProficiencyChoose,
 }
 
 pub type LanguageProficiencies = Vec<LanguageProficiency>;
 
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum ToolNameLower {
 	#[serde(rename = "artisan's tools")]
 	ArtisansTools,
@@ -837,25 +925,16 @@ pub enum ToolNameLower {
 	HerbalismKit,
 	#[serde(rename = "musical instrument")]
 	MusicalInstrument,
-	#[serde(rename = "bagpipes")]
 	BagPipe,
-	#[serde(rename = "drum")]
 	Drum,
-	#[serde(rename = "dulcimer")]
 	Dulcimer,
-	#[serde(rename = "flute")]
 	Flute,
-	#[serde(rename = "horn")]
 	Horn,
-	#[serde(rename = "lute")]
 	Lute,
-	#[serde(rename = "lyre")]
 	Lyre,
 	#[serde(rename = "pan flute")]
 	PanFlute,
-	#[serde(rename = "shawm")]
 	Shawm,
-	#[serde(rename = "viol")]
 	Viol,
 	#[serde(rename = "navigator's tools")]
 	NavigatorsTools,
@@ -863,7 +942,6 @@ pub enum ToolNameLower {
 	ThievesTools,
 	#[serde(rename = "poisoner's kit")]
 	PoisonersKit,
-	#[serde(rename = "vehicles")]
 	Vehicles,
 	#[serde(rename = "vehicles (air)")]
 	VehiclesAir,
@@ -1668,6 +1746,197 @@ pub struct ArmorProficiency {
 pub type ArmorProficiencies = Vec<ArmorProficiency>;
 
 #[derive(Debug, Default, Deserialize)]
+#[serde(default)]
+struct SpeedVal {
+	number: i64,
+	condition: String,
+}
+
+fn deserialize_speed_val<'de, D>(deserializer: D) -> Result<SpeedVal, D::Error>
+where
+	D: Deserializer<'de>,
+{
+	struct SpeedValVisitor;
+
+	impl<'de> Visitor<'de> for SpeedValVisitor {
+		type Value = SpeedVal;
+
+		fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+			return formatter.write_str("");
+		}
+
+		fn visit_i64<E>(self, v: i64) -> Result<Self::Value, E>
+		where
+			E: de::Error,
+		{
+			Ok(SpeedVal { number: v, ..Default::default() })
+		}
+
+		fn visit_bool<E>(self, _: bool) -> Result<Self::Value, E>
+		where
+			E: de::Error,
+		{
+			Ok(SpeedVal { number: 30, ..Default::default() })
+		}
+	}
+
+	return deserializer.deserialize_any(SpeedValVisitor);
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
+enum SpeedMode {
+	Walk,
+	Burrow,
+	Climb,
+	Fly,
+	Swim,
+}
+
+#[derive(Debug, Default, Deserialize)]
+#[serde(default)]
+pub struct SpeedChoose {
+	from: Vec<SpeedMode>,
+	amount: i64,
+	note: String
+}
+
+#[derive(Debug, Default, Deserialize)]
+#[serde(default)]
+pub struct SpeedAlternate {
+	#[serde(deserialize_with = "deserialize_speed_val")]
+	walk: SpeedVal,
+	#[serde(deserialize_with = "deserialize_speed_val")]
+	burrow: SpeedVal,
+	#[serde(deserialize_with = "deserialize_speed_val")]
+	climb: SpeedVal,
+	#[serde(deserialize_with = "deserialize_speed_val")]
+	fly: SpeedVal,
+	#[serde(deserialize_with = "deserialize_speed_val")]
+	swim: SpeedVal,
+}
+
+/**
+ * Can also be either integer or "Varies"
+ */
+#[derive(Debug, Default, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct Speed {
+	#[serde(deserialize_with = "deserialize_speed_val")]
+	walk: SpeedVal,
+	#[serde(deserialize_with = "deserialize_speed_val")]
+	burrow: SpeedVal,
+	#[serde(deserialize_with = "deserialize_speed_val")]
+	climb: SpeedVal,
+	#[serde(deserialize_with = "deserialize_speed_val")]
+	fly: SpeedVal,
+	can_hover: bool,
+	#[serde(deserialize_with = "deserialize_speed_val")]
+	swim: SpeedVal,
+	choose: SpeedChoose,
+	alternate: SpeedAlternate,
+	hidden: Vec<SpeedMode>,
+}
+
+#[derive(Debug, Default, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct DamageImmunity {
+	// Object 1
+	pre_note: String,
+	immune: DamageImmunityArray,
+	note: String,
+	cond: bool,
+
+	// Object 2
+	special: String
+}
+
+// TODO: resolve dual type
+// pub type DamageImmunityArray = Vec<DataDamageType | DamageImmunity>;
+pub type DamageImmunityArray = Vec<DataDamageType>;
+
+#[derive(Debug, Default, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct DamageResist {
+	// Object 1
+	pre_note: String,
+	resist: DamageResistArray,
+	note: String,
+	cond: bool,
+
+	// Object 2
+	special: String
+}
+
+// TODO: resolve dual type
+// pub type DamageResistArray = Vec<DataDamageType | DamageResist>;
+pub type DamageResistArray = Vec<DataDamageType>;
+
+#[derive(Debug, Default, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct DamageVulnerability {
+	// Object 1
+	pre_note: String,
+	vulnerable: DamageVulnerabilityArray,
+	note: String,
+	cond: bool,
+
+	// Object 2
+	special: String
+}
+
+// TODO: resolve dual type
+// pub type DamageVulnerabilityArray = Vec<DataDamageType | DamageVulnerability>;
+pub type DamageVulnerabilityArray = Vec<DataDamageType>;
+
+#[derive(Debug, Default, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct ConditionImmunity {
+	// Object 1
+	pre_note: String,
+	condition_immune: DamageVulnerabilityArray,
+	note: String,
+	cond: bool,
+
+	// Object 2
+	special: String
+}
+
+// TODO: resolve dual type
+// pub type ConditionImmunityArray = Vec<DataCondition | ConditionImmunity>;
+pub type ConditionImmunityArray = Vec<DataCondition>;
+
+#[derive(Debug, Deserialize)]
+pub enum DataDamageTags {
+	/** Acid */
+	A,
+	/** Bludgeoning */
+	B,
+	/** Cold */
+	C,
+	/** Fire */
+	F,
+	/** Force */
+	O,
+	/** Lightning */
+	L,
+	/** Necrotic */
+	N,
+	/** Piercing */
+	P,
+	/** Poison */
+	I,
+	/** Psychic */
+	Y,
+	/** Radiant */
+	R,
+	/** Slashing */
+	S,
+	/** Thunder */
+	T
+}
+
+#[derive(Debug, Default, Deserialize)]
 pub struct AdditionalFeatsArrayItemCategory {
 	#[serde(default)]
 	category: Vec<DataFeatCategory>,
@@ -1744,3 +2013,12 @@ where
 }
 
 pub type BasicRules = bool;
+
+pub type Legacy = bool;
+
+/**
+ * Either 1 or 2
+ * - 1: Proficient
+ * - 2: Expertise
+ */
+pub type ProficiencyLevel = i64;

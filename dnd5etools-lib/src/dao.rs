@@ -24,6 +24,9 @@ pub mod backgrounds_test_dao;
 pub mod items_shared;
 pub mod utils;
 pub mod utils_edition;
+pub mod utils_foundry;
+pub mod utils_token;
+pub mod utils_copy;
 pub mod entry;
 pub mod bestiary;
 
